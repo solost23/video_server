@@ -26,6 +26,7 @@ func (w *WorkList) Register(user *model.User) error {
 		return errors.New("role not exist")
 	}
 	user.Password = model.NewMd5(user.Password, model.SECRET)
+
 	if err := user.Create(); err != nil {
 		return err
 	}
@@ -68,6 +69,10 @@ func (w *WorkList) UpdateUserInfo(user *model.User) error {
 	if err := tmpUser.FindBYUserName(userName); err != nil {
 		return err
 	}
+	user.ID = tmpUser.ID
+	user.UserName = tmpUser.UserName
+	user.Password = tmpUser.Password
+	user.CreateTime = tmpUser.CreateTime
 	if err := user.Update(tmpUser.ID); err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ var dbConn *gorm.DB
 func init() {
 	dsn := "root:123@tcp(localhost:3306)/video_server?charset=utf8mb4"
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		panic(err.Error())

@@ -41,7 +41,7 @@ func (u *User) Delete(id string) error {
 // 修改用户信息
 func (u *User) Update(id string) error {
 	u.UpdateTime = GetCurrentTime()
-	if err := dbConn.Table(u.TableName()).Omit("id", "user_name", "fans_count", "CommentCount").Where("id=?", id).Save(u).Error; err != nil {
+	if err := dbConn.Table(u.TableName()).Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", id).Save(u).Error; err != nil {
 		return err
 	}
 	return nil

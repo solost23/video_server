@@ -42,12 +42,17 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 		user.DELETE("/:user_name", deleteUserInfo)
 		user.PUT("/:user_name", updateUserInfo)
 
-		user.GET("/", getAllUserInfo)
+		user.GET("", getAllUserInfo)
 	}
 }
 
 func initAuthClassRouter(group *gin.RouterGroup) {
-
+	class := group.Group("/class")
+	{
+		class.POST("/:user_name", createClass)
+		class.PUT("/:user_name/:class_id", updateClass)
+		class.GET("/:user_name", getUserAllClass)
+	}
 }
 
 func initAuthVideoRouter(group *gin.RouterGroup) {
