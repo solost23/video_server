@@ -64,8 +64,8 @@ func (v *Video) FindByUserID(userID, deleteStatus string) (res []*Video, err err
 	return res, nil
 }
 
-func (v *Video) FindByClassID(classID string) (videos []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Where("class_id=?", classID).Find(&videos).Error; err != nil {
+func (v *Video) FindByClassID(classID string, deleteStatus string) (videos []*Video, err error) {
+	if err = dbConn.Table(v.TableName()).Where("class_id=? AND delete_status=?", classID, deleteStatus).Find(&videos).Error; err != nil {
 		return videos, err
 	}
 	return videos, nil
@@ -76,11 +76,4 @@ func (v *Video) Find(deleteStatus string) (res []*Video, err error) {
 		return res, err
 	}
 	return res, nil
-}
-
-func (v *Video) DeleteFindClassID(classID string) error {
-	if err := dbConn.Table(v.TableName()).Where("class_id=?", classID).Delete(v).Error; err != nil {
-		return err
-	}
-	return nil
 }

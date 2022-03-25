@@ -102,7 +102,7 @@ func (w *WorkList) DeleteUserInfo(user *model.User) error {
 	var videoses []*model.Video
 	for _, class = range classes {
 		var video = new(model.Video)
-		videos, err := video.FindByClassID(class.ID)
+		videos, err := video.FindByClassID(class.ID, model.DELETENORMAL)
 		if err != nil {
 			return err
 		}
@@ -110,14 +110,12 @@ func (w *WorkList) DeleteUserInfo(user *model.User) error {
 			return nil
 		}
 		videoses = append(videoses, videos...)
-		if err = video.DeleteFindClassID(class.ID); err != nil {
-			return err
-		}
 	}
 	// 删除分类
 	if err = class.DeleteByUserID(user.ID); err != nil {
 		return err
 	}
+
 	// 通过视频查评论
 	for _, video := range videoses {
 		var comment = new(model.Comment)
@@ -130,6 +128,12 @@ func (w *WorkList) DeleteUserInfo(user *model.User) error {
 		}
 		// 删除评论
 		if err = comment.DeleteByVideoID(video.ID); err != nil {
+			return err
+		}
+	}
+	// 删除视频
+	for _, video := range videoses {
+		if err = video.Delete(video.ID); err != nil {
 			return err
 		}
 	}
