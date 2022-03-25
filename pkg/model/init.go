@@ -31,6 +31,10 @@ const (
 	// 删除状态
 	DELETENORMAL = "DELETE_STATUS_NORMAL"
 	DELETEDEL    = "DELETE_STATUS_DEL"
+
+	// 评论类型
+	ISTHUMB   = "ISTHUMB"
+	ISCOMMENT = "ISCOMMENT"
 )
 
 // 生成唯一UUID

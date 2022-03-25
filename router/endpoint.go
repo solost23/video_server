@@ -74,5 +74,10 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 }
 
 func initAuthCommentRouter(group *gin.RouterGroup) {
-
+	comment := group.Group("/comment")
+	{
+		comment.POST("/:video_id", createComment)
+		comment.DELETE("/:video_id/:comment_id", deleteComment)
+		comment.GET("/:video_id", getCommentByVideoID)
+	}
 }
