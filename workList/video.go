@@ -83,7 +83,7 @@ func (w *WorkList) DeleteVideo(video *model.Video) error {
 		return err
 	}
 	// 直接通过用户id,分类id，视频id查就可以
-	if err := video.FindByUserIDANDClassIDAndID(user.ID, classID, videoID); err != nil {
+	if err := video.FindByUserIDANDClassIDAndID(user.ID, classID, videoID, model.DELETENORMAL); err != nil {
 		return err
 	}
 	if err := video.Delete(video.ID); err != nil {
@@ -95,7 +95,7 @@ func (w *WorkList) DeleteVideo(video *model.Video) error {
 func (w *WorkList) GetVideo(video *model.Video) error {
 	// 直接获取视频信息
 	videoID := w.ctx.Param("video_id")
-	if err := video.FindByVideoID(videoID); err != nil {
+	if err := video.FindByVideoID(videoID, model.DELETENORMAL); err != nil {
 		return err
 	}
 	return nil
@@ -109,7 +109,7 @@ func (w *WorkList) GetVideoByUserNameAndClassID(video *model.Video) (videos []*m
 	if err = user.FindBYUserName(userName); err != nil {
 		return videos, err
 	}
-	videos, err = video.FindByUserIDAndClassID(user.ID, classID)
+	videos, err = video.FindByUserIDAndClassID(user.ID, classID, model.DELETENORMAL)
 	if err != nil {
 		return videos, err
 	}
@@ -122,7 +122,7 @@ func (w *WorkList) GetVideoByUserName(video *model.Video) (videos []*model.Video
 	if err = user.FindBYUserName(userName); err != nil {
 		return videos, err
 	}
-	videos, err = video.FindByUserID(user.ID)
+	videos, err = video.FindByUserID(user.ID, model.DELETENORMAL)
 	if err != nil {
 		return videos, err
 	}
@@ -131,7 +131,7 @@ func (w *WorkList) GetVideoByUserName(video *model.Video) (videos []*model.Video
 
 func (w *WorkList) GetAllVideo(video *model.Video) (videos []*model.Video, err error) {
 	// 直接获取并返回
-	videos, err = video.Find()
+	videos, err = video.Find(model.DELETENORMAL)
 	if err != nil {
 		return videos, err
 	}

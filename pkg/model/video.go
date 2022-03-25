@@ -36,36 +36,36 @@ func (v *Video) Delete(videoID string) error {
 	return nil
 }
 
-func (v *Video) FindByVideoID(videoID string) error {
-	if err := dbConn.Table(v.TableName()).Where("id=?", videoID).First(v).Error; err != nil {
+func (v *Video) FindByVideoID(videoID string, deleteStatus string) error {
+	if err := dbConn.Table(v.TableName()).Where("id=? AND delete_status=?", videoID, deleteStatus).First(v).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (v *Video) FindByUserIDAndClassID(userID, classID string) (res []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Where("user_id=? AND class_id=?", userID, classID).Find(&res).Error; err != nil {
+func (v *Video) FindByUserIDAndClassID(userID, classID, deleteStatus string) (res []*Video, err error) {
+	if err = dbConn.Table(v.TableName()).Where("user_id=? AND class_id=? AND delete_status=?", userID, classID, deleteStatus).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
-func (v *Video) FindByUserIDANDClassIDAndID(userID, classID, videoID string) error {
-	if err := dbConn.Table(v.TableName()).Where("user_id=? AND class_id=? AND id=?", userID, classID, videoID).First(v).Error; err != nil {
+func (v *Video) FindByUserIDANDClassIDAndID(userID, classID, videoID, deleteStatus string) error {
+	if err := dbConn.Table(v.TableName()).Where("user_id=? AND class_id=? AND id=? AND delete_status=?", userID, classID, videoID, deleteStatus).First(v).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (v *Video) FindByUserID(userID string) (res []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Where("user_id=?", userID).Find(&res).Error; err != nil {
+func (v *Video) FindByUserID(userID, deleteStatus string) (res []*Video, err error) {
+	if err = dbConn.Table(v.TableName()).Where("user_id=? AND delete_status=?", userID, deleteStatus).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
-func (v *Video) Find() (res []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Find(&res).Error; err != nil {
+func (v *Video) Find(deleteStatus string) (res []*Video, err error) {
+	if err = dbConn.Table(v.TableName()).Where("delete_status=?", deleteStatus).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
