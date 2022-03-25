@@ -56,7 +56,21 @@ func initAuthClassRouter(group *gin.RouterGroup) {
 }
 
 func initAuthVideoRouter(group *gin.RouterGroup) {
-
+	video := group.Group("/video")
+	{
+		// 提交视频信息,通过表单，视频流和视频信息一起上传
+		video.POST("/:user_name/:class_id", createVideo)
+		// 删除就是将video信息的delete_status的字段修改为已删除
+		video.DELETE("/:user_name/:class_id/:video_id", deleteVideo)
+		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
+		video.GET("/:user_name/:class_id/:video_id", getVideo)
+		// 获取此用户分类下所有视频
+		video.GET("/:user_name/:class_id", getVideoByUserNameAndClassID)
+		// 获取此用户下所有视频
+		video.GET("/:user_name", getVideoByUserName)
+		// 获取所有视频
+		video.GET("", getALLVideo)
+	}
 }
 
 func initAuthCommentRouter(group *gin.RouterGroup) {

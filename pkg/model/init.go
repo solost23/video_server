@@ -25,6 +25,8 @@ const (
 	SECRET    = "TY"
 	ROLEADMIN = "ADMIN"
 	ROLEUSER  = "USER"
+
+	FilePath = "video"
 )
 
 // 生成唯一UUID
