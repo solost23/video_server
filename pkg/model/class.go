@@ -61,3 +61,10 @@ func (c *Class) FindByID(id string) error {
 	}
 	return nil
 }
+
+func (c *Class) DeleteByUserID(userID string) error {
+	if err := dbConn.Table(c.TableName()).Where("user_id=?", userID).Delete(c).Error; err != nil {
+		return err
+	}
+	return nil
+}

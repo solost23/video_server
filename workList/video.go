@@ -75,6 +75,7 @@ func (w *WorkList) CreateVideo(video *model.Video) error {
 func (w *WorkList) DeleteVideo(video *model.Video) error {
 	// 先查找视频信息,找不到则报错
 	// 给视频的delete_status打上标记就可以
+	// 注意:删视频的时候，视频下面的评论也要删除
 	userName := w.ctx.Param("user_name")
 	classID := w.ctx.Param("class_id")
 	videoID := w.ctx.Param("video_id")
@@ -86,7 +87,21 @@ func (w *WorkList) DeleteVideo(video *model.Video) error {
 	if err := video.FindByUserIDANDClassIDAndID(user.ID, classID, videoID, model.DELETENORMAL); err != nil {
 		return err
 	}
+	// 删视频
 	if err := video.Delete(video.ID); err != nil {
+		return err
+	}
+	// 删视频下的评论
+	var comment = new(model.Comment)
+	// 查看一下视频下是否有评论
+	comments, err := comment.FindByVideoID(videoID)
+	if err != nil {
+		return err
+	}
+	if len(comments) <= 0 {
+		return nil
+	}
+	if err := comment.DeleteByVideoID(videoID); err != nil {
 		return err
 	}
 	return nil

@@ -52,3 +52,10 @@ func (c *Comment) FindByID(commentID string) error {
 	}
 	return nil
 }
+
+func (c *Comment) DeleteByVideoID(videoID string) error {
+	if err := dbConn.Table(c.TableName()).Where("video_id=?", videoID).Delete(c).Error; err != nil {
+		return err
+	}
+	return nil
+}

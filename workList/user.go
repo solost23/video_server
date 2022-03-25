@@ -82,12 +82,56 @@ func (w *WorkList) UpdateUserInfo(user *model.User) error {
 func (w *WorkList) DeleteUserInfo(user *model.User) error {
 	// 查看用户是否存在，若不存在，则返回错误
 	// 若存在，则按照id删除
+	// 注意:删除用户的时候，用户下的分类，分类下的视频，视频下的评论，都要删除
 	userName := w.ctx.Param("user_name")
 	if err := user.FindBYUserName(userName); err != nil {
 		return err
 	}
 	if err := user.Delete(user.ID); err != nil {
 		return err
+	}
+	// 删除用户下分类
+	var class = new(model.Class)
+	classes, err := class.FindByUserID(user.ID)
+	if err != nil {
+		return err
+	}
+	if len(classes) <= 0 {
+		return nil
+	}
+	var videoses []*model.Video
+	for _, class = range classes {
+		var video = new(model.Video)
+		videos, err := video.FindByClassID(class.ID)
+		if err != nil {
+			return err
+		}
+		if len(videos) <= 0 {
+			return nil
+		}
+		videoses = append(videoses, videos...)
+		if err = video.DeleteFindClassID(class.ID); err != nil {
+			return err
+		}
+	}
+	// 删除分类
+	if err = class.DeleteByUserID(user.ID); err != nil {
+		return err
+	}
+	// 通过视频查评论
+	for _, video := range videoses {
+		var comment = new(model.Comment)
+		comments, err := comment.FindByVideoID(video.ID)
+		if err != nil {
+			return err
+		}
+		if len(comments) <= 0 {
+			return nil
+		}
+		// 删除评论
+		if err = comment.DeleteByVideoID(video.ID); err != nil {
+			return err
+		}
 	}
 	return nil
 }
