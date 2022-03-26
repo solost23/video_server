@@ -28,6 +28,7 @@ func initAuthRouter(group *gin.RouterGroup) {
 	initAuthClassRouter(group)
 	initAuthVideoRouter(group)
 	initAuthCommentRouter(group)
+	initAuthRoleRouter(group)
 }
 
 func initAuthUserRouter(group *gin.RouterGroup) {
@@ -79,5 +80,15 @@ func initAuthCommentRouter(group *gin.RouterGroup) {
 		comment.POST("/:video_id", createComment)
 		comment.DELETE("/:video_id/:comment_id", deleteComment)
 		comment.GET("/:video_id", getCommentByVideoID)
+	}
+}
+
+func initAuthRoleRouter(group *gin.RouterGroup) {
+	role := group.Group("/role")
+	{
+		role.POST("", addRoleAuth)
+		role.DELETE("", deleteRoleAuth)
+		role.GET("", getAllRoleAuth)
+		role.GET("/:role_name", getRoleAuth)
 	}
 }

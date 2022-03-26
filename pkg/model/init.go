@@ -12,9 +12,11 @@ import (
 )
 
 var dbConn *gorm.DB
+var DBCasbin *gorm.DB
 
 func init() {
 	dbConn = mysql.GetMysqlConn()
+	DBCasbin = mysql.GetCasbinConn()
 	dbConn.AutoMigrate(&User{})
 	dbConn.AutoMigrate(&Comment{})
 	dbConn.AutoMigrate(&Video{})
