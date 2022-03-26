@@ -2,10 +2,10 @@ package workList
 
 import (
 	"errors"
-	"video_server/pkg/middleware"
 
 	"gorm.io/gorm"
 
+	"video_server/pkg/middleware"
 	"video_server/pkg/model"
 )
 

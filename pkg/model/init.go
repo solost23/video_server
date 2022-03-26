@@ -3,11 +3,13 @@ package model
 import (
 	"crypto/md5"
 	"fmt"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+
 	"video_server/mysql"
 )
 

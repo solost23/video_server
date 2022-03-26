@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/casbin/casbin"
 	xormadapter "github.com/casbin/xorm-adapter"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func AuthCheckRole() gin.HandlerFunc {
