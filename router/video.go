@@ -9,6 +9,15 @@ import (
 	"video_server/workList"
 )
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description add video
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video/{user_name}/{class_id} [post]
 func createVideo(c *gin.Context) {
 	var video = new(model.Video)
 	if err := c.ShouldBind(video); err != nil {
@@ -23,6 +32,15 @@ func createVideo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description delete video
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video/{user_name}/{class_id}/{video_id} [delete]
 func deleteVideo(c *gin.Context) {
 	var video = new(model.Video)
 	if err := workList.NewWorkList(c).DeleteVideo(video); err != nil {
@@ -33,6 +51,15 @@ func deleteVideo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description get video
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video/{user_name}/{class_id}/{video_id} [get]
 func getVideo(c *gin.Context) {
 	var video = new(model.Video)
 	if err := workList.NewWorkList(c).GetVideo(video); err != nil {
@@ -43,6 +70,15 @@ func getVideo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description get video by user_name and class_id
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video/{user_name}/{class_id} [get]
 func getVideoByUserNameAndClassID(c *gin.Context) {
 	var video = new(model.Video)
 	videos, err := workList.NewWorkList(c).GetVideoByUserNameAndClassID(video)
@@ -54,6 +90,15 @@ func getVideoByUserNameAndClassID(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description get video by user_name
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video/{user_name} [get]
 func getVideoByUserName(c *gin.Context) {
 	var video = new(model.Video)
 	videos, err := workList.NewWorkList(c).GetVideoByUserName(video)
@@ -65,6 +110,15 @@ func getVideoByUserName(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping video
+// @Schemes
+// @Description get all video
+// @Tags Video
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /video [get]
 func getALLVideo(c *gin.Context) {
 	var video = new(model.Video)
 	videos, err := workList.NewWorkList(c).GetAllVideo(video)

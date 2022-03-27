@@ -1,0 +1,278 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: this is a video server
+  title: video_server Swagger
+  version: "1.0"
+paths:
+  /class/{user_name}:
+    get:
+      consumes:
+      - application/json
+      description: get user all class
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping class
+      tags:
+      - Class
+    post:
+      consumes:
+      - application/json
+      description: add class
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping class
+      tags:
+      - Class
+  /class/{user_name}/{class_id}:
+    put:
+      consumes:
+      - application/json
+      description: update class
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping class
+      tags:
+      - Class
+  /comment/{video_id}:
+    get:
+      consumes:
+      - application/json
+      description: get comment by video_id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping comment
+      tags:
+      - Comment
+    post:
+      consumes:
+      - application/json
+      description: add comment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping comment
+      tags:
+      - Comment
+  /comment/{video_id}/{comment_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete comment
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping comment
+      tags:
+      - Comment
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: user login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping user
+      tags:
+      - User
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: user register
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping user
+      tags:
+      - User
+  /role:
+    delete:
+      consumes:
+      - application/json
+      description: delete roleAuth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping role
+      tags:
+      - Role
+    get:
+      consumes:
+      - application/json
+      description: get all roleAuth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping role
+      tags:
+      - Role
+    post:
+      consumes:
+      - application/json
+      description: add roleAuth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping role
+      tags:
+      - Role
+  /role/{role_name}:
+    get:
+      consumes:
+      - application/json
+      description: get roleAuth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping role
+      tags:
+      - Role
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: get all user info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping user
+      tags:
+      - User
+  /user/{user_name}:
+    delete:
+      consumes:
+      - application/json
+      description: update user info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping user
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: get user info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping user
+      tags:
+      - User
+  /video:
+    get:
+      consumes:
+      - application/json
+      description: get all video
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+  /video/{user_name}:
+    get:
+      consumes:
+      - application/json
+      description: get video by user_name
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+  /video/{user_name}/{class_id}:
+    get:
+      consumes:
+      - application/json
+      description: get video by user_name and class_id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+    post:
+      consumes:
+      - application/json
+      description: add video
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+  /video/{user_name}/{class_id}/{video_id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete video
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+    get:
+      consumes:
+      - application/json
+      description: get video
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: ping video
+      tags:
+      - Video
+schemes:
+- http
+- https
+swagger: "2.0"

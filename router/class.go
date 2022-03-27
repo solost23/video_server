@@ -9,6 +9,15 @@ import (
 	"video_server/workList"
 )
 
+// PingExample godoc
+// @Summary ping class
+// @Schemes
+// @Description add class
+// @Tags Class
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /class/{user_name} [post]
 func createClass(c *gin.Context) {
 	var class = new(model.Class)
 	if err := c.ShouldBind(class); err != nil {
@@ -23,6 +32,15 @@ func createClass(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping class
+// @Schemes
+// @Description update class
+// @Tags Class
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /class/{user_name}/{class_id} [put]
 func updateClass(c *gin.Context) {
 	var class = new(model.Class)
 	if err := c.ShouldBind(class); err != nil {
@@ -37,6 +55,15 @@ func updateClass(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping class
+// @Schemes
+// @Description get user all class
+// @Tags Class
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /class/{user_name} [get]
 func getUserAllClass(c *gin.Context) {
 	var class = new(model.Class)
 	userClasses, err := workList.NewWorkList(c).GetUserAllClass(class)

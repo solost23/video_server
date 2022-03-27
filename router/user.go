@@ -9,6 +9,15 @@ import (
 	"video_server/workList"
 )
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description user register
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /register [post]
 func register(c *gin.Context) {
 	var user = new(model.User)
 	if err := c.ShouldBind(user); err != nil {
@@ -23,6 +32,15 @@ func register(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description user login
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /login [post]
 func login(c *gin.Context) {
 	var user = new(model.User)
 	if err := c.ShouldBind(user); err != nil {
@@ -40,6 +58,15 @@ func login(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description get user info
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /user/{user_name} [get]
 func getUserInfo(c *gin.Context) {
 	var user = new(model.User)
 	if err := workList.NewWorkList(c).GetUserInfo(user); err != nil {
@@ -50,6 +77,15 @@ func getUserInfo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description delete user info
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /user/{user_name} [delete]
 func deleteUserInfo(c *gin.Context) {
 	var user = new(model.User)
 	if err := workList.NewWorkList(c).DeleteUserInfo(user); err != nil {
@@ -60,6 +96,15 @@ func deleteUserInfo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description update user info
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /user/{user_name} [delete]
 func updateUserInfo(c *gin.Context) {
 	// 通过用户名去更新字段
 	var user = new(model.User)
@@ -75,6 +120,15 @@ func updateUserInfo(c *gin.Context) {
 	return
 }
 
+// PingExample godoc
+// @Summary ping user
+// @Schemes
+// @Description get all user info
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200
+// @Router /user [get]
 func getAllUserInfo(c *gin.Context) {
 	var user = new(model.User)
 	users, err := workList.NewWorkList(c).GETAllUserInfo(user)

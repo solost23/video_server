@@ -2,7 +2,9 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "video_server/docs" // 必须要导入生成的docs文档包
 	"video_server/pkg/middleware"
 )
 
@@ -21,6 +23,7 @@ func InitRouter() *gin.Engine {
 func initNoAuthRouter(group *gin.RouterGroup) {
 	group.POST("/register", register)
 	group.POST("/login", login)
+	group.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 func initAuthRouter(group *gin.RouterGroup) {

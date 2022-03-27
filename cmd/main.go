@@ -9,6 +9,12 @@ import (
 	"video_server/scheduler"
 )
 
+// @title video_server Swagger
+// @version 1.0
+// @description this is a video server
+// @host localhost:8080
+// @schemes http https
+// @BasePath /
 func main() {
 	// 启动定时任务，每天晚上三点删除视频文件，降低用户删除请求的io操作过多
 	fmt.Println("start scheduler")
