@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"log"
 	"net/url"
 	"os"
-
-	"gorm.io/gorm"
 
 	"video_server/mysql"
 	"video_server/pkg/model"
@@ -47,7 +46,7 @@ func (t *Task) Deal() (err error) {
 	for _, item := range videos {
 		videoUrl, _ := url.Parse(item.VideoUrl)
 		videoFileName := videoUrl.Path
-		videoFilePath = append(videoFilePath, fmt.Sprintf("%s%s", "..", videoFileName))
+		videoFilePath = append(videoFilePath, videoFileName[1:len(videoFileName)])
 	}
 	// 根据路径去删除视频文件
 	if err = t.DeleteVideoFile(videoFilePath); err != nil {

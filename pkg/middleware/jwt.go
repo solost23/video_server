@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"video_server/config"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -38,7 +39,7 @@ func JWTAuth() gin.HandlerFunc {
 	}
 }
 
-const JWTKEY = "my_secret_key"
+var JWTKEY = config.JwtKey
 
 type Claims struct {
 	UserName string

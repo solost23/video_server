@@ -1,0 +1,24 @@
+version: 1.0
+params:
+  service_name: video_server
+  service_addr: 0.0.0.0
+  service_port: 8080
+connections:
+  mysql:
+    video_server:
+      host: 127.0.0.1
+      user: root
+      password: 123
+      port: 3306
+      db: video_server
+      casbin_db: casbin
+      charset: utf8mb4
+scheduler:
+  delete_video:
+    cron_time: 0 0 3 * * ?
+video:
+  video_path: video
+jwt:
+  key: my_secret_key
+md5:
+  secret: ty

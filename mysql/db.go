@@ -1,9 +1,11 @@
 package mysql
 
 import (
+	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"video_server/config"
 )
 
 func GetMysqlConn() *gorm.DB {
@@ -18,8 +20,9 @@ var dbConn *gorm.DB
 var casbinConn *gorm.DB
 
 func init() {
-	dsn := "root:123@tcp(localhost:3306)/video_server?charset=utf8mb4"
-	casbinDsn := "root:123@tcp(localhost:3306)/casbin?charset-utf8mb4"
+	mysqlClient := config.NewConnections()
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", mysqlClient.UserName, mysqlClient.Password, mysqlClient.Host, mysqlClient.Port, mysqlClient.DB, mysqlClient.Charset)
+	casbinDsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s", mysqlClient.UserName, mysqlClient.Password, mysqlClient.Host, mysqlClient.Port, mysqlClient.CasbinDB, mysqlClient.Charset)
 	conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error),
 	})

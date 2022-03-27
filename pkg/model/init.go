@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"video_server/config"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -26,11 +27,9 @@ func init() {
 }
 
 const (
-	SECRET    = "TY"
+	// 管理员
 	ROLEADMIN = "ADMIN"
 	ROLEUSER  = "USER"
-
-	FilePath = "video"
 
 	// 删除状态
 	DELETENORMAL = "DELETE_STATUS_NORMAL"
@@ -39,6 +38,11 @@ const (
 	// 评论类型
 	ISTHUMB   = "ISTHUMB"
 	ISCOMMENT = "ISCOMMENT"
+)
+
+var (
+	FilePath = config.Video_path
+	SECRET   = config.Md5
 )
 
 // 生成唯一UUID
