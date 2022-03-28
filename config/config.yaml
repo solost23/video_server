@@ -6,7 +6,7 @@ params:
 connections:
   mysql:
     video_server:
-      host: 127.0.0.1
+      host: mysqldb
       user: root
       password: 123
       port: 3306
