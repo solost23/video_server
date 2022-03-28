@@ -14,11 +14,11 @@
 将config.yaml中MysqlHost改为mysqldb,否则无法与mysql容器连接
 将服务地址改为0.0.0.0，否则无法从容器外访问
 ```bash
-docker build -t video_server .
+docker build -t video_server:v1.0.0 .
 ```
 
 ```bash
-docker run -d --rm -p 8080:8080 --name video_server_project --link MySQL:mysqldb vider_server
+docker run -d --rm -p 8080:8080 --name video_server_project --link MySQL:mysqldb video_server:v1.0.0
 ```
 ## 访问 swagger文档
 [video_server Swagger](http://localhost:8080/swagger/index.html#/)
