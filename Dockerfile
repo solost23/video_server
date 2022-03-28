@@ -9,9 +9,9 @@ ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct \
     GOPRIVATE=git.domob-inc.cn
 
-WORKDIR /app/golang_blog
-COPY . /app/golang_blog
-RUN go mod tidy
+WORKDIR /app/video_server
+COPY . /app/video_server
+RUN go get github.com/sirupsen/logrus/internal/testutils && go mod tidy
 
 EXPOSE 8080
 

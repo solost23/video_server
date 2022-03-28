@@ -18,7 +18,7 @@ docker build -t video_server:v1.0.0 .
 ```
 
 ```bash
-docker run -d --rm -p 8080:8080 --name video_server_project --link MySQL:mysqldb video_server:v1.0.0
+docker run -d --rm -p 8080:8080 -v E:\Desktop\video_server:/app/video_server --name video_server_project --link MySQL:mysqldb video_server:v1.0.0
 ```
 
 ## 访问 swagger文档
