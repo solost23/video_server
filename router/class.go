@@ -9,11 +9,11 @@ import (
 	"video_server/workList"
 )
 
-// PingExample godoc
-// @Summary ping class
-// @Schemes
+// @Summary create_class
 // @Description add class
 // @Tags Class
+// @Security ApiKeyAuth
+// @Param data body model.Class true "类别"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -32,11 +32,11 @@ func createClass(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping class
-// @Schemes
+// @Summary update_class
 // @Description update class
 // @Tags Class
+// @Security ApiKeyAuth
+// @Param data body model.Class true "类别"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -55,11 +55,10 @@ func updateClass(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping class
-// @Schemes
+// @Summary get user all class
 // @Description get user all class
 // @Tags Class
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200

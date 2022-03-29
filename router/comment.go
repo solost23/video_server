@@ -9,11 +9,11 @@ import (
 	"video_server/workList"
 )
 
-// PingExample godoc
-// @Summary ping comment
-// @Schemes
+// @Summary create comment
 // @Description add comment
 // @Tags Comment
+// @Security ApiKeyAuth
+// @Param data body model.Comment true "评论"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -32,11 +32,10 @@ func createComment(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping comment
-// @Schemes
+// @Summary delete comment
 // @Description delete comment
 // @Tags Comment
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -51,11 +50,10 @@ func deleteComment(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping comment
-// @Schemes
-// @Description get comment by video_id
+// @Summary get_comment_by_video_id
+// @Description get comment by video id
 // @Tags Comment
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200

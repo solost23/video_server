@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/class/{user_name}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get user all class",
                 "consumes": [
                     "application/json"
@@ -28,7 +33,7 @@ const docTemplate = `{
                 "tags": [
                     "Class"
                 ],
-                "summary": "ping class",
+                "summary": "get user all class",
                 "responses": {
                     "200": {
                         "description": ""
@@ -36,6 +41,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add class",
                 "consumes": [
                     "application/json"
@@ -46,7 +56,18 @@ const docTemplate = `{
                 "tags": [
                     "Class"
                 ],
-                "summary": "ping class",
+                "summary": "create_class",
+                "parameters": [
+                    {
+                        "description": "类别",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Class"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -56,6 +77,11 @@ const docTemplate = `{
         },
         "/class/{user_name}/{class_id}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update class",
                 "consumes": [
                     "application/json"
@@ -66,7 +92,18 @@ const docTemplate = `{
                 "tags": [
                     "Class"
                 ],
-                "summary": "ping class",
+                "summary": "update_class",
+                "parameters": [
+                    {
+                        "description": "类别",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Class"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -76,7 +113,12 @@ const docTemplate = `{
         },
         "/comment/{video_id}": {
             "get": {
-                "description": "get comment by video_id",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get comment by video id",
                 "consumes": [
                     "application/json"
                 ],
@@ -86,7 +128,7 @@ const docTemplate = `{
                 "tags": [
                     "Comment"
                 ],
-                "summary": "ping comment",
+                "summary": "get_comment_by_video_id",
                 "responses": {
                     "200": {
                         "description": ""
@@ -94,6 +136,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add comment",
                 "consumes": [
                     "application/json"
@@ -104,7 +151,18 @@ const docTemplate = `{
                 "tags": [
                     "Comment"
                 ],
-                "summary": "ping comment",
+                "summary": "create comment",
+                "parameters": [
+                    {
+                        "description": "评论",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Comment"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -114,6 +172,11 @@ const docTemplate = `{
         },
         "/comment/{video_id}/{comment_id}": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete comment",
                 "consumes": [
                     "application/json"
@@ -124,7 +187,7 @@ const docTemplate = `{
                 "tags": [
                     "Comment"
                 ],
-                "summary": "ping comment",
+                "summary": "delete comment",
                 "responses": {
                     "200": {
                         "description": ""
@@ -144,7 +207,18 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "ping user",
+                "summary": "login",
+                "parameters": [
+                    {
+                        "description": "用户",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -154,7 +228,7 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "user register",
+                "description": "add user",
                 "consumes": [
                     "application/json"
                 ],
@@ -164,7 +238,18 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "ping user",
+                "summary": "register",
+                "parameters": [
+                    {
+                        "description": "用户",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -174,6 +259,11 @@ const docTemplate = `{
         },
         "/role": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all roleAuth",
                 "consumes": [
                     "application/json"
@@ -184,7 +274,7 @@ const docTemplate = `{
                 "tags": [
                     "Role"
                 ],
-                "summary": "ping role",
+                "summary": "get all roleAuth",
                 "responses": {
                     "200": {
                         "description": ""
@@ -192,6 +282,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add roleAuth",
                 "consumes": [
                     "application/json"
@@ -202,7 +297,18 @@ const docTemplate = `{
                 "tags": [
                     "Role"
                 ],
-                "summary": "ping role",
+                "summary": "add roleAuth",
+                "parameters": [
+                    {
+                        "description": "角色",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CasbinModel"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -210,6 +316,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete roleAuth",
                 "consumes": [
                     "application/json"
@@ -220,7 +331,18 @@ const docTemplate = `{
                 "tags": [
                     "Role"
                 ],
-                "summary": "ping role",
+                "summary": "delete role",
+                "parameters": [
+                    {
+                        "description": "角色",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CasbinModel"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -230,6 +352,11 @@ const docTemplate = `{
         },
         "/role/{role_name}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get roleAuth",
                 "consumes": [
                     "application/json"
@@ -240,7 +367,7 @@ const docTemplate = `{
                 "tags": [
                     "Role"
                 ],
-                "summary": "ping role",
+                "summary": "get roleAuth",
                 "responses": {
                     "200": {
                         "description": ""
@@ -250,6 +377,11 @@ const docTemplate = `{
         },
         "/user": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all user info",
                 "consumes": [
                     "application/json"
@@ -260,7 +392,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "ping user",
+                "summary": "get_all_user_info",
                 "responses": {
                     "200": {
                         "description": ""
@@ -270,6 +402,11 @@ const docTemplate = `{
         },
         "/user/{user_name}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get user info",
                 "consumes": [
                     "application/json"
@@ -280,7 +417,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "ping user",
+                "summary": "get_user_info",
                 "responses": {
                     "200": {
                         "description": ""
@@ -288,6 +425,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "update user info",
                 "consumes": [
                     "application/json"
@@ -298,7 +440,18 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "ping user",
+                "summary": "update_user_info",
+                "parameters": [
+                    {
+                        "description": "用户",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -308,6 +461,11 @@ const docTemplate = `{
         },
         "/video": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get all video",
                 "consumes": [
                     "application/json"
@@ -318,7 +476,7 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "get_all_video",
                 "responses": {
                     "200": {
                         "description": ""
@@ -328,6 +486,11 @@ const docTemplate = `{
         },
         "/video/{user_name}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get video by user_name",
                 "consumes": [
                     "application/json"
@@ -338,7 +501,7 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "get_video_by_userName",
                 "responses": {
                     "200": {
                         "description": ""
@@ -348,6 +511,11 @@ const docTemplate = `{
         },
         "/video/{user_name}/{class_id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get video by user_name and class_id",
                 "consumes": [
                     "application/json"
@@ -358,7 +526,7 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "get_video_by_userName_and_classID",
                 "responses": {
                     "200": {
                         "description": ""
@@ -366,6 +534,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "add video",
                 "consumes": [
                     "application/json"
@@ -376,7 +549,18 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "add video",
+                "parameters": [
+                    {
+                        "description": "视频",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Video"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -386,6 +570,11 @@ const docTemplate = `{
         },
         "/video/{user_name}/{class_id}/{video_id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get video",
                 "consumes": [
                     "application/json"
@@ -396,7 +585,7 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "get video",
                 "responses": {
                     "200": {
                         "description": ""
@@ -404,6 +593,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "delete video",
                 "consumes": [
                     "application/json"
@@ -414,11 +608,158 @@ const docTemplate = `{
                 "tags": [
                     "Video"
                 ],
-                "summary": "ping video",
+                "summary": "delete video",
                 "responses": {
                     "200": {
                         "description": ""
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.CasbinModel": {
+            "type": "object",
+            "properties": {
+                "method": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "ptype": {
+                    "type": "string"
+                },
+                "role_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Class": {
+            "type": "object",
+            "properties": {
+                "createTime": {
+                    "description": "DeleteStatus string ` + "`" + `gorm:\"type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL\"` + "`" + `",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "introduce": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Comment": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createTime": {
+                    "description": "DeleteStatus string ` + "`" + `gorm:\"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL\"` + "`" + `",
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isThumb": {
+                    "type": "string"
+                },
+                "parentId": {
+                    "type": "string"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "videoID": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "commentCount": {
+                    "type": "integer"
+                },
+                "createTime": {
+                    "description": "DeleteStatus string ` + "`" + `gorm:\"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL\"` + "`" + `",
+                    "type": "integer"
+                },
+                "fansCount": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "introduce": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Video": {
+            "type": "object",
+            "properties": {
+                "classID": {
+                    "type": "string"
+                },
+                "commentCount": {
+                    "type": "integer"
+                },
+                "createTime": {
+                    "type": "integer"
+                },
+                "deleteStatus": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "introduce": {
+                    "type": "string"
+                },
+                "thumbCount": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updateTime": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "string"
+                },
+                "videoUrl": {
+                    "type": "string"
                 }
             }
         }

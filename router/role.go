@@ -9,11 +9,11 @@ import (
 	"video_server/workList"
 )
 
-// PingExample godoc
-// @Summary ping role
-// @Schemes
+// @Summary add roleAuth
 // @Description add roleAuth
 // @Tags Role
+// @Security ApiKeyAuth
+// @Param data body model.CasbinModel true "角色"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -32,11 +32,11 @@ func addRoleAuth(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping role
-// @Schemes
+// @Summary delete role
 // @Description delete roleAuth
 // @Tags Role
+// @Security ApiKeyAuth
+// @Param data body model.CasbinModel true "角色"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -55,11 +55,10 @@ func deleteRoleAuth(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping role
-// @Schemes
+// @Summary get all roleAuth
 // @Description get all roleAuth
 // @Tags Role
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -75,11 +74,10 @@ func getAllRoleAuth(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping role
-// @Schemes
+// @Summary get roleAuth
 // @Description get roleAuth
 // @Tags Role
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200

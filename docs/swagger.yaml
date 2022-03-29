@@ -1,4 +1,101 @@
 basePath: /
+definitions:
+  model.CasbinModel:
+    properties:
+      method:
+        type: string
+      path:
+        type: string
+      ptype:
+        type: string
+      role_name:
+        type: string
+    type: object
+  model.Class:
+    properties:
+      createTime:
+        description: DeleteStatus string `gorm:"type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
+        type: integer
+      id:
+        type: string
+      introduce:
+        type: string
+      title:
+        type: string
+      updateTime:
+        type: integer
+      userID:
+        type: string
+    type: object
+  model.Comment:
+    properties:
+      content:
+        type: string
+      createTime:
+        description: DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
+        type: integer
+      id:
+        type: string
+      isThumb:
+        type: string
+      parentId:
+        type: string
+      updateTime:
+        type: integer
+      videoID:
+        type: string
+    type: object
+  model.User:
+    properties:
+      avatar:
+        type: string
+      commentCount:
+        type: integer
+      createTime:
+        description: DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
+        type: integer
+      fansCount:
+        type: integer
+      id:
+        type: string
+      introduce:
+        type: string
+      nickname:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      updateTime:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  model.Video:
+    properties:
+      classID:
+        type: string
+      commentCount:
+        type: integer
+      createTime:
+        type: integer
+      deleteStatus:
+        type: string
+      id:
+        type: string
+      introduce:
+        type: string
+      thumbCount:
+        type: integer
+      title:
+        type: string
+      updateTime:
+        type: integer
+      userID:
+        type: string
+      videoUrl:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -16,19 +113,30 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping class
+      security:
+      - ApiKeyAuth: []
+      summary: get user all class
       tags:
       - Class
     post:
       consumes:
       - application/json
       description: add class
+      parameters:
+      - description: 类别
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Class'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping class
+      security:
+      - ApiKeyAuth: []
+      summary: create_class
       tags:
       - Class
   /class/{user_name}/{class_id}:
@@ -36,37 +144,57 @@ paths:
       consumes:
       - application/json
       description: update class
+      parameters:
+      - description: 类别
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Class'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping class
+      security:
+      - ApiKeyAuth: []
+      summary: update_class
       tags:
       - Class
   /comment/{video_id}:
     get:
       consumes:
       - application/json
-      description: get comment by video_id
+      description: get comment by video id
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping comment
+      security:
+      - ApiKeyAuth: []
+      summary: get_comment_by_video_id
       tags:
       - Comment
     post:
       consumes:
       - application/json
       description: add comment
+      parameters:
+      - description: 评论
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Comment'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping comment
+      security:
+      - ApiKeyAuth: []
+      summary: create comment
       tags:
       - Comment
   /comment/{video_id}/{comment_id}:
@@ -79,7 +207,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping comment
+      security:
+      - ApiKeyAuth: []
+      summary: delete comment
       tags:
       - Comment
   /login:
@@ -87,25 +217,39 @@ paths:
       consumes:
       - application/json
       description: user login
+      parameters:
+      - description: 用户
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping user
+      summary: login
       tags:
       - User
   /register:
     post:
       consumes:
       - application/json
-      description: user register
+      description: add user
+      parameters:
+      - description: 用户
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping user
+      summary: register
       tags:
       - User
   /role:
@@ -113,12 +257,21 @@ paths:
       consumes:
       - application/json
       description: delete roleAuth
+      parameters:
+      - description: 角色
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.CasbinModel'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping role
+      security:
+      - ApiKeyAuth: []
+      summary: delete role
       tags:
       - Role
     get:
@@ -130,19 +283,30 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping role
+      security:
+      - ApiKeyAuth: []
+      summary: get all roleAuth
       tags:
       - Role
     post:
       consumes:
       - application/json
       description: add roleAuth
+      parameters:
+      - description: 角色
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.CasbinModel'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping role
+      security:
+      - ApiKeyAuth: []
+      summary: add roleAuth
       tags:
       - Role
   /role/{role_name}:
@@ -155,7 +319,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping role
+      security:
+      - ApiKeyAuth: []
+      summary: get roleAuth
       tags:
       - Role
   /user:
@@ -168,7 +334,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping user
+      security:
+      - ApiKeyAuth: []
+      summary: get_all_user_info
       tags:
       - User
   /user/{user_name}:
@@ -176,12 +344,21 @@ paths:
       consumes:
       - application/json
       description: update user info
+      parameters:
+      - description: 用户
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping user
+      security:
+      - ApiKeyAuth: []
+      summary: update_user_info
       tags:
       - User
     get:
@@ -193,7 +370,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping user
+      security:
+      - ApiKeyAuth: []
+      summary: get_user_info
       tags:
       - User
   /video:
@@ -206,7 +385,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: get_all_video
       tags:
       - Video
   /video/{user_name}:
@@ -219,7 +400,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: get_video_by_userName
       tags:
       - Video
   /video/{user_name}/{class_id}:
@@ -232,19 +415,30 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: get_video_by_userName_and_classID
       tags:
       - Video
     post:
       consumes:
       - application/json
       description: add video
+      parameters:
+      - description: 视频
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Video'
       produces:
       - application/json
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: add video
       tags:
       - Video
   /video/{user_name}/{class_id}/{video_id}:
@@ -257,7 +451,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: delete video
       tags:
       - Video
     get:
@@ -269,7 +465,9 @@ paths:
       responses:
         "200":
           description: ""
-      summary: ping video
+      security:
+      - ApiKeyAuth: []
+      summary: get video
       tags:
       - Video
 schemes:

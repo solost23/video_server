@@ -9,11 +9,11 @@ import (
 	"video_server/workList"
 )
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary add video
 // @Description add video
 // @Tags Video
+// @Security ApiKeyAuth
+// @Param data body model.Video true "视频"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -32,11 +32,10 @@ func createVideo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary delete video
 // @Description delete video
 // @Tags Video
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -51,11 +50,10 @@ func deleteVideo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary get video
 // @Description get video
 // @Tags Video
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -70,11 +68,10 @@ func getVideo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary get_video_by_userName_and_classID
 // @Description get video by user_name and class_id
 // @Tags Video
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -90,11 +87,10 @@ func getVideoByUserNameAndClassID(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary get_video_by_userName
 // @Description get video by user_name
 // @Tags Video
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -110,11 +106,10 @@ func getVideoByUserName(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping video
-// @Schemes
+// @Summary get_all_video
 // @Description get all video
 // @Tags Video
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200

@@ -9,11 +9,10 @@ import (
 	"video_server/workList"
 )
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
-// @Description user register
+// @Summary register
+// @Description add user
 // @Tags User
+// @Param data body model.User true "用户"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -32,11 +31,10 @@ func register(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
+// @Summary login
 // @Description user login
 // @Tags User
+// @Param data body model.User true "用户"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -58,11 +56,10 @@ func login(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
+// @Summary get_user_info
 // @Description get user info
 // @Tags User
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -77,11 +74,10 @@ func getUserInfo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
+// @Summary delete_user_info
 // @Description delete user info
 // @Tags User
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
@@ -96,11 +92,11 @@ func deleteUserInfo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
+// @Summary update_user_info
 // @Description update user info
 // @Tags User
+// @Security ApiKeyAuth
+// @Param data body model.User true "用户"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -120,11 +116,10 @@ func updateUserInfo(c *gin.Context) {
 	return
 }
 
-// PingExample godoc
-// @Summary ping user
-// @Schemes
+// @Summary get_all_user_info
 // @Description get all user info
 // @Tags User
+// @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
