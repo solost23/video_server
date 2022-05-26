@@ -6,6 +6,7 @@ type Video struct {
 	ClassID      string `gorm:"class_id"`
 	Title        string `gorm:"title" json:"title" form:"title"`
 	Introduce    string `gorm:"introduce" json:"introduce" form:"introduce"`
+	ImageUrl     string `gorm:"image_url" json:"image_url" form:"image_url"`
 	VideoUrl     string `gorm:"video_url"`
 	ThumbCount   int64  `gorm:"thumb_count;default:0"`
 	CommentCount int64  `gorm:"comment_count;default:0"`
