@@ -52,11 +52,11 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 }
 
 func initAuthClassRouter(group *gin.RouterGroup) {
-	class := group.Group("class")
+	class := group.Group("category")
 	{
-		class.POST(":user_name", createClass)
-		class.PUT(":user_name :class_id", updateClass)
-		class.GET(":user_name", getUserAllClass)
+		class.POST("create", createCategory)
+		class.POST("update", updateCategory)
+		class.POST("list", listCategory)
 	}
 }
 

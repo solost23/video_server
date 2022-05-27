@@ -16,14 +16,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/class/{user_name}": {
+        "/category/{user_name}": {
             "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "get user all class",
+                "description": "get user all category",
                 "consumes": [
                     "application/json"
                 ],
@@ -33,7 +33,7 @@ const docTemplate = `{
                 "tags": [
                     "Class"
                 ],
-                "summary": "get user all class",
+                "summary": "get user all category",
                 "responses": {
                     "200": {
                         "description": ""
@@ -46,7 +46,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "add class",
+                "description": "add category",
                 "consumes": [
                     "application/json"
                 ],
@@ -75,14 +75,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/class/{user_name}/{class_id}": {
+        "/category/{user_name}/{class_id}": {
             "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "update class",
+                "description": "update category",
                 "consumes": [
                     "application/json"
                 ],

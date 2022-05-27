@@ -107,7 +107,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get user all class
+      description: get user all category
       produces:
       - application/json
       responses:
@@ -115,13 +115,13 @@ paths:
           description: ""
       security:
       - ApiKeyAuth: []
-      summary: get user all class
+      summary: get user all category
       tags:
       - Class
     post:
       consumes:
       - application/json
-      description: add class
+      description: add category
       parameters:
       - description: 类别
         in: body
@@ -143,7 +143,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: update class
+      description: update category
       parameters:
       - description: 类别
         in: body

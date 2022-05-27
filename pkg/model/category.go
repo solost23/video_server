@@ -2,7 +2,7 @@ package model
 
 import "gorm.io/gorm"
 
-type Class struct {
+type Category struct {
 	conn      *gorm.DB `gorm:"_"`
 	ID        string   `gorm:"id;primary_key"`
 	UserID    string   `gorm:"user_id"`
@@ -13,22 +13,22 @@ type Class struct {
 	UpdateTime int64 `gorm:"update_time"`
 }
 
-func NewClass(conn *gorm.DB) *Class {
-	return &Class{
+func NewCategory(conn *gorm.DB) *Category {
+	return &Category{
 		conn: conn,
 	}
 }
 
-func (c *Class) TableName() string {
-	return "class"
+func (c *Category) TableName() string {
+	return "category"
 }
 
-func (c *Class) Connection() *gorm.DB {
+func (c *Category) Connection() *gorm.DB {
 	return c.conn.Table(c.TableName())
 }
 
 // 增加分类
-func (c *Class) Create() error {
+func (c *Category) Create() error {
 	c.ID = NewUUID()
 	c.CreateTime = GetCurrentTime()
 	c.UpdateTime = GetCurrentTime()
@@ -38,7 +38,7 @@ func (c *Class) Create() error {
 	return nil
 }
 
-func (c *Class) FindByClassName(className string) (class *Class, err error) {
+func (c *Category) FindByClassName(className string) (class *Category, err error) {
 	err = c.Connection().Where("title = ?", className).First(&class).Error
 	if err != nil {
 		return class, err
@@ -46,14 +46,14 @@ func (c *Class) FindByClassName(className string) (class *Class, err error) {
 	return class, nil
 }
 
-func (c *Class) Delete(id string) error {
+func (c *Category) Delete(id string) error {
 	if err := dbConn.Table(c.TableName()).Where("id=?", id).Delete(c).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Class) Update(id string) error {
+func (c *Category) Update(id string) error {
 	c.UpdateTime = GetCurrentTime()
 	if err := dbConn.Table(c.TableName()).Omit("user_id", "create_time").Where("id=?", id).Save(c).Error; err != nil {
 		return err
@@ -61,29 +61,29 @@ func (c *Class) Update(id string) error {
 	return nil
 }
 
-func (c *Class) FindByUserID(userID string) ([]*Class, error) {
-	var res []*Class
+func (c *Category) FindByUserID(userID string) ([]*Category, error) {
+	var res []*Category
 	if err := dbConn.Table(c.TableName()).Where("user_id=?", userID).Find(&res).Error; err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
-func (c *Class) FindByUserIDClassTitle(userID, classTitle string) error {
+func (c *Category) FindByUserIDClassTitle(userID, classTitle string) error {
 	if err := dbConn.Table(c.TableName()).Where("user_id=? AND title=?", userID, classTitle).First(c).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Class) FindByID(id string) error {
+func (c *Category) FindByID(id string) error {
 	if err := dbConn.Table(c.TableName()).Where("id=?", id).First(c).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Class) DeleteByUserID(userID string) error {
+func (c *Category) DeleteByUserID(userID string) error {
 	if err := dbConn.Table(c.TableName()).Where("user_id=?", userID).Delete(c).Error; err != nil {
 		return err
 	}
