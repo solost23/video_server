@@ -5,8 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/model"
-	"video_server/workList"
+	create_video "video_server/workList/video/create"
+	delete_video "video_server/workList/video/delete"
+	detail_video "video_server/workList/video/detail"
+	list_video "video_server/workList/video/list"
 )
 
 // @Summary add video
@@ -17,19 +19,19 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /video/{user_name}/{class_id} [post]
+// @Router /video/create [post]
 func createVideo(c *gin.Context) {
-	var video = new(model.Video)
-	if err := c.ShouldBind(video); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &create_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).CreateVideo(video); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := create_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, video)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary delete video
@@ -39,88 +41,61 @@ func createVideo(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /video/{user_name}/{class_id}/{video_id} [delete]
+// @Router /video/delete [post]
 func deleteVideo(c *gin.Context) {
-	var video = new(model.Video)
-	if err := workList.NewWorkList(c).DeleteVideo(video); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &delete_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, video)
-	return
-}
-
-// @Summary get video
-// @Description get video
-// @Tags Video
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/{user_name}/{class_id}/{video_id} [get]
-func getVideo(c *gin.Context) {
-	var video = new(model.Video)
-	if err := workList.NewWorkList(c).GetVideo(video); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, video)
-	return
-}
-
-// @Summary get_video_by_userName_and_classID
-// @Description get video by user_name and class_id
-// @Tags Video
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/{user_name}/{class_id} [get]
-func getVideoByUserNameAndClassID(c *gin.Context) {
-	var video = new(model.Video)
-	videos, err := workList.NewWorkList(c).GetVideoByUserNameAndClassID(video)
+	data, err := delete_video.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, videos)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
-// @Summary get_video_by_userName
-// @Description get video by user_name
+// @Summary video detail
+// @Description video detail
 // @Tags Video
 // @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /video/{user_name} [get]
-func getVideoByUserName(c *gin.Context) {
-	var video = new(model.Video)
-	videos, err := workList.NewWorkList(c).GetVideoByUserName(video)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+// @Router /video/detail [get]
+func videoDetail(c *gin.Context) {
+	request := &detail_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, videos)
-	return
+	data, err := detail_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }
 
-// @Summary get_all_video
-// @Description get all video
+// @Summary video list
+// @Description video list
 // @Tags Video
 // @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /video [get]
-func getALLVideo(c *gin.Context) {
-	var video = new(model.Video)
-	videos, err := workList.NewWorkList(c).GetAllVideo(video)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+// @Router /video/list [post]
+func list(c *gin.Context) {
+	request := &list_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, videos)
-	return
+	data, err := list_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }

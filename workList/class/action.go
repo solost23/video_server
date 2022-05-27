@@ -1,4 +1,4 @@
-package workList
+package class
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"video_server/pkg/model"
 )
 
-func (w *WorkList) CreateClass(class *model.Class) error {
+func (w *workList.WorkList) CreateClass(class *model.Class) error {
 	// 先查询用户是否存在，再查询用户下此分类是否存在
 	userName := w.ctx.Param("user_name")
 	var user = new(model.User)
@@ -31,7 +31,7 @@ func (w *WorkList) CreateClass(class *model.Class) error {
 	return nil
 }
 
-func (w *WorkList) UpdateClass(class *model.Class) error {
+func (w *workList.WorkList) UpdateClass(class *model.Class) error {
 	// 校验用户是否存在，校验类型是否存在
 	userName := w.ctx.Param("user_name")
 	classID := w.ctx.Param("class_id")
@@ -52,7 +52,7 @@ func (w *WorkList) UpdateClass(class *model.Class) error {
 	return nil
 }
 
-func (w *WorkList) GetUserAllClass(class *model.Class) (classes []*model.Class, err error) {
+func (w *workList.WorkList) GetUserAllClass(class *model.Class) (classes []*model.Class, err error) {
 	// 通过用户名找到用户id,再通过id去获取class
 	userName := w.ctx.Param("user_name")
 	var user = new(model.User)

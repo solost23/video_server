@@ -1,14 +1,27 @@
 package model
 
+import "gorm.io/gorm"
+
 type CasbinModel struct {
-	Ptype    string `gorm:"column:p_type;default:p"`
-	RoleName string `gorm:"column:v0" json:"role_name"`
-	Path     string `gorm:"column:v1" json:"path"`
-	Method   string `gorm:"column:v2" json:"method"`
+	conn     *gorm.DB `gorm:"_"`
+	Ptype    string   `gorm:"column:p_type;default:p"`
+	RoleName string   `gorm:"column:v0" json:"role_name"`
+	Path     string   `gorm:"column:v1" json:"path"`
+	Method   string   `gorm:"column:v2" json:"method"`
+}
+
+func newCasbinModel(conn *gorm.DB) *CasbinModel {
+	return &CasbinModel{
+		conn: conn,
+	}
 }
 
 func (c *CasbinModel) TableName() string {
 	return "casbin_rule"
+}
+
+func (c *CasbinModel) Connection() *gorm.DB {
+	return c.conn.Table(c.TableName())
 }
 
 func (c *CasbinModel) Create() error {

@@ -1,4 +1,4 @@
-package workList
+package user
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"video_server/pkg/model"
 )
 
-func (w *WorkList) Register(user *model.User) error {
+func (w *workList.WorkList) Register(user *model.User) error {
 	// 检查当前用户是否存在，若存在，则返回错误
 	// 若不存在，则创建
 	if err := user.FindBYUserName(user.UserName); err != nil {
@@ -33,7 +33,7 @@ func (w *WorkList) Register(user *model.User) error {
 	return nil
 }
 
-func (w *WorkList) Login(user *model.User) (string, error) {
+func (w *workList.WorkList) Login(user *model.User) (string, error) {
 	// 查看有无用户，若没有直接报错
 	// 若有，检查账户名密码，若有一个为错，则返回
 	// 否则生成一个token
@@ -53,7 +53,7 @@ func (w *WorkList) Login(user *model.User) (string, error) {
 	return tokenStr, nil
 }
 
-func (w *WorkList) GetUserInfo(user *model.User) error {
+func (w *workList.WorkList) GetUserInfo(user *model.User) error {
 	// 直接查找用户信息，找不到报错
 	userName := w.ctx.Param("user_name")
 	if err := user.FindBYUserName(userName); err != nil {
@@ -62,7 +62,7 @@ func (w *WorkList) GetUserInfo(user *model.User) error {
 	return nil
 }
 
-func (w *WorkList) UpdateUserInfo(user *model.User) error {
+func (w *workList.WorkList) UpdateUserInfo(user *model.User) error {
 	// 检查用户是否存在，若用户存在，则更新用户信息
 	userName := w.ctx.Param("user_name")
 	var tmpUser = new(model.User)
@@ -79,7 +79,7 @@ func (w *WorkList) UpdateUserInfo(user *model.User) error {
 	return nil
 }
 
-func (w *WorkList) DeleteUserInfo(user *model.User) error {
+func (w *workList.WorkList) DeleteUserInfo(user *model.User) error {
 	// 查看用户是否存在，若不存在，则返回错误
 	// 若存在，则按照id删除
 	// 注意:删除用户的时候，用户下的分类，分类下的视频，视频下的评论，都要删除
@@ -140,7 +140,7 @@ func (w *WorkList) DeleteUserInfo(user *model.User) error {
 	return nil
 }
 
-func (w *WorkList) GETAllUserInfo(user *model.User) ([]*model.User, error) {
+func (w *workList.WorkList) GETAllUserInfo(user *model.User) ([]*model.User, error) {
 	// 直接查询所有用户
 	users, err := user.Find()
 	if err != nil {

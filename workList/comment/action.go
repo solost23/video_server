@@ -1,4 +1,4 @@
-package workList
+package comment
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"video_server/pkg/model"
 )
 
-func (w *WorkList) CreateComment(comment *model.Comment) error {
+func (w *workList.WorkList) CreateComment(comment *model.Comment) error {
 	// 查看video_id是否存在
 	// 如果评论类型不在规定的两个里面，返回错误
 	// 查询是否有此父评论id，若不存在，则parent_id = "0"，
@@ -37,7 +37,7 @@ func (w *WorkList) CreateComment(comment *model.Comment) error {
 	return nil
 }
 
-func (w *WorkList) DeleteComment(comment *model.Comment) error {
+func (w *workList.WorkList) DeleteComment(comment *model.Comment) error {
 	// 直接删除
 	videoID := w.ctx.Param("video_id")
 	commentID := w.ctx.Param("comment_id")
@@ -47,7 +47,7 @@ func (w *WorkList) DeleteComment(comment *model.Comment) error {
 	return nil
 }
 
-func (w *WorkList) GetCommentByVideoID(comment *model.Comment) (comments []*model.Comment, err error) {
+func (w *workList.WorkList) GetCommentByVideoID(comment *model.Comment) (comments []*model.Comment, err error) {
 	// 直接通过video_id获取
 	videoID := w.ctx.Param("video_id")
 	comments, err = comment.FindByVideoID(videoID)

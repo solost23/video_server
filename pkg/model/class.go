@@ -1,17 +1,30 @@
 package model
 
+import "gorm.io/gorm"
+
 type Class struct {
-	ID        string `gorm:"id;primary_key"`
-	UserID    string `gorm:"user_id"`
-	Title     string `gorm:"title" json:"title"`
-	Introduce string `gorm:"introduce" json:"introduce"`
+	conn      *gorm.DB `gorm:"_"`
+	ID        string   `gorm:"id;primary_key"`
+	UserID    string   `gorm:"user_id"`
+	Title     string   `gorm:"title" json:"title"`
+	Introduce string   `gorm:"introduce" json:"introduce"`
 	// DeleteStatus string `gorm:"type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
 	CreateTime int64 `gorm:"create_time"`
 	UpdateTime int64 `gorm:"update_time"`
 }
 
+func NewClass(conn *gorm.DB) *Class {
+	return &Class{
+		conn: conn,
+	}
+}
+
 func (c *Class) TableName() string {
 	return "class"
+}
+
+func (c *Class) Connection() *gorm.DB {
+	return c.conn.Table(c.TableName())
 }
 
 // 增加分类
@@ -23,6 +36,14 @@ func (c *Class) Create() error {
 		return err
 	}
 	return nil
+}
+
+func (c *Class) FindByClassName(className string) (class *Class, err error) {
+	err = c.Connection().Where("title = ?", className).First(&class).Error
+	if err != nil {
+		return class, err
+	}
+	return class, nil
 }
 
 func (c *Class) Delete(id string) error {

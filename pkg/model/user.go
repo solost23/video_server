@@ -1,22 +1,35 @@
 package model
 
+import "gorm.io/gorm"
+
 type User struct {
-	ID           string `gorm:"id;primary_key"`
-	UserName     string `gorm:"user_name" json:"user_name"`
-	Password     string `gorm:"password" json:"password"`
-	Nickname     string `gorm:"nickname" json:"nickname"`
-	Role         string `gorm:"role;type:enum('ADMIN','USER');default:USER" json:"role"`
-	Avatar       string `gorm:"avatar" json:"avatar"`
-	Introduce    string `gorm:"introduce" json:"introduce"`
-	FansCount    int64  `gorm:"fans_count;default:0"`
-	CommentCount int64  `gorm:"comment_count;default:0"`
+	conn         *gorm.DB `gorm:"_"`
+	ID           string   `gorm:"id;primary_key"`
+	UserName     string   `gorm:"user_name" json:"user_name"`
+	Password     string   `gorm:"password" json:"password"`
+	Nickname     string   `gorm:"nickname" json:"nickname"`
+	Role         string   `gorm:"role;type:enum('ADMIN','USER');default:USER" json:"role"`
+	Avatar       string   `gorm:"avatar" json:"avatar"`
+	Introduce    string   `gorm:"introduce" json:"introduce"`
+	FansCount    int64    `gorm:"fans_count;default:0"`
+	CommentCount int64    `gorm:"comment_count;default:0"`
 	// DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
 	CreateTime int64 `gorm:"create_time"`
 	UpdateTime int64 `gorm:"update_time"`
 }
 
+func NewUser(conn *gorm.DB) *User {
+	return &User{
+		conn: conn,
+	}
+}
+
 func (u *User) TableName() string {
 	return "user"
+}
+
+func (u *User) Connection() *gorm.DB {
+	return u.conn.Table(u.TableName())
 }
 
 // 增加用户
@@ -49,7 +62,7 @@ func (u *User) Update(id string) error {
 
 // 显示单个用户信息
 func (u *User) FindByID(id string) error {
-	if err := dbConn.Table(u.TableName()).Where("id=?", id).First(u).Error; err != nil {
+	if err := u.Connection().Where("id = ?", id).First(u).Error; err != nil {
 		return err
 	}
 	return nil
@@ -64,9 +77,9 @@ func (u *User) Find() ([]*User, error) {
 	return res, nil
 }
 
-func (u *User) FindBYUserName(userName string) error {
+func (u *User) FindBYUserName(userName string) (user *User, err error) {
 	if err := dbConn.Table(u.TableName()).Where("user_name=?", userName).First(u).Error; err != nil {
-		return err
+		return user, err
 	}
-	return nil
+	return user, nil
 }

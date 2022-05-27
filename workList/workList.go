@@ -1,13 +1,26 @@
 package workList
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+	"video_server/mysql"
+)
 
 type WorkList struct {
-	ctx *gin.Context
+	Conn *gorm.DB
+	Ctx  *gin.Context
 }
 
-func NewWorkList(ctx *gin.Context) *WorkList {
+func NewWorkList(conn *gorm.DB) *WorkList {
 	return &WorkList{
-		ctx: ctx,
+		Conn: conn,
 	}
+}
+
+func (w *WorkList) Init(ctx *gin.Context) {
+	w.Ctx = ctx
+}
+
+func (w *WorkList) GetMysqlConn() *gorm.DB {
+	return mysql.GetMysqlConn()
 }

@@ -45,6 +45,13 @@ var (
 	SECRET   = config.Md5
 )
 
+type PageInfo struct {
+	IsNotPage  bool  `json:"-"`
+	Page       int32 `json:"page"`
+	PageSize   int32 `json:"pageSize"`
+	TotalCount int32 `json:"totalCount"`
+}
+
 // 生成唯一UUID
 func NewUUID() string {
 	uuid, err := uuid.NewUUID()

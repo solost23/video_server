@@ -1,18 +1,31 @@
 package model
 
+import "gorm.io/gorm"
+
 type Comment struct {
-	ID       string `gorm:"id;primary_key"`
-	VideoID  string `gorm:"video_id"`
-	Content  string `gorm:"content" json:"content"`
-	ParentID string `gorm:"parent_id" json:"parentId"`
-	ISThumb  string `gorm:"is_thumb;type:enum('ISTHUMB','ISCOMMENT');default:ISTHUMB" json:"isThumb"`
+	conn     *gorm.DB `gorm:"_"`
+	ID       string   `gorm:"id;primary_key"`
+	VideoID  string   `gorm:"video_id"`
+	Content  string   `gorm:"content" json:"content"`
+	ParentID string   `gorm:"parent_id" json:"parentId"`
+	ISThumb  string   `gorm:"is_thumb;type:enum('ISTHUMB','ISCOMMENT');default:ISTHUMB" json:"isThumb"`
 	// DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
 	CreateTime int64 `gorm:"create_time"`
 	UpdateTime int64 `gorm:"update_time"`
 }
 
+func NewComment(conn *gorm.DB) *Comment {
+	return &Comment{
+		conn: conn,
+	}
+}
+
 func (c *Comment) TableName() string {
 	return "comment"
+}
+
+func (c *Comment) Connection() *gorm.DB {
+	return c.conn.Table(c.TableName())
 }
 
 func (c *Comment) Create() error {
