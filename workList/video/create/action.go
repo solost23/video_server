@@ -28,13 +28,15 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	// 封装视频结构体，存储视频信息
 
 	// 校验参数，查看该用户下是否有此分类
-	if err = model.NewUser(a.GetMysqlConn()).FindByID(request.UserID); err != nil {
+	_, err = model.NewUser(a.GetMysqlConn()).FindByID(request.UserID)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
 		}
 		return resp, err
 	}
-	if err = model.NewClass(a.GetMysqlConn()).FindByID(request.ClassID); err != nil {
+	_, err = model.NewCategory(a.GetMysqlConn()).FindByID(request.ClassID)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
 		}

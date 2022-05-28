@@ -55,3 +55,11 @@ func (c *Comment) DeleteByVideoID(videoID string) error {
 	}
 	return nil
 }
+
+func (c *Comment) FindByID(ID string) (comment *Comment, err error) {
+	err = c.Connection().Where("id = ?", ID).First(&comment).Error
+	if err != nil {
+		return comment, err
+	}
+	return comment, nil
+}
