@@ -5,8 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/model"
-	"video_server/workList"
+	create_role "video_server/workList/role/create"
+	delete_role "video_server/workList/role/delete"
+	list_role "video_server/workList/role/list"
 )
 
 // @Summary add roleAuth
@@ -17,19 +18,19 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /role [post]
+// @Router /role/create [post]
 func addRoleAuth(c *gin.Context) {
-	var casbinModel = new(model.CasbinModel)
-	if err := c.Bind(casbinModel); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &create_role.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).AddRoleAuth(casbinModel); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := create_role.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, casbinModel)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary delete role
@@ -40,19 +41,19 @@ func addRoleAuth(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /role [delete]
+// @Router /role/delete [post]
 func deleteRoleAuth(c *gin.Context) {
-	var casbinModel = new(model.CasbinModel)
-	if err := c.Bind(casbinModel); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &delete_role.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).DeleteRoleAuth(casbinModel); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := delete_role.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, "delete roleAuth success")
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary get all roleAuth
@@ -62,35 +63,17 @@ func deleteRoleAuth(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /role [get]
+// @Router /role/list [post]
 func getAllRoleAuth(c *gin.Context) {
-	var casbinModel = new(model.CasbinModel)
-	casbinModelList, err := workList.NewWorkList(c).GetAllRoleAuth(casbinModel)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &list_role.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, casbinModelList)
-	return
-}
-
-// @Summary get roleAuth
-// @Description get roleAuth
-// @Tags Role
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /role/{role_name} [get]
-func getRoleAuth(c *gin.Context) {
-	roleName := c.Param("role_name")
-	c.Set("role_name", roleName)
-	var casbinModel = new(model.CasbinModel)
-	casbinModelList, err := workList.NewWorkList(c).GetRoleAuth(casbinModel)
+	data, err := list_role.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, casbinModelList)
-	return
+	c.JSON(http.StatusOK, data)
 }

@@ -24,3 +24,7 @@ func (w *WorkList) Init(ctx *gin.Context) {
 func (w *WorkList) GetMysqlConn() *gorm.DB {
 	return mysql.GetMysqlConn()
 }
+
+func (w *WorkList) GetMysqlConnCasbin() *gorm.DB {
+	return mysql.GetCasbinConn()
+}

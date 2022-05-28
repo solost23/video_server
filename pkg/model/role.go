@@ -10,7 +10,7 @@ type CasbinModel struct {
 	Method   string   `gorm:"column:v2" json:"method"`
 }
 
-func newCasbinModel(conn *gorm.DB) *CasbinModel {
+func NewCasbinModel(conn *gorm.DB) *CasbinModel {
 	return &CasbinModel{
 		conn: conn,
 	}

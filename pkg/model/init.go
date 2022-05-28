@@ -24,6 +24,7 @@ func init() {
 	dbConn.AutoMigrate(&Comment{})
 	dbConn.AutoMigrate(&Video{})
 	dbConn.AutoMigrate(&Category{})
+	DBCasbin.AutoMigrate(&CasbinModel{})
 }
 
 const (
