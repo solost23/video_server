@@ -2,6 +2,7 @@ package list
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"video_server/pkg/model"
 	"video_server/workList"
 )
@@ -55,22 +56,35 @@ func (a *Action) FindByFilter(request *Request) (videos []model.Video, total int
 	// 通过视频标题找出视频内容
 	tx := model.NewVideo(a.GetMysqlConn()).Connection().Select("*")
 	if request.Filter.UserName != "" {
-		user, err := model.NewUser(a.GetMysqlConn()).FindBYUserName(request.Filter.UserName)
+		var users []*model.User
+		err = model.NewUser(a.GetMysqlConn()).Connection().Where("user_name LIKE ?", request.Filter.UserName).First(&users).Error
 		if err != nil {
 			return videos, total, err
 		}
-		tx.Where("user_id = ?", user.ID)
+		// 保存用户id列表
+		var userIds []string
+		for _, user := range users {
+			userIds = append(userIds, user.ID)
+		}
+		tx.Where("user_id in ?", userIds)
 	}
 	if request.Filter.CategoryName != "" {
-		category, err := model.NewCategory(a.GetMysqlConn()).FindByClassName(request.Filter.CategoryName)
+		var categorys []*model.Category
+		err = model.NewCategory(a.GetMysqlConn()).Connection().Where("title = ?", request.Filter.CategoryName).First(&categorys).Error
 		if err != nil {
 			return videos, total, err
 		}
-		tx.Where("class_id = ?", category.ID)
+		// 保存视频分类id列表
+		var categoryIds []string
+		for _, category := range categorys {
+			categoryIds = append(categoryIds, category.ID)
+		}
+		tx.Where("class_id in ?", categoryIds)
 	}
 	if request.Filter.VideoTitle != "" {
-		tx.Where("title = ?", request.Filter.VideoTitle)
+		tx.Where("title LIKE ?", model.LikeFilter(request.Filter.VideoTitle))
 	}
+	tx.Where("delete_status = ?", model.DELETENORMAL)
 	tx.Count(&total)
 	// 数据分页
 	if request.PageInfo == nil {

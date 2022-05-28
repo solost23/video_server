@@ -33,11 +33,8 @@ func (u *User) Connection() *gorm.DB {
 }
 
 // 增加用户
-func (u *User) Create() error {
-	u.ID = NewUUID()
-	u.CreateTime = GetCurrentTime()
-	u.UpdateTime = GetCurrentTime()
-	if err := dbConn.Table(u.TableName()).Create(u).Error; err != nil {
+func (u *User) Create(data *User) (err error) {
+	if err = u.Connection().Create(&data).Error; err != nil {
 		return err
 	}
 	return nil
@@ -52,9 +49,8 @@ func (u *User) Delete(id string) error {
 }
 
 // 修改用户信息
-func (u *User) Update(id string) error {
-	u.UpdateTime = GetCurrentTime()
-	if err := dbConn.Table(u.TableName()).Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", id).Save(u).Error; err != nil {
+func (u *User) Update(data *User) error {
+	if err := u.Connection().Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", data.ID).Save(&data).Error; err != nil {
 		return err
 	}
 	return nil
@@ -78,7 +74,7 @@ func (u *User) Find() ([]*User, error) {
 }
 
 func (u *User) FindBYUserName(userName string) (user *User, err error) {
-	if err := dbConn.Table(u.TableName()).Where("user_name=?", userName).First(u).Error; err != nil {
+	if err := u.Connection().Where("user_name = ?", userName).First(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil

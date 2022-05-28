@@ -43,11 +43,11 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 	// 显示所有用户信息(管理员用)
 	user := group.Group("user")
 	{
-		user.GET(":user_name", getUserInfo)
-		user.DELETE(":user_name", deleteUserInfo)
-		user.PUT(":user_name", updateUserInfo)
+		user.POST("detail", getUserInfo)
+		user.POST("delete", deleteUserInfo)
+		user.POST("update", updateUserInfo)
 
-		user.GET("", getAllUserInfo)
+		user.POST("list", getAllUserInfo)
 	}
 }
 

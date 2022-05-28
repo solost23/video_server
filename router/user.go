@@ -5,8 +5,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/model"
-	"video_server/workList"
+	list_video "video_server/workList/user/List"
+	delete_video "video_server/workList/user/delete"
+	detail_video "video_server/workList/user/detail"
+	login_video "video_server/workList/user/login"
+	register_video "video_server/workList/user/register"
+	update_video "video_server/workList/user/update"
 )
 
 // @Summary register
@@ -18,17 +22,17 @@ import (
 // @Success 200
 // @Router /register [post]
 func register(c *gin.Context) {
-	var user = new(model.User)
-	if err := c.ShouldBind(user); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &register_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).Register(user); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := register_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, user)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary login
@@ -40,20 +44,17 @@ func register(c *gin.Context) {
 // @Success 200
 // @Router /login [post]
 func login(c *gin.Context) {
-	var user = new(model.User)
-	if err := c.ShouldBind(user); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &login_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	tokenStr, err := workList.NewWorkList(c).Login(user)
+	data, err := login_video.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"Auth": tokenStr,
-	})
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary get_user_info
@@ -63,15 +64,19 @@ func login(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /user/{user_name} [get]
+// @Router /user/detail [post]
 func getUserInfo(c *gin.Context) {
-	var user = new(model.User)
-	if err := workList.NewWorkList(c).GetUserInfo(user); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &detail_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, user)
-	return
+	data, err := detail_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary delete_user_info
@@ -81,15 +86,19 @@ func getUserInfo(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /user/{user_name} [delete]
+// @Router /user/delete [post]
 func deleteUserInfo(c *gin.Context) {
-	var user = new(model.User)
-	if err := workList.NewWorkList(c).DeleteUserInfo(user); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &delete_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, user)
-	return
+	data, err := delete_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary update_user_info
@@ -100,20 +109,19 @@ func deleteUserInfo(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /user/{user_name} [delete]
+// @Router /user/update [post]
 func updateUserInfo(c *gin.Context) {
-	// 通过用户名去更新字段
-	var user = new(model.User)
-	if err := c.ShouldBind(user); err != nil {
-		c.JSON(http.StatusOK, err.Error())
+	request := &update_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).UpdateUserInfo(user); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := update_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, user)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary get_all_user_info
@@ -123,14 +131,17 @@ func updateUserInfo(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /user [get]
+// @Router /user/list [post]
 func getAllUserInfo(c *gin.Context) {
-	var user = new(model.User)
-	users, err := workList.NewWorkList(c).GETAllUserInfo(user)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &list_video.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, users)
-	return
+	data, err := list_video.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }

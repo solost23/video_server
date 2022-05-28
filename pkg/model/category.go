@@ -57,12 +57,11 @@ func (c *Category) Update(data *Category) (err error) {
 	return nil
 }
 
-func (c *Category) FindByUserID(userID string) ([]*Category, error) {
-	var res []*Category
-	if err := dbConn.Table(c.TableName()).Where("user_id = ?", userID).Find(&res).Error; err != nil {
-		return res, err
+func (c *Category) FindByUserID(userID string) (categorys []*Category, err error) {
+	if err = c.Connection().Where("user_id = ?", userID).Find(&categorys).Error; err != nil {
+		return categorys, err
 	}
-	return res, nil
+	return categorys, nil
 }
 
 func (c *Category) FindByUserIDClassTitle(userID, classTitle string) (category *Category, err error) {

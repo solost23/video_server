@@ -75,3 +75,8 @@ func NewMd5(str string, salt ...interface{}) string {
 	}
 	return fmt.Sprintf("%x", md5.Sum([]byte(str)))
 }
+
+// 生成模糊匹配字符串
+func LikeFilter(value interface{}) string {
+	return fmt.Sprintf("%%%v%%", value)
+}
