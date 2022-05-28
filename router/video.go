@@ -2,10 +2,10 @@ package router
 
 import (
 	"net/http"
-	"video_server/scheduler/video/create"
-	delete2 "video_server/scheduler/video/delete"
-	"video_server/scheduler/video/detail"
-	list2 "video_server/scheduler/video/list"
+	create2 "video_server/workList/video/create"
+	delete3 "video_server/workList/video/delete"
+	detail2 "video_server/workList/video/detail"
+	list3 "video_server/workList/video/list"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,12 +20,12 @@ import (
 // @Success 200
 // @Router /video/create [post]
 func createVideo(c *gin.Context) {
-	request := &create.Request{}
+	request := &create2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := create.NewActionWithCtx(c).Deal(request)
+	data, err := create2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -42,12 +42,12 @@ func createVideo(c *gin.Context) {
 // @Success 200
 // @Router /video/delete [post]
 func deleteVideo(c *gin.Context) {
-	request := &delete2.Request{}
+	request := &delete3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := delete2.NewActionWithCtx(c).Deal(request)
+	data, err := delete3.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -64,12 +64,12 @@ func deleteVideo(c *gin.Context) {
 // @Success 200
 // @Router /video/detail [get]
 func videoDetail(c *gin.Context) {
-	request := &detail.Request{}
+	request := &detail2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := detail.NewActionWithCtx(c).Deal(request)
+	data, err := detail2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -86,12 +86,12 @@ func videoDetail(c *gin.Context) {
 // @Success 200
 // @Router /video/list [post]
 func list(c *gin.Context) {
-	request := &list2.Request{}
+	request := &list3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := list2.NewActionWithCtx(c).Deal(request)
+	data, err := list3.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
