@@ -4,5 +4,11 @@ import "video_server/pkg/model"
 
 type Request struct {
 	PageInfo *model.PageInfo `json:"pageInfo"`
-	RoleName string          `json:"RoleName"`
+	Filter   *Filter         `json:"filter"`
+}
+
+type Filter struct {
+	RoleName string `json:"RoleName"`
+	Path     string `json:"path"`
+	Method   string `json:"method"`
 }

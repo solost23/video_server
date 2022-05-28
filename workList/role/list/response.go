@@ -4,7 +4,7 @@ import "video_server/pkg/model"
 
 type Response struct {
 	PageInfo model.PageInfo `json:"pageInfo"`
-	List     []*RoleInfo    `json:"list"`
+	List     []RoleInfo     `json:"list"`
 }
 
 type RoleInfo struct {

@@ -24,15 +24,15 @@ func (c *CasbinModel) Connection() *gorm.DB {
 	return c.conn.Table(c.TableName())
 }
 
-func (c *CasbinModel) Create() error {
-	if err := DBCasbin.Table(c.TableName()).Create(c).Error; err != nil {
+func (c *CasbinModel) Create(data *CasbinModel) error {
+	if err := c.Connection().Create(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CasbinModel) Delete() error {
-	if err := DBCasbin.Table(c.TableName()).Where("v0=? AND v1=? AND v2=?", c.RoleName, c.Path, c.Method).Delete(c).Error; err != nil {
+func (c *CasbinModel) Delete(data *CasbinModel) error {
+	if err := c.Connection().Where("v0=? AND v1=? AND v2=?", data.RoleName, data.Path, data.Method).Delete(&data).Error; err != nil {
 		return err
 	}
 	return nil
