@@ -2,13 +2,12 @@ package router
 
 import (
 	"net/http"
+	"video_server/scheduler/video/create"
+	delete2 "video_server/scheduler/video/delete"
+	"video_server/scheduler/video/detail"
+	list2 "video_server/scheduler/video/list"
 
 	"github.com/gin-gonic/gin"
-
-	create_video "video_server/workList/video/create"
-	delete_video "video_server/workList/video/delete"
-	detail_video "video_server/workList/video/detail"
-	list_video "video_server/workList/video/list"
 )
 
 // @Summary add video
@@ -21,12 +20,12 @@ import (
 // @Success 200
 // @Router /video/create [post]
 func createVideo(c *gin.Context) {
-	request := &create_video.Request{}
+	request := &create.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := create_video.NewActionWithCtx(c).Deal(request)
+	data, err := create.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -43,12 +42,12 @@ func createVideo(c *gin.Context) {
 // @Success 200
 // @Router /video/delete [post]
 func deleteVideo(c *gin.Context) {
-	request := &delete_video.Request{}
+	request := &delete2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := delete_video.NewActionWithCtx(c).Deal(request)
+	data, err := delete2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -65,12 +64,12 @@ func deleteVideo(c *gin.Context) {
 // @Success 200
 // @Router /video/detail [get]
 func videoDetail(c *gin.Context) {
-	request := &detail_video.Request{}
+	request := &detail.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := detail_video.NewActionWithCtx(c).Deal(request)
+	data, err := detail.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
@@ -87,12 +86,12 @@ func videoDetail(c *gin.Context) {
 // @Success 200
 // @Router /video/list [post]
 func list(c *gin.Context) {
-	request := &list_video.Request{}
+	request := &list2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	data, err := list_video.NewActionWithCtx(c).Deal(request)
+	data, err := list2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
