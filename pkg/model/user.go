@@ -61,11 +61,11 @@ func (u *User) Update(id string) error {
 }
 
 // 显示单个用户信息
-func (u *User) FindByID(id string) error {
-	if err := u.Connection().Where("id = ?", id).First(u).Error; err != nil {
-		return err
+func (u *User) FindByID(id string) (user *User, err error) {
+	if err = u.Connection().Where("id = ?", id).First(&user).Error; err != nil {
+		return user, err
 	}
-	return nil
+	return user, nil
 }
 
 // 显示所有用户信息
