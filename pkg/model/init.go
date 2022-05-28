@@ -23,7 +23,7 @@ func init() {
 	dbConn.AutoMigrate(&User{})
 	dbConn.AutoMigrate(&Comment{})
 	dbConn.AutoMigrate(&Video{})
-	dbConn.AutoMigrate(&Class{})
+	dbConn.AutoMigrate(&Category{})
 }
 
 const (

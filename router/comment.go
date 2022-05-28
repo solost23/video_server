@@ -5,8 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/model"
-	"video_server/workList"
+	create_comment "video_server/workList/comment/create"
+	delete_comment "video_server/workList/comment/delete"
+	list_comment "video_server/workList/comment/list"
 )
 
 // @Summary create comment
@@ -17,19 +18,19 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /comment/{video_id} [post]
+// @Router /comment/create [post]
 func createComment(c *gin.Context) {
-	var comment = new(model.Comment)
-	if err := c.ShouldBind(comment); err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+	request := &create_comment.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	if err := workList.NewWorkList(c).CreateComment(comment); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	data, err := create_comment.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, comment)
-	return
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary delete comment
@@ -39,15 +40,19 @@ func createComment(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /comment/{video_id}/{comment_id} [delete]
+// @Router /comment/delete [post]
 func deleteComment(c *gin.Context) {
-	var comment = new(model.Comment)
-	if err := workList.NewWorkList(c).DeleteComment(comment); err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &delete_comment.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, comment)
-	return
+	data, err := delete_comment.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }
 
 // @Summary get_comment_by_video_id
@@ -57,14 +62,17 @@ func deleteComment(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200
-// @Router /comment/{video_id} [get]
+// @Router /comment/list [post]
 func getCommentByVideoID(c *gin.Context) {
-	var comment = new(model.Comment)
-	comments, err := workList.NewWorkList(c).GetCommentByVideoID(comment)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	request := &list_comment.Request{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(http.StatusOK, comments)
-	return
+	data, err := list_comment.NewActionWithCtx(c).Deal(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, data)
 }

@@ -28,28 +28,18 @@ func (c *Comment) Connection() *gorm.DB {
 	return c.conn.Table(c.TableName())
 }
 
-func (c *Comment) Create() error {
-	c.ID = NewUUID()
-	c.CreateTime = GetCurrentTime()
-	c.UpdateTime = GetCurrentTime()
-	if err := dbConn.Table(c.TableName()).Create(c).Error; err != nil {
+func (c *Comment) Create(data *Comment) error {
+	if err := c.Connection().Create(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Comment) Delete(commentID string) error {
-	if err := dbConn.Table(c.TableName()).Where("id=?", commentID).Delete(c).Error; err != nil {
-		return err
+func (c *Comment) Delete(commentID string) (comment *Comment, err error) {
+	if err = dbConn.Table(c.TableName()).Where("id = ?", commentID).Delete(&comment).Error; err != nil {
+		return comment, err
 	}
-	return nil
-}
-
-func (c *Comment) DeleteByVideoIDAndCommentID(videoID, commentID string) error {
-	if err := dbConn.Table(c.TableName()).Where("id=? AND video_id=?", commentID, videoID).Delete(c).Error; err != nil {
-		return err
-	}
-	return nil
+	return comment, nil
 }
 
 func (c *Comment) FindByVideoID(videoID string) (res []*Comment, err error) {
@@ -57,13 +47,6 @@ func (c *Comment) FindByVideoID(videoID string) (res []*Comment, err error) {
 		return res, err
 	}
 	return res, nil
-}
-
-func (c *Comment) FindByID(commentID string) error {
-	if err := dbConn.Table(c.TableName()).Where("id=?", commentID).First(c).Error; err != nil {
-		return err
-	}
-	return nil
 }
 
 func (c *Comment) DeleteByVideoID(videoID string) error {
