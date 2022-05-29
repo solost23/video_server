@@ -24,7 +24,8 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 先查询本条数据是否存在
-	if err = model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method); err != nil {
+	_, err = model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method)
+	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
 		}

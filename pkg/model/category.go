@@ -29,7 +29,8 @@ func (c *Category) Connection() *gorm.DB {
 
 // 增加分类
 func (c *Category) Create(data *Category) (err error) {
-	if err = dbConn.Table(c.TableName()).Create(&data).Error; err != nil {
+	err = dbConn.Table(c.TableName()).Create(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
@@ -43,44 +44,50 @@ func (c *Category) FindByClassName(className string) (class *Category, err error
 	return class, nil
 }
 
-func (c *Category) Delete(id string) (err error) {
-	if err = dbConn.Table(c.TableName()).Where("id=?", id).Delete(c).Error; err != nil {
-		return err
+func (c *Category) Delete(id string) (category *Category, err error) {
+	err = dbConn.Table(c.TableName()).Where("id = ?", id).Delete(&category).Error
+	if err != nil {
+		return category, err
 	}
-	return nil
+	return category, nil
 }
 
 func (c *Category) Update(data *Category) (err error) {
-	if err = c.Connection().Omit("user_id", "create_time").Where("id = ?", data.ID).Save(&data).Error; err != nil {
+	err = c.Connection().Omit("user_id", "create_time").Where("id = ?", data.ID).Updates(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *Category) FindByUserID(userID string) (categorys []*Category, err error) {
-	if err = c.Connection().Where("user_id = ?", userID).Find(&categorys).Error; err != nil {
+	err = c.Connection().Where("user_id = ?", userID).Find(&categorys).Error
+	if err != nil {
 		return categorys, err
 	}
 	return categorys, nil
 }
 
 func (c *Category) FindByUserIDClassTitle(userID, classTitle string) (category *Category, err error) {
-	if err = c.Connection().Where("user_id = ? AND title = ?", userID, classTitle).First(&category).Error; err != nil {
+	err = c.Connection().Where("user_id = ? AND title = ?", userID, classTitle).First(&category).Error
+	if err != nil {
 		return category, err
 	}
 	return category, nil
 }
 
 func (c *Category) FindByID(id string) (category *Category, err error) {
-	if err = c.Connection().Where("id = ?", id).First(&category).Error; err != nil {
+	err = c.Connection().Where("id = ?", id).First(&category).Error
+	if err != nil {
 		return category, err
 	}
 	return category, nil
 }
 
-func (c *Category) DeleteByUserID(userID string) error {
-	if err := dbConn.Table(c.TableName()).Where("user_id=?", userID).Delete(c).Error; err != nil {
-		return err
+func (c *Category) DeleteByUserID(userID string) (category *Category, err error) {
+	err = dbConn.Table(c.TableName()).Where("user_id=?", userID).Delete(&category).Error
+	if err != nil {
+		return category, err
 	}
-	return nil
+	return category, nil
 }

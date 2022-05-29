@@ -24,10 +24,12 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 先查询本条数据是否存在，若存在，删除
-	if err = model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method); err != nil {
+	_, err = model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method)
+	if err != nil {
 		return resp, err
 	}
-	if err = model.NewCasbinModel(a.GetMysqlConnCasbin()).Delete(a.buildRequest(request)); err != nil {
+	_, err = model.NewCasbinModel(a.GetMysqlConnCasbin()).Delete(a.buildRequest(request))
+	if err != nil {
 		return resp, err
 	}
 	return resp, err

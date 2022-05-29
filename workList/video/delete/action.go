@@ -25,11 +25,11 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 直接通过id, 分类, 视频id查询就可以
-	if err = model.NewVideo(a.GetMysqlConn()).FindByUserIDANDClassIDAndID(request.UserID, request.ClassID, request.VideoID, model.DELETENORMAL); err != nil {
+	if _, err = model.NewVideo(a.GetMysqlConn()).FindByUserIDANDClassIDAndID(request.UserID, request.ClassID, request.VideoID, model.DELETENORMAL); err != nil {
 		return resp, err
 	}
 	// 删视频
-	if err = model.NewVideo(a.GetMysqlConn()).Delete(request.VideoID); err != nil {
+	if _, err = model.NewVideo(a.GetMysqlConn()).Delete(request.VideoID); err != nil {
 		return resp, err
 	}
 	// 删除视频下的评论
@@ -40,7 +40,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if len(comments) <= 0 {
 		return resp, nil
 	}
-	if err = model.NewComment(a.GetMysqlConn()).DeleteByVideoID(request.VideoID); err != nil {
+	if _, err = model.NewComment(a.GetMysqlConn()).DeleteByVideoID(request.VideoID); err != nil {
 		return resp, err
 	}
 	return resp, err

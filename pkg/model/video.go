@@ -35,20 +35,21 @@ func (v *Video) Connection() *gorm.DB {
 	return v.conn.Table(v.TableName())
 }
 
-func (v *Video) Create(data *Video) error {
-	if err := v.Connection().Create(&data).Error; err != nil {
+func (v *Video) Create(data *Video) (err error) {
+	err = v.Connection().Create(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (v *Video) Delete(videoID string) error {
-	err := v.Connection().Where("id = ? AND delete_status = ?", videoID, DELETENORMAL).
+func (v *Video) Delete(videoID string) (video *Video, err error) {
+	err = v.Connection().Where("id = ? AND delete_status = ?", videoID, DELETENORMAL).
 		Update("delete_status = ?", DELETEDEL).Error
 	if err != nil {
-		return err
+		return video, err
 	}
-	return nil
+	return video, err
 }
 
 func (v *Video) FindByVideoID(videoID string, deleteStatus string) (video *Video, err error) {
@@ -70,18 +71,20 @@ func (v *Video) FindByUserIDAndClassID(userID, classID, deleteStatus string) (re
 	return res, nil
 }
 
-func (v *Video) FindByUserIDANDClassIDAndID(userID, classID, videoID, deleteStatus string) error {
-	if err := v.Connection().Where("user_id=? AND class_id=? AND id=? AND delete_status=?", userID, classID, videoID, deleteStatus).First(v).Error; err != nil {
-		return err
+func (v *Video) FindByUserIDANDClassIDAndID(userID, classID, videoID, deleteStatus string) (video *Video, err error) {
+	err = v.Connection().Where("user_id = ? AND class_id = ? AND id = ? AND delete_status = ?", userID, classID, videoID, deleteStatus).First(&video).Error
+	if err != nil {
+		return video, err
 	}
-	return nil
+	return video, nil
 }
 
-func (v *Video) FindByUserID(userID, deleteStatus string) (res []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Where("user_id=? AND delete_status=?", userID, deleteStatus).Find(&res).Error; err != nil {
-		return res, err
+func (v *Video) FindByUserID(userID, deleteStatus string) (videos []*Video, err error) {
+	err = dbConn.Table(v.TableName()).Where("user_id=? AND delete_status=?", userID, deleteStatus).Find(&videos).Error
+	if err != nil {
+		return videos, err
 	}
-	return res, nil
+	return videos, nil
 }
 
 func (v *Video) FindByClassID(classID string, deleteStatus string) (videos []*Video, err error) {
@@ -91,9 +94,9 @@ func (v *Video) FindByClassID(classID string, deleteStatus string) (videos []*Vi
 	return videos, nil
 }
 
-func (v *Video) Find(deleteStatus string) (res []*Video, err error) {
-	if err = dbConn.Table(v.TableName()).Where("delete_status=?", deleteStatus).Find(&res).Error; err != nil {
-		return res, err
+func (v *Video) Find(deleteStatus string) (videos []*Video, err error) {
+	if err = dbConn.Table(v.TableName()).Where("delete_status=?", deleteStatus).Find(&videos).Error; err != nil {
+		return videos, err
 	}
-	return res, nil
+	return videos, nil
 }

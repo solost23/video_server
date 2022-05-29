@@ -28,32 +28,36 @@ func (c *Comment) Connection() *gorm.DB {
 	return c.conn.Table(c.TableName())
 }
 
-func (c *Comment) Create(data *Comment) error {
-	if err := c.Connection().Create(&data).Error; err != nil {
+func (c *Comment) Create(data *Comment) (err error) {
+	err = c.Connection().Create(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
 func (c *Comment) Delete(commentID string) (comment *Comment, err error) {
-	if err = dbConn.Table(c.TableName()).Where("id = ?", commentID).Delete(&comment).Error; err != nil {
+	err = dbConn.Table(c.TableName()).Where("id = ?", commentID).Delete(&comment).Error
+	if err != nil {
 		return comment, err
 	}
 	return comment, nil
 }
 
-func (c *Comment) FindByVideoID(videoID string) (res []*Comment, err error) {
-	if err = dbConn.Table(c.TableName()).Where("video_id=?", videoID).Find(&res).Error; err != nil {
-		return res, err
+func (c *Comment) FindByVideoID(videoID string) (comments []*Comment, err error) {
+	err = dbConn.Table(c.TableName()).Where("video_id = ?", videoID).Find(&comments).Error
+	if err != nil {
+		return comments, err
 	}
-	return res, nil
+	return comments, nil
 }
 
-func (c *Comment) DeleteByVideoID(videoID string) error {
-	if err := dbConn.Table(c.TableName()).Where("video_id=?", videoID).Delete(c).Error; err != nil {
-		return err
+func (c *Comment) DeleteByVideoID(videoID string) (comment *Comment, err error) {
+	err = dbConn.Table(c.TableName()).Where("video_id = ?", videoID).Delete(&comment).Error
+	if err != nil {
+		return comment, err
 	}
-	return nil
+	return comment, nil
 }
 
 func (c *Comment) FindByID(ID string) (comment *Comment, err error) {

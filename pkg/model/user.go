@@ -34,23 +34,26 @@ func (u *User) Connection() *gorm.DB {
 
 // 增加用户
 func (u *User) Create(data *User) (err error) {
-	if err = u.Connection().Create(&data).Error; err != nil {
+	err = u.Connection().Create(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
 // 删除用户
-func (u *User) Delete(id string) error {
-	if err := dbConn.Table(u.TableName()).Where("id=?", id).Delete(u).Error; err != nil {
-		return err
+func (u *User) Delete(id string) (user *User, err error) {
+	err = dbConn.Table(u.TableName()).Where("id=?", id).Delete(&user).Error
+	if err != nil {
+		return user, err
 	}
-	return nil
+	return user, nil
 }
 
 // 修改用户信息
-func (u *User) Update(data *User) error {
-	if err := u.Connection().Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", data.ID).Save(&data).Error; err != nil {
+func (u *User) Update(data *User) (err error) {
+	err = u.Connection().Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", data.ID).Updates(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
@@ -58,23 +61,25 @@ func (u *User) Update(data *User) error {
 
 // 显示单个用户信息
 func (u *User) FindByID(id string) (user *User, err error) {
-	if err = u.Connection().Where("id = ?", id).First(&user).Error; err != nil {
+	err = u.Connection().Where("id = ?", id).First(&user).Error
+	if err != nil {
 		return user, err
 	}
 	return user, nil
 }
 
 // 显示所有用户信息
-func (u *User) Find() ([]*User, error) {
-	var res []*User
-	if err := dbConn.Table(u.TableName()).Find(&res).Error; err != nil {
-		return res, err
+func (u *User) Find() (users []*User, err error) {
+	err = dbConn.Table(u.TableName()).Find(&users).Error
+	if err != nil {
+		return users, err
 	}
-	return res, nil
+	return users, nil
 }
 
 func (u *User) FindBYUserName(userName string) (user *User, err error) {
-	if err := u.Connection().Where("user_name = ?", userName).First(&user).Error; err != nil {
+	err = u.Connection().Where("user_name = ?", userName).First(&user).Error
+	if err != nil {
 		return user, err
 	}
 	return user, nil

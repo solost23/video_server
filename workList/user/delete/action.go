@@ -48,7 +48,8 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		videos = append(videos, tmpVideos...)
 	}
 	// 删除分类
-	if err = model.NewCategory(a.GetMysqlConn()).DeleteByUserID(user.ID); err != nil {
+	_, err = model.NewCategory(a.GetMysqlConn()).DeleteByUserID(user.ID)
+	if err != nil {
 		return resp, err
 	}
 	// 通过视频查找评论
@@ -61,13 +62,15 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 			return resp, err
 		}
 		// 删除评论
-		if err = model.NewComment(a.GetMysqlConn()).DeleteByVideoID(video.ID); err != nil {
+		_, err = model.NewComment(a.GetMysqlConn()).DeleteByVideoID(video.ID)
+		if err != nil {
 			return resp, err
 		}
 	}
 	// 删除视频
 	for _, video := range videos {
-		if err = model.NewVideo(a.GetMysqlConn()).Delete(video.ID); err != nil {
+		_, err = model.NewVideo(a.GetMysqlConn()).Delete(video.ID)
+		if err != nil {
 			return resp, err
 		}
 	}

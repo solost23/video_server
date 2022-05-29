@@ -24,39 +24,42 @@ func (c *CasbinModel) Connection() *gorm.DB {
 	return c.conn.Table(c.TableName())
 }
 
-func (c *CasbinModel) Create(data *CasbinModel) error {
-	if err := c.Connection().Create(&data).Error; err != nil {
+func (c *CasbinModel) Create(data *CasbinModel) (err error) {
+	err = c.Connection().Create(&data).Error
+	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *CasbinModel) Delete(data *CasbinModel) error {
-	if err := c.Connection().Where("v0=? AND v1=? AND v2=?", data.RoleName, data.Path, data.Method).Delete(&data).Error; err != nil {
-		return err
+func (c *CasbinModel) Delete(data *CasbinModel) (casbinModel *CasbinModel, err error) {
+	err = c.Connection().Where("v0=? AND v1=? AND v2=?", data.RoleName, data.Path, data.Method).Delete(&casbinModel).Error
+	if err != nil {
+		return casbinModel, err
 	}
-	return nil
+	return casbinModel, nil
 }
 
-func (c *CasbinModel) FindByRoleName(roleName string) ([]*CasbinModel, error) {
-	var res []*CasbinModel
-	if err := DBCasbin.Table(c.TableName()).Where("v0=?", roleName).Find(&res).Error; err != nil {
-		return res, err
+func (c *CasbinModel) FindByRoleName(roleName string) (casbinModels []*CasbinModel, err error) {
+	err = DBCasbin.Table(c.TableName()).Where("v0=?", roleName).Find(&casbinModels).Error
+	if err != nil {
+		return casbinModels, err
 	}
-	return res, nil
+	return casbinModels, nil
 }
 
-func (c *CasbinModel) Find() ([]*CasbinModel, error) {
-	var res []*CasbinModel
-	if err := DBCasbin.Table(c.TableName()).Find(&res).Error; err != nil {
-		return res, err
+func (c *CasbinModel) Find() (casbinModels []*CasbinModel, err error) {
+	err = DBCasbin.Table(c.TableName()).Find(&casbinModels).Error
+	if err != nil {
+		return casbinModels, err
 	}
-	return res, nil
+	return casbinModels, nil
 }
 
-func (c *CasbinModel) FindByRolePathMethod(roleName, path, method string) error {
-	if err := DBCasbin.Table(c.TableName()).Where("v0=? AND v1=? AND v2=?", roleName, path, method).First(c).Error; err != nil {
-		return err
+func (c *CasbinModel) FindByRolePathMethod(roleName, path, method string) (casbinModel *CasbinModel, err error) {
+	err = DBCasbin.Table(c.TableName()).Where("v0=? AND v1=? AND v2=?", roleName, path, method).First(casbinModel).Error
+	if err != nil {
+		return casbinModel, err
 	}
-	return nil
+	return casbinModel, nil
 }
