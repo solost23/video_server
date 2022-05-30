@@ -4,5 +4,9 @@ import "video_server/pkg/model"
 
 type Request struct {
 	PageInfo *model.PageInfo `json:"pageInfo"`
-	VideoID  string          `json:"videoId"`
+	Filter   *Filter
+}
+
+type Filter struct {
+	VideoID string `json:"videoId"`
 }

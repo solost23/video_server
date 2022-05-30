@@ -33,6 +33,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	}
 	if request.ISThumb != model.ISTHUMB && request.ISThumb != model.ISCOMMENT {
 		err = errors.New("request.ISThumb error")
+		return resp, err
 	}
 	_, err = model.NewVideo(a.GetMysqlConn()).FindByVideoID(request.VideoID, model.DELETENORMAL)
 	if err != nil {
@@ -43,12 +44,14 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
+		} else {
+			err = nil
 		}
 	}
 	if parentComment.ID == "" {
 		request.ParentID = "0"
 	}
-	if err := model.NewComment(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
+	if err = model.NewComment(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
 		return resp, err
 	}
 	return resp, err

@@ -19,13 +19,13 @@ func NewActionWithCtx(ctx *gin.Context) *Action {
 
 func (a *Action) Deal(request *Request) (resp Response, err error) {
 	resp.List = []CommentInfo{}
-	if request.VideoID == "" {
+	if request.Filter.VideoID == "" {
 		err = errors.New("request.VideoID not empty")
 		return resp, err
 	}
 	var comments []*model.Comment
 	var total int64
-	tx := model.NewComment(a.GetMysqlConn()).Connection().Where("video_id = ?", request.VideoID)
+	tx := model.NewComment(a.GetMysqlConn()).Connection().Where("video_id = ?", request.Filter.VideoID)
 	if request.PageInfo == nil {
 		request.PageInfo = &model.PageInfo{
 			Page:     1,
