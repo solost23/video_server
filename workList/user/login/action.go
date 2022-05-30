@@ -19,11 +19,11 @@ func NewActionWithCtx(ctx *gin.Context) *Action {
 }
 
 func (a *Action) Deal(request *Request) (resp Response, err error) {
-	if request.UserName != "" {
+	if request.UserName == "" {
 		err = errors.New("request.UserName not empty")
 		return resp, err
 	}
-	if request.Password != "" {
+	if request.Password == "" {
 		err = errors.New("request.Password not empty")
 		return resp, err
 	}
@@ -35,11 +35,12 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	}
 	if request.UserName != user.UserName || model.NewMd5(request.Password, model.SECRET) != user.Password {
 		err = errors.New("UserName or Password err")
+		return resp, err
 	}
 	tokenStr, err := middleware.CreateToken(user.UserName, user.Role)
 	if err != nil {
-		resp = Response{TokenStr: tokenStr}
 		return resp, err
 	}
+	resp = Response{TokenStr: tokenStr}
 	return resp, err
 }

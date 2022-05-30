@@ -19,7 +19,7 @@ func InitRouter() *gin.Engine {
 	initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里
 	//group.Use(jwt.JWTAuth, role.CheckRole)
-	//group.Use(middleware.JWTAuth())
+	group.Use(middleware.JWTAuth())
 	initAuthRouter(group)
 	return router
 }
