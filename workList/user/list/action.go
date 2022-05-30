@@ -60,7 +60,7 @@ func (a *Action) FindByFilter(request *Request) (users []model.User, total int64
 		tx.Where("user_name LIKE ?", model.LikeFilter(request.Filter.UserName))
 	}
 	if request.Filter.Role != "" {
-		tx.Where("user_name LIKE ?", model.LikeFilter(request.Filter.Role))
+		tx.Where("role LIKE ?", model.LikeFilter(request.Filter.Role))
 	}
 	tx.Count(&total)
 	// 数据分页
