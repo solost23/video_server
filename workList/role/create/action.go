@@ -24,12 +24,17 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 先查询本条数据是否存在
-	_, err = model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method)
+	role, err := model.NewCasbinModel(a.GetMysqlConnCasbin()).FindByRolePathMethod(request.RoleName, request.Path, request.Method)
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
 		}
 	}
+	if role.RoleName != "" {
+		err = errors.New("role.RoleName exist")
+		return resp, err
+	}
+
 	if err = model.NewCasbinModel(a.GetMysqlConnCasbin()).Create(a.buildRequest(request)); err != nil {
 		return resp, err
 	}

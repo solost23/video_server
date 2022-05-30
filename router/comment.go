@@ -1,8 +1,6 @@
 package router
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	create_comment "video_server/workList/comment/create"
@@ -22,15 +20,15 @@ import (
 func createComment(c *gin.Context) {
 	request := &create_comment.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := create_comment.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary delete comment
@@ -44,15 +42,15 @@ func createComment(c *gin.Context) {
 func deleteComment(c *gin.Context) {
 	request := &delete_comment.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := delete_comment.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary get_comment_by_video_id
@@ -66,13 +64,13 @@ func deleteComment(c *gin.Context) {
 func getCommentByVideoID(c *gin.Context) {
 	request := &list_comment.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := list_comment.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }

@@ -4,10 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"net/http"
 
 	_ "video_server/docs" // 必须要导入生成的docs文档包
 	"video_server/pkg/middleware"
 )
+
+type ErrCode int
 
 func InitRouter() *gin.Engine {
 	router := gin.New()
@@ -90,5 +93,41 @@ func initAuthRoleRouter(group *gin.RouterGroup) {
 		role.POST("delete", deleteRoleAuth)
 		// 支持筛选项为role_name
 		role.POST("list", getAllRoleAuth)
+	}
+}
+
+// 封装返回
+
+type ApiResponse struct {
+	// in: body
+	Code    ErrCode     `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
+// 封装返回
+func RenderJSON(ctx *gin.Context, code ErrCode, message string, data ...interface{}) {
+	// 如果切片中无数据，那么不封装data，否则封装data
+	var res ApiResponse
+	if len(data) >= 1 {
+		res = ApiResponse{
+			Code:    code,
+			Message: message,
+			Data:    data,
+		}
+	} else {
+		res = ApiResponse{
+			Code:    code,
+			Message: message,
+		}
+	}
+	ctx.JSON(http.StatusOK, res)
+}
+
+func Render(ctx *gin.Context, err error, data ...interface{}) {
+	if err != nil {
+		RenderJSON(ctx, http.StatusOK, err.Error(), data...)
+	} else {
+		RenderJSON(ctx, http.StatusOK, "success", data...)
 	}
 }

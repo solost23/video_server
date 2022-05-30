@@ -2,8 +2,6 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
-
 	create_category "video_server/workList/category/create"
 	list_category "video_server/workList/category/list"
 	update_category "video_server/workList/category/update"
@@ -21,15 +19,15 @@ import (
 func createCategory(c *gin.Context) {
 	request := &create_category.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := create_category.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary update_class
@@ -44,15 +42,15 @@ func createCategory(c *gin.Context) {
 func updateCategory(c *gin.Context) {
 	request := &update_category.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := update_category.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary get user all category
@@ -66,13 +64,13 @@ func updateCategory(c *gin.Context) {
 func listCategory(c *gin.Context) {
 	request := &list_category.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := list_category.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }

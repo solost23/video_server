@@ -1,6 +1,8 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type CasbinModel struct {
 	conn     *gorm.DB `gorm:"_"`
@@ -57,7 +59,7 @@ func (c *CasbinModel) Find() (casbinModels []*CasbinModel, err error) {
 }
 
 func (c *CasbinModel) FindByRolePathMethod(roleName, path, method string) (casbinModel *CasbinModel, err error) {
-	err = DBCasbin.Table(c.TableName()).Where("v0=? AND v1=? AND v2=?", roleName, path, method).First(casbinModel).Error
+	err = DBCasbin.Table(c.TableName()).Where("v0 = ? AND v1 = ? AND v2 = ?", roleName, path, method).First(&casbinModel).Error
 	if err != nil {
 		return casbinModel, err
 	}

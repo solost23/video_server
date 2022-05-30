@@ -1,7 +1,6 @@
 package router
 
 import (
-	"net/http"
 	create2 "video_server/workList/video/create"
 	delete3 "video_server/workList/video/delete"
 	detail2 "video_server/workList/video/detail"
@@ -22,15 +21,15 @@ import (
 func createVideo(c *gin.Context) {
 	request := &create2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := create2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary delete video
@@ -44,15 +43,15 @@ func createVideo(c *gin.Context) {
 func deleteVideo(c *gin.Context) {
 	request := &delete3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := delete3.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary video detail
@@ -66,15 +65,15 @@ func deleteVideo(c *gin.Context) {
 func videoDetail(c *gin.Context) {
 	request := &detail2.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := detail2.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary video list
@@ -88,13 +87,13 @@ func videoDetail(c *gin.Context) {
 func list(c *gin.Context) {
 	request := &list3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := list3.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }

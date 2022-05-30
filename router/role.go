@@ -1,8 +1,6 @@
 package router
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	create_role "video_server/workList/role/create"
@@ -22,15 +20,15 @@ import (
 func addRoleAuth(c *gin.Context) {
 	request := &create_role.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := create_role.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary delete role
@@ -45,15 +43,15 @@ func addRoleAuth(c *gin.Context) {
 func deleteRoleAuth(c *gin.Context) {
 	request := &delete_role.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := delete_role.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
 
 // @Summary get all roleAuth
@@ -67,13 +65,13 @@ func deleteRoleAuth(c *gin.Context) {
 func getAllRoleAuth(c *gin.Context) {
 	request := &list_role.Request{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		Render(c, err)
 		return
 	}
 	data, err := list_role.NewActionWithCtx(c).Deal(request)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		Render(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, data)
+	Render(c, err, data)
 }
