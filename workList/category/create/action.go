@@ -42,7 +42,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if category.ID != "" {
 		return resp, errors.New("用户下此分类已存在")
 	}
-	if err := model.NewCategory(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
+	if err = model.NewCategory(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
 		return resp, err
 	}
 	return resp, err

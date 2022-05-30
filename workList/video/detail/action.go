@@ -1,6 +1,7 @@
 package detail
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"video_server/pkg/model"
 	"video_server/workList"
@@ -17,6 +18,10 @@ func NewActionWithCtx(ctx *gin.Context) *Action {
 }
 
 func (a *Action) Deal(request *Request) (resp Response, err error) {
+	if request.ID == "" {
+		err = errors.New("request.ID not empty")
+		return resp, err
+	}
 	data, err := model.NewVideo(a.GetMysqlConn()).FindByVideoID(request.ID, model.DELETENORMAL)
 	if err != nil {
 		return resp, err
@@ -42,5 +47,3 @@ func (a *Action) buildResponse(data *model.Video) (resp Response) {
 	}
 	return resp
 }
-
-

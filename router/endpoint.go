@@ -71,7 +71,7 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 		// 删除就是将video信息的delete_status的字段修改为已删除
 		video.POST("delete", deleteVideo)
 		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
-		video.GET("detail", videoDetail)
+		video.POST("detail", videoDetail)
 		// 首页 支持获取所有视频，支持按照 分类名，用户名，视频标题 搜索，并支持分页操作
 		video.POST("list", list)
 	}
@@ -113,7 +113,7 @@ func RenderJSON(ctx *gin.Context, code ErrCode, message string, data ...interfac
 		res = ApiResponse{
 			Code:    code,
 			Message: message,
-			Data:    data,
+			Data:    data[0],
 		}
 	} else {
 		res = ApiResponse{
