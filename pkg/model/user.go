@@ -1,6 +1,8 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type User struct {
 	conn         *gorm.DB `gorm:"_"`
@@ -43,7 +45,7 @@ func (u *User) Create(data *User) (err error) {
 
 // 删除用户
 func (u *User) Delete(id string) (user *User, err error) {
-	err = dbConn.Table(u.TableName()).Where("id=?", id).Delete(&user).Error
+	err = u.Connection().Where("id=?", id).Delete(&user).Error
 	if err != nil {
 		return user, err
 	}
@@ -51,8 +53,8 @@ func (u *User) Delete(id string) (user *User, err error) {
 }
 
 // 修改用户信息
-func (u *User) Update(data *User) (err error) {
-	err = u.Connection().Omit("id", "user_name", "fans_count", "comment_count", "create_time").Where("id=?", data.ID).Updates(&data).Error
+func (u *User) Update(id string, data *User) (err error) {
+	err = u.Connection().Where("id = ?", id).Omit("id", "user_name", "fans_count", "comment_count", "create_time").Updates(&data).Error
 	if err != nil {
 		return err
 	}
@@ -70,7 +72,7 @@ func (u *User) FindByID(id string) (user *User, err error) {
 
 // 显示所有用户信息
 func (u *User) Find() (users []*User, err error) {
-	err = dbConn.Table(u.TableName()).Find(&users).Error
+	err = u.Connection().Find(&users).Error
 	if err != nil {
 		return users, err
 	}

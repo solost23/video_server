@@ -35,8 +35,8 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if err != nil {
 		return resp, err
 	}
-	// 删除
-	if err := user.Update(a.buildRequest(request)); err != nil {
+	// 更新
+	if err = model.NewUser(a.GetMysqlConn()).Update(user.ID, a.buildRequest(request)); err != nil {
 		return resp, err
 	}
 	return resp, err
@@ -46,7 +46,7 @@ func (a *Action) buildRequest(request *Request) (user *model.User) {
 	user = &model.User{
 		ID:         request.ID,
 		UserName:   request.UserName,
-		Password:   request.Password,
+		Password:   model.NewMd5(request.Password, model.SECRET),
 		Nickname:   request.Nickname,
 		Avatar:     request.Avatar,
 		Introduce:  request.Introduce,
