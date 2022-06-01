@@ -9,7 +9,8 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.8.1
+	github.com/solost23/tools v1.0.2
 	github.com/spf13/viper v1.10.1
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
 	github.com/swaggo/gin-swagger v1.4.1
@@ -39,7 +40,6 @@ require (
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
