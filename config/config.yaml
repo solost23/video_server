@@ -2,7 +2,7 @@ version: 1.0
 params:
   service_name: video_server
   service_addr: 0.0.0.0
-  service_port: 8080
+  service_port: 8081
 connections:
   mysql:
     video_server:
@@ -27,3 +27,8 @@ log:
     path: /logs/
   track:
     path: /err_logs/
+
+gRpc:
+  user_service:
+    addrSlice:
+      127.0.0.1:8080

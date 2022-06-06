@@ -1,4 +1,4 @@
-package hello_world_service
+package user_service
 
 import (
 	"github.com/spf13/viper"
@@ -6,17 +6,17 @@ import (
 	"google.golang.org/grpc/resolver"
 	"google.golang.org/grpc/resolver/manual"
 
-	HelloWorldService "github.com/solost23/my_interface/hello_world_service"
+	UserService "github.com/solost23/go_interface/gen-go/user_service"
 )
 
 var client *grpc.ClientConn
 
-func GetHelloWorldServiceClient() (HelloWorldService.HelloWorldServiceClient, error) {
+func GetUserServiceClient() (UserService.UserServiceClient, error) {
 	grpcClient, err := getClient()
 	if err != nil {
 		return nil, err
 	}
-	return HelloWorldService.NewHelloWorldServiceClient(grpcClient), nil
+	return UserService.NewUserServiceClient(grpcClient), nil
 }
 
 func getClient() (*grpc.ClientConn, error) {
@@ -28,7 +28,7 @@ func getClient() (*grpc.ClientConn, error) {
 }
 
 func newClient() (conn *grpc.ClientConn, err error) {
-	addrSlice := viper.GetStringSlice("gRpc.hello_world_service.addrSlice")
+	addrSlice := viper.GetStringSlice("gRpc.user_service.addrSlice")
 	var addrs []resolver.Address
 	r := manual.NewBuilderWithScheme("whatever")
 	for _, addr := range addrSlice {
