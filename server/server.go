@@ -15,11 +15,12 @@ import (
 )
 
 func Run() {
-	fmt.Println(viper.ConfigFileUsed())
-	port := viper.Get("params.service_port").(int)
+	port := viper.GetInt("params.service_port")
 	// 启动定时任务，每天晚上三点删除视频文件，降低用户删除请求的io操作过多
-	fmt.Println("start scheduler")
-	go scheduler.Run()
+	go func() {
+		fmt.Println("start scheduler")
+		scheduler.Run()
+	}()
 	service := config.NewProject()
 	server := &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", service.ServiceAddr, port),
@@ -46,5 +47,4 @@ func Run() {
 			return
 		}
 	}
-
 }
