@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -21,21 +23,68 @@ func NewCategory(conn *gorm.DB) *Category {
 	}
 }
 
-func (c *Category) TableName() string {
+func (t *Category) TableName() string {
 	return "category"
 }
 
-func (c *Category) Connection() *gorm.DB {
-	return c.conn.Table(c.TableName())
+func (t *Category) Connection() *gorm.DB {
+	return t.conn.Table(t.TableName())
 }
 
 // 增加分类
-func (c *Category) Create(data *Category) (err error) {
-	err = dbConn.Table(c.TableName()).Create(&data).Error
+func (t *Category) Create(data *Category) (err error) {
+	err = t.Connection().Create(&data).Error
+	return err
+}
+
+// 删
+func (t *Category) Delete1(query interface{}, args ...interface{}) (err error) {
+	err = t.Connection().Where(query, args...).Delete(&t).Error
+	return err
+}
+
+// 改
+func (t *Category) UpdateColumn(key string, value interface{}, query interface{}, args ...interface{}) (err error) {
+	return t.Connection().Where(query, args...).Update(key, value).Error
+}
+
+// 更新全部数据
+func (t *Category) Save(data *Category) (err error) {
+	return t.Connection().Save(&data).Error
+}
+
+// 查单个数据
+func (t *Category) WhereOne(query interface{}, args ...interface{}) (category *Category, err error) {
+	err = t.Connection().Where(query, args...).First(&category).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return category, nil
+}
+
+// 查询所有
+func (t *Category) WhereAll(query interface{}, args ...interface{}) (categories []*Category, err error) {
+	err = t.Connection().Where(query, args...).Find(&categories).Error
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
+}
+
+// 支持分页筛选
+func (t *Category) PageList(params *ListPageInput, query interface{}, args ...interface{}) (categories []*Category, count int64, err error) {
+	offset := (params.Page - 1) * params.Size
+
+	err = t.Connection().Where(query, args...).Offset(offset).Limit(params.Size).Order("create_time DESC").Find(&categories).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, 0, err
+	}
+
+	err = t.Connection().Where(query, args...).Count(&count).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, 0, err
+	}
+	return categories, count, nil
 }
 
 func (c *Category) FindByClassName(className string) (class *Category, err error) {
