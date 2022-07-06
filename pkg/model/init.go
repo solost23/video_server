@@ -10,16 +10,21 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-
-	"video_server/mysql"
 )
 
 var dbConn *gorm.DB
 var DBCasbin *gorm.DB
 
 func init() {
-	dbConn = mysql.GetMysqlConn()
-	DBCasbin = mysql.GetCasbinConn()
+	var err error
+	dbConn, err = NewMysqlClient(false)
+	if err != nil {
+		panic(err)
+	}
+	DBCasbin, err = NewMysqlClient(true)
+	if err != nil {
+		panic(err)
+	}
 	dbConn.AutoMigrate(&User{})
 	dbConn.AutoMigrate(&Comment{})
 	dbConn.AutoMigrate(&Video{})

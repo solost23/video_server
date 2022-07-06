@@ -10,8 +10,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var logger *logrus.Logger
+
 func Logger() gin.HandlerFunc {
-	logger := initLogger()
 	return func(c *gin.Context) {
 		// 开始时间
 		startTime := time.Now()
@@ -45,7 +46,7 @@ func initLogger() *logrus.Logger {
 	now := time.Now()
 	logFilePath := ""
 	if dir, err := os.Getwd(); err == nil {
-		logFilePath = dir + "/log/"
+		logFilePath = dir + "/logs/"
 	}
 	if err := os.MkdirAll(logFilePath, 0777); err != nil {
 		log.Println(err.Error())

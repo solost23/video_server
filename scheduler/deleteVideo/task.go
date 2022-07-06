@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gorm.io/gorm"
 	"log"
 	"net/url"
 	"os"
 
-	"video_server/mysql"
+	"gorm.io/gorm"
+
 	"video_server/pkg/model"
 )
 
@@ -20,8 +20,12 @@ type Task struct {
 
 func (t *Task) DeleteVideo() {
 	t.Ctx = context.Background()
-	t.Conn = mysql.GetMysqlConn()
-	if err := t.Deal(); err != nil {
+	var err error
+	t.Conn, err = model.NewMysqlClient(false)
+	if err != nil {
+		panic(err)
+	}
+	if err = t.Deal(); err != nil {
 		log.Printf("delete video: %v \n", err.Error())
 	}
 }

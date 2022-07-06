@@ -1,24 +1,44 @@
 package workList
 
 import (
+	"video_server/pkg/model"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"video_server/mysql"
 )
 
 type WorkList struct {
-	Conn *gorm.DB
-	Ctx  *gin.Context
+	Conn       *gorm.DB
+	ConnCasbin *gorm.DB
+	Ctx        *gin.Context
 }
 
 func (w *WorkList) Init(ctx *gin.Context) {
 	w.Ctx = ctx
 }
 
-func (w *WorkList) GetMysqlConn() *gorm.DB {
-	return mysql.GetMysqlConn()
+// 单例模式
+func (w *WorkList) GetMysqlConn() (db *gorm.DB) {
+	if w.Conn != nil {
+		return w.Conn
+	}
+	var err error
+	w.Conn, err = model.NewMysqlClient(false)
+	if err != nil {
+		panic(err)
+	}
+	return w.Conn
 }
 
-func (w *WorkList) GetMysqlConnCasbin() *gorm.DB {
-	return mysql.GetCasbinConn()
+// 单例模式
+func (w *WorkList) GetMysqlConnCasbin() (db *gorm.DB) {
+	if w.ConnCasbin != nil {
+		return w.ConnCasbin
+	}
+	var err error
+	w.ConnCasbin, err = model.NewMysqlClient(true)
+	if err != nil {
+		panic(err)
+	}
+	return w.ConnCasbin
 }
