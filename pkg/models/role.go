@@ -27,18 +27,18 @@ func (t *CasbinModel) Updates(db *gorm.DB, value interface{}, conditions interfa
 	return db.Model(&t).Where(conditions, args...).Updates(value).Error
 }
 
-func (t *CasbinModel) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (category *Category, err error) {
-	err = db.Model(&t).Where(query, args...).First(&category).Error
+func (t *CasbinModel) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (casbinModel *CasbinModel, err error) {
+	err = db.Model(&t).Where(query, args...).First(&casbinModel).Error
 	if err != nil {
 		return nil, err
 	}
-	return category, nil
+	return casbinModel, nil
 }
 
-func (t *CasbinModel) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (categories []*Category, err error) {
-	err = db.Model(&t).Where(query, args...).Find(&categories).Error
+func (t *CasbinModel) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (casbinModels []*CasbinModel, err error) {
+	err = db.Model(&t).Where(query, args...).Find(&casbinModels).Error
 	if err != nil {
 		return nil, err
 	}
-	return categories, nil
+	return casbinModels, nil
 }

@@ -90,9 +90,8 @@ func initAuthCommentRouter(group *gin.RouterGroup) {
 func initAuthRoleRouter(group *gin.RouterGroup) {
 	role := group.Group("role")
 	{
-		role.POST("create", addRoleAuth)
-		role.POST("delete", deleteRoleAuth)
-		// 支持筛选项为role_name
-		role.POST("list", getAllRoleAuth)
+		role.POST("", roleInsert)
+		role.DELETE(":id", roleDelete)
+		role.GET("", roleList)
 	}
 }

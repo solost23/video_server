@@ -1,11 +1,12 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"video_server/forms"
+	"video_server/pkg/response"
+	"video_server/pkg/utils"
+	"video_server/workList"
 
-	create_role "video_server/workList/role/create"
-	delete_role "video_server/workList/role/delete"
-	list_role "video_server/workList/role/list"
+	"github.com/gin-gonic/gin"
 )
 
 // @Summary add roleAuth
@@ -17,18 +18,19 @@ import (
 // @Produce json
 // @Success 200
 // @Router /role/create [post]
-func addRoleAuth(c *gin.Context) {
-	request := &create_role.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func roleInsert(c *gin.Context) {
+	params := &forms.RoleInsertForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := create_role.NewActionWithCtx(c).Deal(request)
+	err := (&workList.RoleService{}).Insert(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary delete role
@@ -40,18 +42,18 @@ func addRoleAuth(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /role/delete [post]
-func deleteRoleAuth(c *gin.Context) {
-	request := &delete_role.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func roleDelete(c *gin.Context) {
+	params := &forms.RoleInsertForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := delete_role.NewActionWithCtx(c).Deal(request)
+	err := (&workList.RoleService{}).Delete(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary get all roleAuth
@@ -62,16 +64,16 @@ func deleteRoleAuth(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /role/list [post]
-func getAllRoleAuth(c *gin.Context) {
-	request := &list_role.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func roleList(c *gin.Context) {
+	params := &forms.RoleListForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := list_role.NewActionWithCtx(c).Deal(request)
+	result, err := (&workList.RoleService{}).List(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.Success(c, result)
 }
