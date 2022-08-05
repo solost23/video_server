@@ -96,13 +96,13 @@ func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *fo
 			Introduce:    user.Introduce,
 			FansCount:    user.FansCount,
 			CommentCount: user.CommentCount,
-			CreateTime:   user.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdateTime:   user.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreateTime:   user.CreatedAt.Format(models.TimeFormat),
+			UpdateTime:   user.CreatedAt.Format(models.TimeFormat),
 		})
 	}
 	response = &forms.ListResponse{
 		List: records,
-		PageList: &models.PageList{
+		PageList: &utils.PageList{
 			Size:    params.Size,
 			Pages:   int64(math.Ceil(float64(total) / float64(params.Size))),
 			Total:   total,

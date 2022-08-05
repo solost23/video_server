@@ -1,9 +1,10 @@
 package router
 
 import (
-	create_category "video_server/workList/category/create"
-	list_category "video_server/workList/category/list"
-	update_category "video_server/workList/category/update"
+	"video_server/forms"
+	"video_server/pkg/response"
+	"video_server/pkg/utils"
+	"video_server/workList"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,17 +19,19 @@ import (
 // @Success 200
 // @Router /category/create [post]
 func categoryInsert(c *gin.Context) {
-	request := &create_category.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	params := &forms.CategoryInsertForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := create_category.NewActionWithCtx(c).Deal(request)
+
+	err := (&workList.CategoryService{}).Insert(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary update_class
@@ -41,17 +44,23 @@ func categoryInsert(c *gin.Context) {
 // @Success 200
 // @Router /category/update [post]
 func categoryUpdate(c *gin.Context) {
-	request := &update_category.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	UIdForm := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := update_category.NewActionWithCtx(c).Deal(request)
+	params := &forms.CategoryUpdateForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	err := (&workList.CategoryService{}).Update(c, UIdForm.Id, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary get user all category
@@ -63,15 +72,22 @@ func categoryUpdate(c *gin.Context) {
 // @Success 200
 // @Router /category/list [post]
 func categoryList(c *gin.Context) {
-	request := &list_category.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	params := &forms.CategoryListForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := list_category.NewActionWithCtx(c).Deal(request)
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	if params.Size == 0 {
+		params.Size = 10
+	}
+	result, err := (&workList.CategoryService{}).List(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.Success(c, result)
 }
