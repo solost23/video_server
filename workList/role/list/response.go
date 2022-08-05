@@ -1,10 +1,10 @@
 package list
 
-import "video_server/pkg/model"
+import "video_server/pkg/models"
 
 type Response struct {
-	PageInfo model.PageInfo `json:"pageInfo"`
-	List     []RoleInfo     `json:"list"`
+	PageInfo models.PageInfo `json:"pageInfo"`
+	List     []RoleInfo      `json:"list"`
 }
 
 type RoleInfo struct {

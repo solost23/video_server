@@ -13,7 +13,7 @@ import (
 // @Description add video
 // @Tags Video
 // @Security ApiKeyAuth
-// @Param data body model.Video true "视频"
+// @Param data body models.Video true "视频"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -40,7 +40,7 @@ func createVideo(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /video/delete [post]
-func deleteVideo(c *gin.Context) {
+func videoDelete(c *gin.Context) {
 	request := &delete3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		Render(c, err)
@@ -84,7 +84,7 @@ func videoDetail(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /video/list [post]
-func list(c *gin.Context) {
+func videoList(c *gin.Context) {
 	request := &list3.Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		Render(c, err)

@@ -1,58 +1,42 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"video_server/forms"
+	"video_server/pkg/response"
+	"video_server/pkg/utils"
+	"video_server/workList"
 
-	list_video "video_server/workList/user/List"
-	delete_video "video_server/workList/user/delete"
-	detail_video "video_server/workList/user/detail"
-	login_video "video_server/workList/user/login"
-	register_video "video_server/workList/user/register"
-	update_video "video_server/workList/user/update"
+	"github.com/gin-gonic/gin"
 )
 
-// @Summary register
-// @Description add user
-// @Tags User
-// @Param data body model.User true "用户"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /register [post]
 func register(c *gin.Context) {
-	request := &register_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	params := &forms.RegisterForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := register_video.NewActionWithCtx(c).Deal(request)
+	_, err := (&workList.UserService{}).Register(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary login
-// @Description user login
-// @Tags User
-// @Param data body model.User true "用户"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /login [post]
 func login(c *gin.Context) {
-	request := &login_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	params := &forms.LoginForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := login_video.NewActionWithCtx(c).Deal(request)
+	result, err := (&workList.UserService{}).Login(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.Success(c, result)
 }
 
 // @Summary get_user_info
@@ -63,18 +47,19 @@ func login(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /user/detail [post]
-func getUserInfo(c *gin.Context) {
-	request := &detail_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func userDetail(c *gin.Context) {
+	UIdForm := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := detail_video.NewActionWithCtx(c).Deal(request)
+	result, err := (&workList.UserService{}).Detail(c, UIdForm.Id)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.Success(c, result)
 }
 
 // @Summary delete_user_info
@@ -85,41 +70,49 @@ func getUserInfo(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /user/delete [post]
-func deleteUserInfo(c *gin.Context) {
-	request := &delete_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func userDelete(c *gin.Context) {
+	UIdForm := utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := delete_video.NewActionWithCtx(c).Deal(request)
+
+	err := (&workList.UserService{}).Delete(c, UIdForm.Id)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary update_user_info
 // @Description update user info
 // @Tags User
 // @Security ApiKeyAuth
-// @Param data body model.User true "用户"
+// @Param data body models.User true "用户"
 // @Accept json
 // @Produce json
 // @Success 200
 // @Router /user/update [post]
-func updateUserInfo(c *gin.Context) {
-	request := &update_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func userUpdate(c *gin.Context) {
+	UIdForm := utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := update_video.NewActionWithCtx(c).Deal(request)
+	params := &forms.UserUpdateForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	err := (&workList.UserService{}).Update(c, UIdForm.Id, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary get_all_user_info
@@ -130,16 +123,23 @@ func updateUserInfo(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /user/list [post]
-func getAllUserInfo(c *gin.Context) {
-	request := &list_video.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func userList(c *gin.Context) {
+	params := &forms.ListForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := list_video.NewActionWithCtx(c).Deal(request)
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	if params.Size == 0 {
+		params.Size = 10
+	}
+	result, err := (&workList.UserService{}).List(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	response.Success(c, result)
 }

@@ -12,7 +12,7 @@ import (
 // @Description add comment
 // @Tags Comment
 // @Security ApiKeyAuth
-// @Param data body model.Comment true "评论"
+// @Param data body models.Comment true "评论"
 // @Accept json
 // @Produce json
 // @Success 200

@@ -2,10 +2,11 @@ package create
 
 import (
 	"errors"
+	"video_server/pkg/models"
+	"video_server/workList"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"video_server/pkg/model"
-	"video_server/workList"
 )
 
 type Action struct {
@@ -31,16 +32,16 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		err = errors.New("request.Content not empty")
 		return resp, err
 	}
-	if request.ISThumb != model.ISTHUMB && request.ISThumb != model.ISCOMMENT {
+	if request.ISThumb != models.ISTHUMB && request.ISThumb != models.ISCOMMENT {
 		err = errors.New("request.ISThumb error")
 		return resp, err
 	}
-	_, err = model.NewVideo(a.GetMysqlConn()).FindByVideoID(request.VideoID, model.DELETENORMAL)
+	_, err = models.NewVideo(a.GetMysqlConn()).FindByVideoID(request.VideoID, models.DELETENORMAL)
 	if err != nil {
 		return resp, err
 	}
 	// 查找父评论
-	parentComment, err := model.NewComment(a.GetMysqlConn()).FindByID(request.ParentID)
+	parentComment, err := models.NewComment(a.GetMysqlConn()).FindByID(request.ParentID)
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
@@ -51,21 +52,21 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if parentComment.ID == "" {
 		request.ParentID = "0"
 	}
-	if err = model.NewComment(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
+	if err = models.NewComment(a.GetMysqlConn()).Create(a.buildRequest(request)); err != nil {
 		return resp, err
 	}
 	return resp, err
 }
 
-func (a *Action) buildRequest(request *Request) (comment *model.Comment) {
-	comment = &model.Comment{
-		ID:         model.NewUUID(),
+func (a *Action) buildRequest(request *Request) (comment *models.Comment) {
+	comment = &models.Comment{
+		ID:         models.NewUUID(),
 		VideoID:    request.VideoID,
 		Content:    request.Content,
 		ParentID:   request.ParentID,
 		ISThumb:    request.ISThumb,
-		CreateTime: model.GetCurrentTime(),
-		UpdateTime: model.GetCurrentTime(),
+		CreateTime: models.GetCurrentTime(),
+		UpdateTime: models.GetCurrentTime(),
 	}
 	return comment
 }

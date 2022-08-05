@@ -12,7 +12,7 @@ import (
 // @Description add roleAuth
 // @Tags Role
 // @Security ApiKeyAuth
-// @Param data body model.CasbinModel true "角色"
+// @Param data body models.CasbinModel true "角色"
 // @Accept json
 // @Produce json
 // @Success 200
@@ -35,7 +35,7 @@ func addRoleAuth(c *gin.Context) {
 // @Description delete roleAuth
 // @Tags Role
 // @Security ApiKeyAuth
-// @Param data body model.CasbinModel true "角色"
+// @Param data body models.CasbinModel true "角色"
 // @Accept json
 // @Produce json
 // @Success 200

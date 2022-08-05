@@ -10,7 +10,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 )
 
 type Task struct {
@@ -21,7 +21,7 @@ type Task struct {
 func (t *Task) DeleteVideo() {
 	t.Ctx = context.Background()
 	var err error
-	t.Conn, err = model.NewMysqlClient(false)
+	t.Conn, err = models.NewMysqlClient(false)
 	if err != nil {
 		panic(err)
 	}
@@ -34,16 +34,16 @@ func (t *Task) Deal() (err error) {
 	// 去数据库查询要删除的视频数据
 	// 删除数据库视频数据
 	// 删除本地视频数据
-	var video = new(model.Video)
-	var videos []*model.Video
-	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", model.DELETEDEL).Find(&videos).Error; err != nil {
+	var video = new(models.Video)
+	var videos []*models.Video
+	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", models.DELETEDEL).Find(&videos).Error; err != nil {
 		return err
 	}
 	if len(videos) <= 0 {
 		return errors.New("不存在要删除视频")
 	}
 	// 删除数据库中记录
-	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", model.DELETEDEL).Delete(video).Error; err != nil {
+	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", models.DELETEDEL).Delete(video).Error; err != nil {
 		return err
 	}
 	var videoFilePath []string

@@ -2,10 +2,11 @@ package update
 
 import (
 	"errors"
+	"video_server/pkg/models"
+	"video_server/workList"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"video_server/pkg/model"
-	"video_server/workList"
 )
 
 type Action struct {
@@ -27,11 +28,11 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if request.CategoryId == "" {
 		err = errors.New("request.CategoryId not empty")
 	}
-	_, err = model.NewUser(a.GetMysqlConn()).FindByID(request.UserId)
+	_, err = models.NewUser(a.GetMysqlConn()).FindByID(request.UserId)
 	if err != nil {
 		return resp, err
 	}
-	category, err := model.NewCategory(a.GetMysqlConn()).FindByID(request.CategoryId)
+	category, err := models.NewCategory(a.GetMysqlConn()).FindByID(request.CategoryId)
 	if err != nil {
 		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
@@ -40,19 +41,19 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if category.ID == "" {
 		return resp, errors.New("用户下此分类不存在")
 	}
-	if err = model.NewCategory(a.GetMysqlConn()).Update(a.buildRequest(request, category.ID)); err != nil {
+	if err = models.NewCategory(a.GetMysqlConn()).Update(a.buildRequest(request, category.ID)); err != nil {
 		return resp, err
 	}
 	return resp, err
 }
 
-func (a *Action) buildRequest(request *Request, categoryID string) (category *model.Category) {
-	category = &model.Category{
+func (a *Action) buildRequest(request *Request, categoryID string) (category *models.Category) {
+	category = &models.Category{
 		ID:         categoryID,
 		UserID:     request.UserId,
 		Title:      request.Title,
 		Introduce:  request.Introduce,
-		UpdateTime: model.GetCurrentTime(),
+		UpdateTime: models.GetCurrentTime(),
 	}
 	return category
 }

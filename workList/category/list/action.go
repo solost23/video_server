@@ -1,9 +1,10 @@
 package list
 
 import (
-	"github.com/gin-gonic/gin"
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Action struct {
@@ -24,7 +25,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 组装数据，返回
-	resp.PageInfo = model.PageInfo{
+	resp.PageInfo = models.PageInfo{
 		Page:       request.PageInfo.Page,
 		PageSize:   request.PageInfo.PageSize,
 		TotalCount: int32(total),
@@ -43,15 +44,15 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	return resp, err
 }
 
-func (a *Action) FindByFilter(request *Request) (categorys []*model.Category, total int64, err error) {
-	tx := model.NewCategory(a.GetMysqlConn()).Connection().Select("*")
+func (a *Action) FindByFilter(request *Request) (categorys []*models.Category, total int64, err error) {
+	tx := models.NewCategory(a.GetMysqlConn()).Connection().Select("*")
 	if request.Filter.UserID != "" {
 		tx.Where("user_id = ?", request.Filter.UserID)
 	}
 	tx.Count(&total)
 	// 数据分页
 	if request.PageInfo == nil {
-		request.PageInfo = &model.PageInfo{
+		request.PageInfo = &models.PageInfo{
 			Page:     1,
 			PageSize: 10,
 		}

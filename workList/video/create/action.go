@@ -3,12 +3,13 @@ package create
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"io"
 	"os"
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type Action struct {
@@ -28,14 +29,14 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	// 封装视频结构体，存储视频信息
 
 	// 校验参数，查看该用户下是否有此分类
-	_, err = model.NewUser(a.GetMysqlConn()).FindByID(request.UserID)
+	_, err = models.NewUser(a.GetMysqlConn()).FindByID(request.UserID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
 		}
 		return resp, err
 	}
-	_, err = model.NewCategory(a.GetMysqlConn()).FindByID(request.ClassID)
+	_, err = models.NewCategory(a.GetMysqlConn()).FindByID(request.ClassID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return resp, err
@@ -47,8 +48,8 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	if err != nil {
 		return resp, err
 	}
-	filePath := fmt.Sprintf("%s/%s/%s", model.FilePath, request.UserID, request.ClassID)
-	fileName := fmt.Sprintf("%s/%s/%s/%s", model.FilePath, request.UserID, request.ClassID, header.Filename)
+	filePath := fmt.Sprintf("%s/%s/%s", models.FilePath, request.UserID, request.ClassID)
+	fileName := fmt.Sprintf("%s/%s/%s/%s", models.FilePath, request.UserID, request.ClassID, header.Filename)
 	// 判断此文件是否存在,若存在，则直接返回错误
 	if Exist(fileName) {
 		return resp, errors.New("此视频已存在，请勿重复创建")
@@ -73,16 +74,16 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	}
 
 	// 封装视频结构体，保存数据
-	if err = model.NewVideo(a.GetMysqlConn()).Create(a.buildCreateVideo(request, fileName)); err != nil {
+	if err = models.NewVideo(a.GetMysqlConn()).Create(a.buildCreateVideo(request, fileName)); err != nil {
 		return resp, err
 	}
 	return resp, nil
 }
 
-func (a *Action) buildCreateVideo(request *Request, fileName string) (data *model.Video) {
+func (a *Action) buildCreateVideo(request *Request, fileName string) (data *models.Video) {
 	// 视频网址暂时采用本地的，后面改为前段上传
-	data = &model.Video{
-		ID:           model.NewUUID(),
+	data = &models.Video{
+		ID:           models.NewUUID(),
 		UserID:       request.UserID,
 		ClassID:      request.ClassID,
 		Title:        request.Title,
@@ -92,8 +93,8 @@ func (a *Action) buildCreateVideo(request *Request, fileName string) (data *mode
 		ThumbCount:   0,
 		CommentCount: 0,
 		DeleteStatus: "DELETE_STATUS_NORMAL",
-		CreateTime:   model.GetCurrentTime(),
-		UpdateTime:   model.GetCurrentTime(),
+		CreateTime:   models.GetCurrentTime(),
+		UpdateTime:   models.GetCurrentTime(),
 	}
 	return data
 }

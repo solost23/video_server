@@ -1,4 +1,4 @@
-package model
+package models
 
 type ListPageInput struct {
 	Page int `comment:"当前页"`

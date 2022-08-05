@@ -2,9 +2,10 @@ package list
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Action struct {
@@ -23,11 +24,11 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		err = errors.New("request.VideoID not empty")
 		return resp, err
 	}
-	var comments []*model.Comment
+	var comments []*models.Comment
 	var total int64
-	tx := model.NewComment(a.GetMysqlConn()).Connection().Where("video_id = ?", request.Filter.VideoID)
+	tx := models.NewComment(a.GetMysqlConn()).Connection().Where("video_id = ?", request.Filter.VideoID)
 	if request.PageInfo == nil {
-		request.PageInfo = &model.PageInfo{
+		request.PageInfo = &models.PageInfo{
 			Page:     1,
 			PageSize: 10,
 		}
@@ -38,7 +39,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 封装数据
-	resp.PageInfo = model.PageInfo{
+	resp.PageInfo = models.PageInfo{
 		Page:       request.PageInfo.Page,
 		PageSize:   request.PageInfo.PageSize,
 		TotalCount: int32(total),

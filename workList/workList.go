@@ -1,20 +1,14 @@
 package workList
 
 import (
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 type WorkList struct {
 	Conn       *gorm.DB
 	ConnCasbin *gorm.DB
-	Ctx        *gin.Context
-}
-
-func (w *WorkList) Init(ctx *gin.Context) {
-	w.Ctx = ctx
 }
 
 // 单例模式
@@ -23,7 +17,7 @@ func (w *WorkList) GetMysqlConn() (db *gorm.DB) {
 		return w.Conn
 	}
 	var err error
-	w.Conn, err = model.NewMysqlClient(false)
+	w.Conn, err = models.NewMysqlClient(false)
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +30,7 @@ func (w *WorkList) GetMysqlConnCasbin() (db *gorm.DB) {
 		return w.ConnCasbin
 	}
 	var err error
-	w.ConnCasbin, err = model.NewMysqlClient(true)
+	w.ConnCasbin, err = models.NewMysqlClient(true)
 	if err != nil {
 		panic(err)
 	}

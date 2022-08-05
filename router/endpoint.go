@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"net/http"
 
 	_ "video_server/docs" // 必须要导入生成的docs文档包
 	"video_server/pkg/middleware"
@@ -39,41 +38,43 @@ func initAuthRouter(group *gin.RouterGroup) {
 }
 
 func initAuthUserRouter(group *gin.RouterGroup) {
-	// 显示单个用户信息
-	// 删除单个用户信息(注销，此时用户下的分类、视频和评论都需要删除:定时任务),这里只需要打标记即可
-	// 修改单个用户信息
-
-	// 显示所有用户信息(管理员用)
 	user := group.Group("user")
 	{
-		user.POST("detail", getUserInfo)
-		user.POST("delete", deleteUserInfo)
-		user.POST("update", updateUserInfo)
-
-		user.POST("list", getAllUserInfo)
+		// 显示单个用户信息
+		user.GET(":id", userDetail)
+		// 删除单个用户信息(注销，此时用户下的分类、视频和评论都需要删除:定时任务),这里只需要打标记即可
+		user.DELETE(":id", userDelete)
+		// 修改单个用户信息
+		user.PUT(":id", userUpdate)
+		// 显示所有用户信息
+		user.GET("", userList)
 	}
 }
 
 func initAuthClassRouter(group *gin.RouterGroup) {
 	class := group.Group("category")
 	{
-		class.POST("create", createCategory)
-		class.POST("update", updateCategory)
-		class.POST("list", listCategory)
+		class.POST("", categoryInsert)
+		class.PUT(":id", categoryUpdate)
+		class.GET("", categoryList)
 	}
 }
 
 func initAuthVideoRouter(group *gin.RouterGroup) {
 	video := group.Group("video")
 	{
-		// 提交视频信息,通过表单，视频流和视频信息一起上传
-		video.POST("create", createVideo)
+		// 上传视频图片接口
+		video.POST("img", videoUploadImg)
+		// 上传视频流接口
+		video.POST("vid", videoUploadVid)
+		// 提交视频信息接口
+		video.POST("", videoInsert)
 		// 删除就是将video信息的delete_status的字段修改为已删除
-		video.POST("delete", deleteVideo)
+		video.DELETE(":id", videoDelete)
 		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
-		video.POST("detail", videoDetail)
+		video.GET(":id", videoDetail)
 		// 首页 支持获取所有视频，支持按照 分类名，用户名，视频标题 搜索，并支持分页操作
-		video.POST("list", list)
+		video.GET("", videoList)
 	}
 }
 
@@ -93,41 +94,5 @@ func initAuthRoleRouter(group *gin.RouterGroup) {
 		role.POST("delete", deleteRoleAuth)
 		// 支持筛选项为role_name
 		role.POST("list", getAllRoleAuth)
-	}
-}
-
-// 封装返回
-
-type ApiResponse struct {
-	// in: body
-	Code    ErrCode     `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-}
-
-// 封装返回
-func RenderJSON(ctx *gin.Context, code ErrCode, message string, data ...interface{}) {
-	// 如果切片中无数据，那么不封装data，否则封装data
-	var res ApiResponse
-	if len(data) >= 1 {
-		res = ApiResponse{
-			Code:    code,
-			Message: message,
-			Data:    data[0],
-		}
-	} else {
-		res = ApiResponse{
-			Code:    code,
-			Message: message,
-		}
-	}
-	ctx.JSON(http.StatusOK, res)
-}
-
-func Render(ctx *gin.Context, err error, data ...interface{}) {
-	if err != nil {
-		RenderJSON(ctx, http.StatusOK, err.Error(), data...)
-	} else {
-		RenderJSON(ctx, http.StatusOK, "success", data...)
 	}
 }

@@ -2,9 +2,10 @@ package detail
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Action struct {
@@ -22,7 +23,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		err = errors.New("request.ID not empty")
 		return resp, err
 	}
-	data, err := model.NewVideo(a.GetMysqlConn()).FindByVideoID(request.ID, model.DELETENORMAL)
+	data, err := models.NewVideo(a.GetMysqlConn()).FindByVideoID(request.ID, models.DELETENORMAL)
 	if err != nil {
 		return resp, err
 	}
@@ -30,7 +31,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	return a.buildResponse(data), err
 }
 
-func (a *Action) buildResponse(data *model.Video) (resp Response) {
+func (a *Action) buildResponse(data *models.Video) (resp Response) {
 	resp = Response{
 		ID:           data.ID,
 		UserID:       data.UserID,

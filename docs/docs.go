@@ -64,7 +64,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Class"
+                            "$ref": "#/definitions/models.Class"
                         }
                     }
                 ],
@@ -100,7 +100,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Class"
+                            "$ref": "#/definitions/models.Class"
                         }
                     }
                 ],
@@ -159,7 +159,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Comment"
+                            "$ref": "#/definitions/models.Comment"
                         }
                     }
                 ],
@@ -215,7 +215,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -246,7 +246,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -305,7 +305,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CasbinModel"
+                            "$ref": "#/definitions/models.CasbinModel"
                         }
                     }
                 ],
@@ -339,7 +339,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CasbinModel"
+                            "$ref": "#/definitions/models.CasbinModel"
                         }
                     }
                 ],
@@ -448,7 +448,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/models.User"
                         }
                     }
                 ],
@@ -557,7 +557,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Video"
+                            "$ref": "#/definitions/models.Video"
                         }
                     }
                 ],
@@ -618,7 +618,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.CasbinModel": {
+        "models.CasbinModel": {
             "type": "object",
             "properties": {
                 "method": {
@@ -635,7 +635,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Class": {
+        "models.Class": {
             "type": "object",
             "properties": {
                 "createTime": {
@@ -659,7 +659,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Comment": {
+        "models.Comment": {
             "type": "object",
             "properties": {
                 "content": {
@@ -686,7 +686,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.User": {
+        "models.User": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -725,7 +725,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Video": {
+        "models.Video": {
             "type": "object",
             "properties": {
                 "classID": {

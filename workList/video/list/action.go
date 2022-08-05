@@ -3,7 +3,7 @@ package list
 import (
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
 )
 
@@ -25,7 +25,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		return resp, err
 	}
 	// 组装数据，返回
-	resp.PageInfo = model.PageInfo{
+	resp.PageInfo = models.PageInfo{
 		Page:       request.PageInfo.Page,
 		PageSize:   request.PageInfo.PageSize,
 		TotalCount: int32(total),
@@ -50,14 +50,14 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 	return resp, err
 }
 
-func (a *Action) FindByFilter(request *Request) (videos []model.Video, total int64, err error) {
+func (a *Action) FindByFilter(request *Request) (videos []models.Video, total int64, err error) {
 	// 通过用户名查找出用户id
 	// 通过分类名查找出分类id
 	// 通过视频标题找出视频内容
-	tx := model.NewVideo(a.GetMysqlConn()).Connection().Select("*")
+	tx := models.NewVideo(a.GetMysqlConn()).Connection().Select("*")
 	if request.Filter.UserName != "" {
-		var users []*model.User
-		err = model.NewUser(a.GetMysqlConn()).Connection().Where("user_name LIKE ?", request.Filter.UserName).First(&users).Error
+		var users []*models.User
+		err = models.NewUser(a.GetMysqlConn()).Connection().Where("user_name LIKE ?", request.Filter.UserName).First(&users).Error
 		if err != nil {
 			return videos, total, err
 		}
@@ -69,8 +69,8 @@ func (a *Action) FindByFilter(request *Request) (videos []model.Video, total int
 		tx.Where("user_id in ?", userIds)
 	}
 	if request.Filter.CategoryName != "" {
-		var categorys []*model.Category
-		err = model.NewCategory(a.GetMysqlConn()).Connection().Where("title = ?", request.Filter.CategoryName).First(&categorys).Error
+		var categorys []*models.Category
+		err = models.NewCategory(a.GetMysqlConn()).Connection().Where("title = ?", request.Filter.CategoryName).First(&categorys).Error
 		if err != nil {
 			return videos, total, err
 		}
@@ -82,13 +82,13 @@ func (a *Action) FindByFilter(request *Request) (videos []model.Video, total int
 		tx.Where("class_id in ?", categoryIds)
 	}
 	if request.Filter.VideoTitle != "" {
-		tx.Where("title LIKE ?", model.LikeFilter(request.Filter.VideoTitle))
+		tx.Where("title LIKE ?", models.LikeFilter(request.Filter.VideoTitle))
 	}
-	tx.Where("delete_status = ?", model.DELETENORMAL)
+	tx.Where("delete_status = ?", models.DELETENORMAL)
 	tx.Count(&total)
 	// 数据分页
 	if request.PageInfo == nil {
-		request.PageInfo = &model.PageInfo{
+		request.PageInfo = &models.PageInfo{
 			Page:     1,
 			PageSize: 10,
 		}

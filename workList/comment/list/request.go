@@ -1,9 +1,9 @@
 package list
 
-import "video_server/pkg/model"
+import "video_server/pkg/models"
 
 type Request struct {
-	PageInfo *model.PageInfo `json:"pageInfo"`
+	PageInfo *models.PageInfo `json:"pageInfo"`
 	Filter   *Filter
 }
 

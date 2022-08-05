@@ -1,12 +1,12 @@
 package list
 
-import "video_server/pkg/model"
+import "video_server/pkg/models"
 
 // 分类名，用户名，视频标题 搜索，并支持分页操作
 
 type Request struct {
-	PageInfo *model.PageInfo `json:"pageInfo"`
-	Filter   *Filter         `json:"filter"`
+	PageInfo *models.PageInfo `json:"pageInfo"`
+	Filter   *Filter          `json:"filter"`
 }
 
 type Filter struct {

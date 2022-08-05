@@ -2,9 +2,10 @@ package delete
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
-	"video_server/pkg/model"
+	"video_server/pkg/models"
 	"video_server/workList"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Action struct {
@@ -22,7 +23,7 @@ func (a *Action) Deal(request *Request) (resp Response, err error) {
 		err = errors.New("request.ID not empty")
 		return resp, err
 	}
-	_, err = model.NewComment(a.GetMysqlConn()).Delete(request.ID)
+	_, err = models.NewComment(a.GetMysqlConn()).Delete(request.ID)
 	if err != nil {
 		return resp, err
 	}
