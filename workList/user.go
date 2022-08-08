@@ -55,11 +55,12 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	if params.UserName != user.UserName || utils.NewMd5(params.Password, models.SECRET) != user.Password {
 		return nil, errors.New("userName or password err")
 	}
-	tokenStr, err := middleware.CreateToken(user.UserName, user.Role)
+	tokenStr, err := middleware.CreateToken(user)
 	if err != nil {
 		return nil, err
 	}
-	return &forms.LoginResponse{TokenStr: tokenStr}, err
+	response = &forms.LoginResponse{TokenStr: tokenStr, User: user}
+	return response, err
 }
 
 func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *forms.ListResponse, err error) {

@@ -1,6 +1,9 @@
 package forms
 
-import "video_server/pkg/utils"
+import (
+	"video_server/pkg/models"
+	"video_server/pkg/utils"
+)
 
 type RegisterForm struct {
 	UserName  string `json:"userName" binding:"required"`
@@ -20,7 +23,8 @@ type LoginForm struct {
 }
 
 type LoginResponse struct {
-	TokenStr string `json:"tokenStr"`
+	TokenStr string       `json:"tokenStr"`
+	User     *models.User `json:"user"`
 }
 
 type ListForm struct {

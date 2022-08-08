@@ -6,8 +6,8 @@ import (
 
 type Video struct {
 	gorm.Model
-	UserID       uint   `gorm:"comment: 用户 ID"`
-	CategoryID   uint   `gorm:"comment: 视频分类 ID"`
+	UserId       uint   `gorm:"comment: 用户 ID"`
+	CategoryId   uint   `gorm:"comment: 视频分类 ID"`
 	Title        string `gorm:"comment: 视频标题" json:"title" form:"title"`
 	Introduce    string `gorm:"comment: 视频介绍" json:"introduce" form:"introduce"`
 	ImageUrl     string `gorm:"comment: 视频封面oss地址" json:"image_url" form:"image_url"`
@@ -33,12 +33,12 @@ func (t *Video) Updates(db *gorm.DB, value interface{}, conditions interface{}, 
 	return db.Model(&t).Where(conditions, args...).Updates(value).Error
 }
 
-func (t *Video) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (category *Category, err error) {
-	err = db.Model(&t).Where(query, args...).First(&category).Error
+func (t *Video) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (video *Video, err error) {
+	err = db.Model(&t).Where(query, args...).First(&video).Error
 	if err != nil {
 		return nil, err
 	}
-	return category, nil
+	return video, nil
 }
 
 func (t *Video) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (categories []*Category, err error) {
@@ -49,13 +49,13 @@ func (t *Video) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (c
 	return categories, nil
 }
 
-func (t *Video) PageListOrder(db *gorm.DB, order string, params *ListPageInput, conditions interface{}, args ...interface{}) (categories []*Category, total int64, err error) {
+func (t *Video) PageListOrder(db *gorm.DB, order string, params *ListPageInput, conditions interface{}, args ...interface{}) (videos []*Video, total int64, err error) {
 	if order == "" {
 		order = "created_at DESC"
 	}
 	offset := (params.Page - 1) * params.Size
 
-	err = db.Model(&t).Where(conditions, args...).Offset(offset).Limit(params.Size).Order(order).Find(&categories).Error
+	err = db.Model(&t).Where(conditions, args...).Offset(offset).Limit(params.Size).Order(order).Find(&videos).Error
 	if err != nil {
 		return nil, 0, err
 	}
@@ -64,5 +64,5 @@ func (t *Video) PageListOrder(db *gorm.DB, order string, params *ListPageInput, 
 	if err != nil {
 		return nil, 0, err
 	}
-	return categories, total, nil
+	return videos, total, nil
 }

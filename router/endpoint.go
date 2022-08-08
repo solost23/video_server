@@ -31,7 +31,7 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 
 func initAuthRouter(group *gin.RouterGroup) {
 	initAuthUserRouter(group)
-	initAuthClassRouter(group)
+	initAuthCategoryRouter(group)
 	initAuthVideoRouter(group)
 	initAuthCommentRouter(group)
 	initAuthRoleRouter(group)
@@ -51,7 +51,7 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 	}
 }
 
-func initAuthClassRouter(group *gin.RouterGroup) {
+func initAuthCategoryRouter(group *gin.RouterGroup) {
 	class := group.Group("category")
 	{
 		class.POST("", categoryInsert)
@@ -81,9 +81,9 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 func initAuthCommentRouter(group *gin.RouterGroup) {
 	comment := group.Group("comment")
 	{
-		comment.POST("create", createComment)
-		comment.POST("delete", deleteComment)
-		comment.POST("list", getCommentByVideoID)
+		comment.POST("", commentCreate)
+		comment.DELETE(":id", commentDelete)
+		comment.GET("", commentList)
 	}
 }
 

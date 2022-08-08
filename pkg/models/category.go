@@ -5,7 +5,7 @@ import (
 )
 
 type Category struct {
-	gorm.DB
+	gorm.Model
 	UserID    uint   `gorm:"comment: 用户 ID"`
 	Title     string `gorm:"comment: 分类标题" json:"title"`
 	Introduce string `gorm:"comment: 分类介绍" json:"introduce"`

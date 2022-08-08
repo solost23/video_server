@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 	"video_server/config"
+	"video_server/pkg/models"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,7 @@ func JWTAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("claims", claims)
+		c.Set("user", claims.User)
 		c.Next()
 		return
 	}
@@ -42,17 +43,15 @@ func JWTAuth() gin.HandlerFunc {
 var JWTKEY = config.JwtKey
 
 type Claims struct {
-	UserName string
-	Role     string
+	User *models.User
 	jwt.StandardClaims
 }
 
-func CreateToken(userName, role string) (string, error) {
+func CreateToken(user *models.User) (string, error) {
 	// 后续修改为配置
 	expirationTime := time.Now().Add(30 * time.Minute)
 	claims := &Claims{
-		UserName: userName,
-		Role:     role,
+		User: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},

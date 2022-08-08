@@ -1,11 +1,12 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
+	"video_server/forms"
+	"video_server/pkg/response"
+	"video_server/pkg/utils"
+	"video_server/workList"
 
-	create_comment "video_server/workList/comment/create"
-	delete_comment "video_server/workList/comment/delete"
-	list_comment "video_server/workList/comment/list"
+	"github.com/gin-gonic/gin"
 )
 
 // @Summary create comment
@@ -17,18 +18,17 @@ import (
 // @Produce json
 // @Success 200
 // @Router /comment/create [post]
-func createComment(c *gin.Context) {
-	request := &create_comment.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func commentCreate(c *gin.Context) {
+	params := &forms.CommentCreateForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := create_comment.NewActionWithCtx(c).Deal(request)
-	if err != nil {
-		Render(c, err)
+	if err := (&workList.CommentService{}).CommentInsert(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary delete comment
@@ -39,18 +39,17 @@ func createComment(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /comment/delete [post]
-func deleteComment(c *gin.Context) {
-	request := &delete_comment.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func commentDelete(c *gin.Context) {
+	UIdForm := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := delete_comment.NewActionWithCtx(c).Deal(request)
-	if err != nil {
-		Render(c, err)
+	if err := (&workList.CommentService{}).CommentDelete(c, UIdForm.Id); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary get_comment_by_video_id
@@ -61,16 +60,23 @@ func deleteComment(c *gin.Context) {
 // @Produce json
 // @Success 200
 // @Router /comment/list [post]
-func getCommentByVideoID(c *gin.Context) {
-	request := &list_comment.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+func commentList(c *gin.Context) {
+	params := &forms.CommentListForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := list_comment.NewActionWithCtx(c).Deal(request)
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	if params.Size == 0 {
+		params.Size = 10
+	}
+
+	result, err := (&workList.CommentService{}).CommentList(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.Success(c, result)
 }

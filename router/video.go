@@ -1,10 +1,10 @@
 package router
 
 import (
-	create2 "video_server/workList/video/create"
-	delete3 "video_server/workList/video/delete"
-	detail2 "video_server/workList/video/detail"
-	list3 "video_server/workList/video/list"
+	"video_server/forms"
+	"video_server/pkg/response"
+	"video_server/pkg/utils"
+	"video_server/workList"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,18 +18,48 @@ import (
 // @Produce json
 // @Success 200
 // @Router /video/create [post]
-func createVideo(c *gin.Context) {
-	request := &create2.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
-		return
-	}
-	data, err := create2.NewActionWithCtx(c).Deal(request)
+
+func videoUploadImg(c *gin.Context) {
+	file, err := c.FormFile("file")
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+
+	result, err := (&workList.VideoService{}).VideoUploadImg(c, file)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	response.Success(c, result)
+}
+
+func videoUploadVid(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	result, err := (&workList.VideoService{}).VideoUploadVid(c, file)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	response.Success(c, result)
+}
+
+func videoInsert(c *gin.Context) {
+	params := &forms.VideoInsertForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	if err := (&workList.VideoService{}).VideoInsert(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary delete video
@@ -41,17 +71,16 @@ func createVideo(c *gin.Context) {
 // @Success 200
 // @Router /video/delete [post]
 func videoDelete(c *gin.Context) {
-	request := &delete3.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	UIdForm := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := delete3.NewActionWithCtx(c).Deal(request)
-	if err != nil {
-		Render(c, err)
+	if err := (&workList.VideoService{}).VideoDelete(c, UIdForm.Id); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.MessageSuccess(c, "成功", nil)
 }
 
 // @Summary video detail
@@ -63,17 +92,17 @@ func videoDelete(c *gin.Context) {
 // @Success 200
 // @Router /video/detail [get]
 func videoDetail(c *gin.Context) {
-	request := &detail2.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	UIdForm := &utils.UIdForm{}
+	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := detail2.NewActionWithCtx(c).Deal(request)
+	result, err := (&workList.VideoService{}).VideoDetail(c, UIdForm.Id)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.Success(c, result)
 }
 
 // @Summary video list
@@ -85,15 +114,15 @@ func videoDetail(c *gin.Context) {
 // @Success 200
 // @Router /video/list [post]
 func videoList(c *gin.Context) {
-	request := &list3.Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		Render(c, err)
+	params := &forms.VideoListForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
 		return
 	}
-	data, err := list3.NewActionWithCtx(c).Deal(request)
+	result, err := (&workList.VideoService{}).VideoList(c, params)
 	if err != nil {
-		Render(c, err)
+		response.Error(c, 2001, err)
 		return
 	}
-	Render(c, err, data)
+	response.Success(c, result)
 }
