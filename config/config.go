@@ -1,15 +1,15 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
 var (
-	Version    = viper.GetString("version")
-	Video_path = viper.GetString("video.video_path")
-	JwtKey     = viper.GetString("jwt.key")
-	Md5        = viper.GetString("md5.secret")
+	Version = viper.GetString("version")
+	JwtKey  = viper.GetString("jwt.key")
+	Md5     = viper.GetString("md5.secret")
 )
 
 type Project struct {
@@ -55,6 +55,22 @@ type Scheduler struct {
 func NewScheduler() *Scheduler {
 	return &Scheduler{
 		CronTime: viper.GetString("scheduler.delete_video.cron_time"),
+	}
+}
+
+type MinioConfig struct {
+	EndPoint        string
+	AccessKeyID     string
+	SecretAccessKey string
+	UserSSL         bool
+}
+
+func NewMinio() *MinioConfig {
+	return &MinioConfig{
+		EndPoint:        viper.GetString("minio.end_point"),
+		AccessKeyID:     viper.GetString("minio.access_key_id"),
+		SecretAccessKey: viper.GetString("minio.secret_access_key"),
+		UserSSL:         viper.GetBool("minio.user_ssl"),
 	}
 }
 

@@ -25,6 +25,7 @@ func InitRouter() *gin.Engine {
 
 func initNoAuthRouter(group *gin.RouterGroup) {
 	group.POST("register", register)
+	group.POST("register/avatar", uploadAvatar)
 	group.POST("login", login)
 	group.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

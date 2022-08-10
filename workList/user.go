@@ -3,6 +3,7 @@ package workList
 import (
 	"errors"
 	"math"
+	"mime/multipart"
 	"strings"
 	"video_server/forms"
 	"video_server/pkg/middleware"
@@ -195,4 +196,14 @@ func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecor
 		UpdateTime:   user.UpdatedAt.Format(models.TimeFormat),
 	}
 	return response, nil
+}
+
+func (w *UserService) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+	user := &models.User{}
+	result, err = UploadImg(user, "avatar/", file)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
 }

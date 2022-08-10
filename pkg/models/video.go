@@ -41,12 +41,12 @@ func (t *Video) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (v
 	return video, nil
 }
 
-func (t *Video) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (categories []*Category, err error) {
-	err = db.Model(&t).Where(query, args...).Find(&categories).Error
+func (t *Video) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (videos []*Video, err error) {
+	err = db.Model(&t).Where(query, args...).Find(&videos).Error
 	if err != nil {
 		return nil, err
 	}
-	return categories, nil
+	return videos, nil
 }
 
 func (t *Video) PageListOrder(db *gorm.DB, order string, params *ListPageInput, conditions interface{}, args ...interface{}) (videos []*Video, total int64, err error) {

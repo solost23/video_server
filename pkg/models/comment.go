@@ -45,12 +45,12 @@ func (t *Comment) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) 
 	return comment, nil
 }
 
-func (t *Comment) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (categories []*Category, err error) {
-	err = db.Model(&t).Where(query, args...).Find(&categories).Error
+func (t *Comment) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (comments []*Comment, err error) {
+	err = db.Model(&t).Where(query, args...).Find(&comments).Error
 	if err != nil {
 		return nil, err
 	}
-	return categories, nil
+	return comments, nil
 }
 
 func (t *Comment) PageListOrder(db *gorm.DB, order string, params *ListPageInput, conditions interface{}, args ...interface{}) (comments []*Comment, total int64, err error) {

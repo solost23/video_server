@@ -3,6 +3,7 @@ package workList
 import (
 	"errors"
 	"math"
+	"mime/multipart"
 	"strings"
 	"video_server/forms"
 	"video_server/pkg/models"
@@ -211,4 +212,26 @@ func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm
 		return err
 	}
 	return nil
+}
+
+func (w *VideoService) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+	user := utils.GetUser(c)
+
+	result, err = UploadImg(user, "img/", file)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
+}
+
+func (w *VideoService) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+	user := utils.GetUser(c)
+
+	result, err = UploadVid(user, "vid/", file)
+	if err != nil {
+		return "", err
+	}
+
+	return result, nil
 }

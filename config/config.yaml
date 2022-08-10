@@ -16,8 +16,11 @@ connections:
 scheduler:
   delete_video:
     cron_time: 0 0 3 * * ?
-video:
-  video_path: video
+minio:
+  end_point: 127.0.0.1
+  access_key_id: minioadmin
+  secret_access_key: minioadmin
+  user_ssl: false
 jwt:
   key: my_secret_key
 md5:

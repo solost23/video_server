@@ -41,9 +41,9 @@ func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCrea
 		// 不存在
 		commentData = &models.Comment{
 			UserId:   user.ID,
-			VideoID:  params.VideoID,
+			VideoId:  params.VideoID,
 			Content:  params.Content,
-			ParentID: 0,
+			ParentId: 0,
 			ISThumb:  params.ISThumb,
 		}
 		err = commentData.Insert(tx)
@@ -55,9 +55,9 @@ func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCrea
 		// 存在
 		commentData = &models.Comment{
 			UserId:   user.ID,
-			VideoID:  params.VideoID,
+			VideoId:  params.VideoID,
 			Content:  params.Content,
-			ParentID: comment.ID,
+			ParentId: comment.ID,
 			ISThumb:  params.ISThumb,
 		}
 		err = commentData.Insert(tx)
@@ -123,7 +123,7 @@ func (w *CommentService) CommentList(c *gin.Context, params *forms.CommentListFo
 		records = append(records, forms.CommentListRecord{
 			Id:          comment.ID,
 			Content:     comment.Content,
-			ParentId:    comment.ParentID,
+			ParentId:    comment.ParentId,
 			ISThumb:     comment.ISThumb,
 			CreatedAt:   comment.CreatedAt.Format(models.TimeFormat),
 			UpdatedTime: comment.UpdatedAt.Format(models.TimeFormat),

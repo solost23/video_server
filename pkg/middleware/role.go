@@ -10,12 +10,12 @@ import (
 
 func AuthCheckRole() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, ok := c.Get("claims")
+		claims, ok := c.Get("user")
 		if !ok {
 			c.Abort()
 			return
 		}
-		role := claims.(*Claims).Role
+		role := claims.(*Claims).User.Role
 		// 写入配置文件
 		casbinDsn := "root:123@tcp(localhost:3306)/"
 		a := xormadapter.NewAdapter("mysql", casbinDsn)

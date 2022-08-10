@@ -20,11 +20,16 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	dbConn.AutoMigrate(&User{})
-	dbConn.AutoMigrate(&Comment{})
-	dbConn.AutoMigrate(&Video{})
-	dbConn.AutoMigrate(&Category{})
-	DBCasbin.AutoMigrate(&CasbinModel{})
+	dbConn.AutoMigrate(
+		Category{},
+		Comment{},
+		User{},
+		UserComment{},
+		Video{},
+	)
+	DBCasbin.AutoMigrate(
+		CasbinModel{},
+	)
 }
 
 const (
@@ -42,7 +47,6 @@ const (
 )
 
 var (
-	FilePath   = config.Video_path
 	SECRET     = config.Md5
 	TimeFormat = "2006-01-02 15:04:05"
 )

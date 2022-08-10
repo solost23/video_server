@@ -24,6 +24,21 @@ func register(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
+func uploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	result, err := (&workList.UserService{}).UploadAvatar(c, file)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	response.Success(c, result)
+}
+
 func login(c *gin.Context) {
 	params := &forms.LoginForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
