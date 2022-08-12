@@ -2,6 +2,7 @@ package workList
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"mime/multipart"
 	"net/url"
@@ -11,8 +12,6 @@ import (
 	"video_server/config"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
-
-	"github.com/minio/minio-go"
 
 	"github.com/solost23/tools/minio_storage"
 )
@@ -43,14 +42,14 @@ func uploadImage(user *models.User, folderName string, file *multipart.FileHeade
 			strconv.Itoa(int(user.ID))+
 			utils.GetMd5Hash(string(fileByte))+
 			postFileName) + path.Ext(postFileName)
-	url, err := upload(folderName, fileName, fileHandle, uploadType)
+	url, err := upload(folderName, fileName, fileHandle, uploadType, file.Size)
 	if err != nil {
 		return "", err
 	}
 	return url, nil
 }
 
-func upload(folderName string, fileName string, fileHandle multipart.File, uploadType string) (result string, err error) {
+func upload(folderName string, fileName string, fileHandle multipart.File, uploadType string, fileSize int64) (result string, err error) {
 	minioConfig := config.NewMinio()
 	client, err := minio_storage.NewMinio(&minio_storage.Config{
 		EndPoint:        minioConfig.EndPoint,
@@ -65,12 +64,7 @@ func upload(folderName string, fileName string, fileHandle multipart.File, uploa
 	if err = minio_storage.CreateBucket(ctx, client, folderName); err != nil {
 		return "", err
 	}
-	//err = minio_storage.FileUpload(ctx, client, "bucket1", fileName, folderName, "Application/"+uploadType)
-	//if err != nil {
-	//	return "", err
-	//}
-	_, err = client.PutObjectWithContext(ctx, folderName, fileName, fileHandle, -1, minio.PutObjectOptions{ContentType: "Application/" + uploadType})
-	if err != nil {
+	if err = minio_storage.StreamUpload(ctx, client, folderName, fileName, fileHandle, fileSize, fmt.Sprintf("Application/%s", uploadType)); err != nil {
 		return "", err
 	}
 	requestParams := make(url.Values)
