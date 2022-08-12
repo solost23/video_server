@@ -15,7 +15,7 @@ func register(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	_, err := (&workList.UserService{}).Register(c, params)
+	err := (&workList.UserService{}).Register(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

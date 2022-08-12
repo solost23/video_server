@@ -2,7 +2,6 @@ package server
 
 import (
 	"fmt"
-	"github.com/spf13/viper"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"video_server/config"
 	"video_server/router"
 	"video_server/scheduler"
+
+	"github.com/spf13/viper"
 )
 
 func Run() {
@@ -40,7 +41,6 @@ func Run() {
 		switch si {
 		case syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT:
 			server.Close()
-			time.Sleep(3 * time.Second)
 			return
 		case syscall.SIGHUP:
 		default:

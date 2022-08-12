@@ -16,16 +16,17 @@ type CategoryService struct {
 
 func (w *CategoryService) Insert(c *gin.Context, params *forms.CategoryInsertForm) (err error) {
 	db := w.GetMysqlConn()
+	user := utils.GetUser(c)
 	// 查询用户是否存在，若存在，则新建分类
 	query := []string{"id = ?"}
-	args := []interface{}{params.UserId}
+	args := []interface{}{user.ID}
 	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil {
 		return err
 	}
 	// 增加分类
 	err = (&models.Category{
-		UserID:    params.UserId,
+		UserID:    user.ID,
 		Title:     params.Title,
 		Introduce: params.Introduce,
 	}).Insert(db)

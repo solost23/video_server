@@ -13,7 +13,7 @@ type ErrCode int
 
 func InitRouter() *gin.Engine {
 	router := gin.New()
-	router.Use(middleware.Logger(), gin.Recovery())
+	router.Use(gin.Logger(), gin.Recovery())
 	group := router.Group("")
 	initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里

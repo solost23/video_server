@@ -69,13 +69,12 @@ func upload(folderName string, fileName string, fileHandle multipart.File, uploa
 	//if err != nil {
 	//	return "", err
 	//}
-	_, err = client.PutObjectWithContext(ctx, folderName, fileName, fileHandle, 100, minio.PutObjectOptions{ContentType: "Application/" + uploadType})
+	_, err = client.PutObjectWithContext(ctx, folderName, fileName, fileHandle, -1, minio.PutObjectOptions{ContentType: "Application/" + uploadType})
 	if err != nil {
 		return "", err
 	}
-	// 上传文件流数据
 	requestParams := make(url.Values)
-	fileUrl, err := minio_storage.GetFileUrl(ctx, client, folderName, fileName, 300*time.Hour, requestParams)
+	fileUrl, err := minio_storage.GetFileUrl(ctx, client, folderName, fileName, 24*time.Hour, requestParams)
 	if err != nil {
 		return "", err
 	}

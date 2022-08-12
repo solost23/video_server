@@ -25,7 +25,6 @@ func videoUploadImg(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-
 	result, err := (&workList.VideoService{}).VideoUploadImg(c, file)
 	if err != nil {
 		response.Error(c, 2001, err)
@@ -118,6 +117,12 @@ func videoList(c *gin.Context) {
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
 		response.Error(c, 2001, err)
 		return
+	}
+	if params.Page == 0 {
+		params.Page = 1
+	}
+	if params.Size == 0 {
+		params.Size = 10
 	}
 	result, err := (&workList.VideoService{}).VideoList(c, params)
 	if err != nil {

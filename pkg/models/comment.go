@@ -75,7 +75,7 @@ func (t *Comment) WhereCountGroup(db *gorm.DB, distinct string, conditions inter
 	if distinct == "" {
 		distinct = "id"
 	}
-	err = db.Select(fmt.Sprintf("video_id, COUNT(DISTINCT(%s))", distinct)).
+	err = db.Select(fmt.Sprintf("video_id, COUNT(DISTINCT(%s)) AS comment_count", distinct)).
 		Where(conditions, args...).
 		Group("video_id").Error
 	if err != nil {

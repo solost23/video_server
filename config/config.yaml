@@ -17,7 +17,7 @@ scheduler:
   delete_video:
     cron_time: 0 0 3 * * ?
 minio:
-  end_point: 127.0.0.1
+  end_point: 127.0.0.1:9000
   access_key_id: minioadmin
   secret_access_key: minioadmin
   user_ssl: false

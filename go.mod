@@ -22,6 +22,8 @@ require (
 require github.com/go-playground/validator/v10 v10.4.1
 
 require (
+	github.com/go-playground/locales v0.13.0
+	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-xorm/xorm v0.7.9 // indirect
 	github.com/lib/pq v1.10.4 // indirect
 	github.com/minio/minio-go v6.0.14+incompatible

@@ -5,13 +5,12 @@ import (
 )
 
 type CategoryInsertForm struct {
-	UserId    uint   `json:"userId" binding:"required"`
 	Title     string `json:"title" binging:"required,max=20"`
 	Introduce string `json:"introduce"`
 }
 
 type CategoryListForm struct {
-	*utils.PageForm
+	utils.PageForm
 	UserID    uint   `json:"userId"`
 	Title     string `json:"title"`
 	Introduce string `json:"introduce"`

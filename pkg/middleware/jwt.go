@@ -14,9 +14,9 @@ import (
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从Header中获取
-		tknStr := c.Request.Header.Get("Auth")
+		tknStr := c.Request.Header.Get("token")
 		if tknStr == "" {
-			c.JSON(http.StatusBadRequest, "Auth err")
+			c.JSON(http.StatusBadRequest, "token err")
 			c.Abort()
 			return
 		}

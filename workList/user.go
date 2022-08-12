@@ -18,16 +18,16 @@ type UserService struct {
 	WorkList
 }
 
-func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (response *forms.RegisterResponse, err error) {
+func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err error) {
 	// base logic: 校验当前用户是否存在，若不存在则新建
 	query := []string{"user_name = ?"}
 	args := []interface{}{params.UserName}
 	_, err = (&models.User{}).WhereOne(w.GetMysqlConn(), strings.Join(query, " AND "), args...)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+		return err
 	}
 	if err == nil {
-		return nil, errors.New("用户已存在")
+		return errors.New("用户已存在")
 	}
 	err = (&models.User{
 		UserName:     params.UserName,
@@ -40,9 +40,9 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (resp
 		CommentCount: 0,
 	}).Insert(w.GetMysqlConn())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return response, err
+	return nil
 }
 
 func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
@@ -200,7 +200,7 @@ func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecor
 
 func (w *UserService) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := &models.User{}
-	result, err = UploadImg(user, "avatar/", file)
+	result, err = UploadImg(user, "avatar", file)
 	if err != nil {
 		return "", err
 	}

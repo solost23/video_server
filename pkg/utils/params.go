@@ -3,17 +3,24 @@ package utils
 import (
 	"errors"
 
+	ut "github.com/go-playground/universal-translator"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
+var Trans ut.Translator
+
 func DefaultGetValidParams(c *gin.Context, params interface{}) error {
+	if err := InitTrans("zh"); err != nil {
+		return err
+	}
 	if err := c.ShouldBind(params); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
 			return err
 		}
-		return errors.New(removeTopStruct(errs.Translate(nil)))
+		return errors.New(removeTopStruct(errs.Translate(Trans)))
 	}
 	return nil
 }
@@ -26,12 +33,15 @@ func removeTopStruct(fields map[string]string) (result string) {
 }
 
 func GetValidUriParams(c *gin.Context, params interface{}) error {
+	if err := InitTrans("zh"); err != nil {
+		return err
+	}
 	if err := c.ShouldBindUri(params); err != nil {
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
 			return err
 		}
-		return errors.New(removeTopStruct(errs.Translate(nil)))
+		return errors.New(removeTopStruct(errs.Translate(Trans)))
 	}
 	return nil
 }

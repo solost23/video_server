@@ -9,7 +9,7 @@ type RegisterForm struct {
 	UserName  string `json:"userName" binding:"required"`
 	Password  string `json:"password" binding:"required,min=8"`
 	Nickname  string `json:"nickname"`
-	Role      string `json:"role" binding:"required,oneof=ADMIN,USER"`
+	Role      string `json:"role" binding:"required,oneof=ADMIN USER"`
 	Avatar    string `json:"avatar"`
 	Introduce string `json:"introduce"`
 }
@@ -28,10 +28,10 @@ type LoginResponse struct {
 }
 
 type ListForm struct {
-	*utils.PageForm
-	ID       uint   `json:"id"`
-	UserName string `json:"userName"`
-	Role     string `json:"role"`
+	utils.PageForm
+	ID       uint   `form:"id"`
+	UserName string `form:"userName"`
+	Role     string `form:"role"`
 }
 
 type ListResponse struct {

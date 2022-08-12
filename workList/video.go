@@ -144,6 +144,13 @@ func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.Vid
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
+	var thumbCount, commentCount int64
+	if len(thumbs) > 0 {
+		thumbCount = int64(thumbs[0].CommentCount)
+	}
+	if len(comments) > 0 {
+		commentCount = int64(comments[0].CommentCount)
+	}
 	// 封装数据返回
 	response = &forms.VideoListRecord{
 		ID:           video.ID,
@@ -153,8 +160,8 @@ func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.Vid
 		Introduce:    video.Introduce,
 		ImageUrl:     video.ImageUrl,
 		VideoUrl:     video.VideoUrl,
-		ThumbCount:   int64(thumbs[0].CommentCount),
-		CommentCount: int64(comments[0].CommentCount),
+		ThumbCount:   thumbCount,
+		CommentCount: commentCount,
 		CreatedAt:    video.CreatedAt.Format(models.TimeFormat),
 		UpdatedAt:    video.UpdatedAt.Format(models.TimeFormat),
 	}
@@ -217,7 +224,7 @@ func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm
 func (w *VideoService) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadImg(user, "img/", file)
+	result, err = UploadImg(user, "img", file)
 	if err != nil {
 		return "", err
 	}
@@ -228,7 +235,7 @@ func (w *VideoService) VideoUploadImg(c *gin.Context, file *multipart.FileHeader
 func (w *VideoService) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadVid(user, "vid/", file)
+	result, err = UploadVid(user, "vid", file)
 	if err != nil {
 		return "", err
 	}
