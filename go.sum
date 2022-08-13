@@ -465,8 +465,8 @@ github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/solost23/go_interface v1.0.9 h1:bsDxXB7jo9U4YluAnVuSh1tvPqVpRplKpTk11J1Y1uw=
 github.com/solost23/go_interface v1.0.9/go.mod h1:gfsHxHc2SVL4r5r6JAQz+xUgKDhQa1rdVoLCC1y/bRU=
-github.com/solost23/tools v1.0.7 h1:bZgF0qNCO+tnWkNTRaJRYnuujsX5pXk/JOw1YnojKqE=
-github.com/solost23/tools v1.0.7/go.mod h1:vL9XUNcMKsmyouN0YOSCDcucx7BZxZhX0my4WJXfcDQ=
+github.com/solost23/tools v1.0.8 h1:qZYo2rhyb8r3BJK9iuFzbGRVBYk31AwxV2s08BkYRN4=
+github.com/solost23/tools v1.0.8/go.mod h1:vL9XUNcMKsmyouN0YOSCDcucx7BZxZhX0my4WJXfcDQ=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spf13/afero v1.3.3/go.mod h1:5KUK8ByomD5Ti5Artl0RtHeI5pTF7MIDuXL3yY520V4=
 github.com/spf13/afero v1.6.0 h1:xoax2sJ2DT8S8xA2paPFjDCScCNeWsg75VG0DLRreiY=
