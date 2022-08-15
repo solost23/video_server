@@ -21,7 +21,9 @@ type VideoListForm struct {
 type VideoListRecord struct {
 	ID           uint   `json:"id"`
 	UserID       uint   `json:"userId"`
+	UserName     string `json:"userName"`
 	CategoryID   uint   `json:"categoryId"`
+	CategoryName string `json:"categoryName"`
 	Title        string `json:"title"`
 	Introduce    string `json:"introduce"`
 	ImageUrl     string `json:"imageUrl"`

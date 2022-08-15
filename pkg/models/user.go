@@ -41,12 +41,12 @@ func (t *User) WhereOne(db *gorm.DB, query interface{}, args ...interface{}) (us
 	return user, nil
 }
 
-func (t *User) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (categories []*User, err error) {
-	err = db.Model(&t).Where(query, args...).Find(&categories).Error
+func (t *User) WhereAll(db *gorm.DB, query interface{}, args ...interface{}) (users []*User, err error) {
+	err = db.Model(&t).Where(query, args...).Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
-	return categories, nil
+	return users, nil
 }
 
 func (t *User) PageListOrder(db *gorm.DB, order string, params *ListPageInput, conditions interface{}, args ...interface{}) (users []*User, total int64, err error) {

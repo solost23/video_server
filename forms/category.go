@@ -22,6 +22,7 @@ type CategoryListResponse struct {
 }
 
 type CategoryListRecord struct {
+	Id        uint   `json:"id"`
 	Title     string `json:"title"`
 	Introduce string `json:"introduce"`
 }

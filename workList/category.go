@@ -63,6 +63,7 @@ func (w *CategoryService) List(c *gin.Context, params *forms.CategoryListForm) (
 	records := make([]forms.CategoryListRecord, 0, len(categories))
 	for _, category := range categories {
 		records = append(records, forms.CategoryListRecord{
+			Id:        category.ID,
 			Title:     category.Title,
 			Introduce: category.Introduce,
 		})

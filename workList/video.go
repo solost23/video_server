@@ -69,8 +69,36 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 		return nil, err
 	}
 	videoIds := make([]uint, 0, len(videos))
+	categoryIds = make([]uint, 0, len(videos))
+	userIds = make([]uint, 0, len(videos))
 	for _, video := range videos {
 		videoIds = append(videoIds, video.ID)
+		categoryIds = append(categoryIds, video.CategoryId)
+		userIds = append(userIds, video.UserId)
+	}
+	// 求出所有所属人和所属类别
+	userNameMaps := make(map[uint]string)
+	categoryNameMaps := make(map[uint]string)
+	query = []string{"id IN ?"}
+	args = []interface{}{userIds}
+	users, err := (&models.User{}).WhereAll(db, strings.Join(query, " AND "), args...)
+	if err != nil {
+		return nil, err
+	}
+	query = []string{"id IN ?"}
+	args = []interface{}{categoryIds}
+	categories, err := (&models.Category{}).WhereAll(db, strings.Join(query, " AND "), args...)
+	if err != nil {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	for _, user := range users {
+		userNameMaps[user.ID] = user.UserName
+	}
+	for _, category := range categories {
+		categoryNameMaps[category.ID] = category.Title
 	}
 	// 求出视频点赞数和评论数
 	thumbCountMap := make(map[uint]uint)
@@ -99,7 +127,9 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 		records = append(records, forms.VideoListRecord{
 			ID:           video.ID,
 			UserID:       video.UserId,
+			UserName:     userNameMaps[video.UserId],
 			CategoryID:   video.CategoryId,
+			CategoryName: categoryNameMaps[video.CategoryId],
 			Title:        video.Title,
 			Introduce:    video.Introduce,
 			ImageUrl:     video.ImageUrl,
