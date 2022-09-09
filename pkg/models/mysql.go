@@ -23,7 +23,7 @@ func NewMysqlClient(flagDb bool) (db *gorm.DB, err error) {
 			IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound错误
 			Colorful:                  true,        // 禁用彩色打印
 		})
-	mysqlClient := config.NewConnections()
+	mysqlClient := config.NewMysqlConfig()
 	port, err := strconv.Atoi(mysqlClient.Port)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,9 @@
 package middleware
 
 import (
-	"net/http"
+	"errors"
+	"video_server/pkg/models"
+	"video_server/pkg/response"
 
 	"github.com/casbin/casbin"
 	xormadapter "github.com/casbin/xorm-adapter"
@@ -10,25 +12,23 @@ import (
 
 func AuthCheckRole() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, ok := c.Get("user")
+		user, ok := c.Get("user")
 		if !ok {
-			c.Abort()
+			response.Error(c, 2001, errors.New("获取user失败"))
 			return
 		}
-		role := claims.(*Claims).User.Role
+		role := user.(*models.User).Role
 		// 写入配置文件
 		casbinDsn := "root:123@tcp(localhost:3306)/"
 		a := xormadapter.NewAdapter("mysql", casbinDsn)
 		e := casbin.NewEnforcer("../config/rbac_model.conf", a)
 		if err := e.LoadPolicy(); err != nil {
-			c.JSON(http.StatusInternalServerError, err.Error())
-			c.Abort()
+			response.Error(c, 2001, err)
 			return
 		}
 		ok = e.Enforce(role, c.Request.URL.Path, c.Request.Method)
 		if !ok {
-			c.JSON(http.StatusInternalServerError, "AuthCheckRole Failed")
-			c.Abort()
+			response.Error(c, 2001, errors.New("权限认证错误"))
 			return
 		}
 		c.Next()

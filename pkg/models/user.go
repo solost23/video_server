@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -15,6 +17,7 @@ type User struct {
 	FansCount    int64  `gorm:"comment: 用户粉丝数;default:0"`
 	CommentCount int64  `gorm:"comment: 用户评论数;default:0"`
 	// DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
+	LastLoginTime time.Time `gorm:"comment: 用户上次登录时间"`
 }
 
 func (u *User) TableName() string {

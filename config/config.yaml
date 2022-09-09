@@ -13,6 +13,12 @@ connections:
       db: video_server
       casbin_db: casbin
       charset: utf8mb4
+  redis:
+    video_server:
+      host: localhost
+      port: 6379
+      user: ""
+      password: ""
 scheduler:
   delete_video:
     cron_time: 0 0 3 * * ?
@@ -23,6 +29,7 @@ minio:
   user_ssl: false
 jwt:
   key: my_secret_key
+  duration: 2678400
 md5:
   secret: ty
 log:

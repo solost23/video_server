@@ -1,14 +1,22 @@
 package workList
 
 import (
+	"encoding/json"
 	"errors"
 	"math"
 	"mime/multipart"
+	"strconv"
 	"strings"
+	"time"
+	"video_server/config"
 	"video_server/forms"
+	"video_server/pkg/cache"
+	"video_server/pkg/constants"
 	"video_server/pkg/middleware"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
+
+	"github.com/dgrijalva/jwt-go"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -46,21 +54,63 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 }
 
 func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
-	// base logic: 查看有无用户，若有进行登录校验
-	query := []string{"user_name = ?"}
-	args := []interface{}{params.UserName}
-	user, err := (&models.User{}).WhereOne(w.GetMysqlConn(), strings.Join(query, " AND "), args...)
+	user, err := (&models.User{}).WhereOne(w.GetMysqlConn(), "user_name = ?", params.UserName)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 	if params.UserName != user.UserName || utils.NewMd5(params.Password, models.SECRET) != user.Password {
 		return nil, errors.New("userName or password err")
 	}
-	tokenStr, err := middleware.CreateToken(user)
+	// 区分两种设备 分别是 web 和 mobile
+	var redisPrefix string
+	if params.Device == "web" {
+		redisPrefix = constants.WebRedisPrefix
+	} else {
+		redisPrefix = constants.MobileRedisPrefix
+	}
+
+	j := middleware.NewJWT()
+	claims := middleware.CustomClaims{
+		UserId: user.ID,
+		Device: redisPrefix,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),
+			ExpiresAt: time.Now().Unix() + config.NewJWTConfig().Duration,
+			Issuer:    "video_server",
+		},
+	}
+	token, err := j.CreateToken(claims)
 	if err != nil {
 		return nil, err
 	}
-	response = &forms.LoginResponse{TokenStr: tokenStr, User: user}
+
+	userJson, _ := json.Marshal(user)
+	if err != nil {
+		return nil, err
+	}
+
+	rdb, err := cache.RedisConnFactory(15)
+	if err != nil {
+		return nil, err
+	}
+
+	key := redisPrefix + strconv.Itoa(int(user.ID))
+	oldToken, err := rdb.Get(c, key).Result()
+
+	rdb.Del(c, constants.RedisPrefix+oldToken)
+	rdb.Set(c, key, token, time.Duration(config.NewJWTConfig().Duration)*time.Second)
+	rdb.Set(c, constants.RedisPrefix+token, userJson, time.Duration(config.NewJWTConfig().Duration)*time.Second)
+
+	if err = user.Updates(w.GetMysqlConn(), map[string]interface{}{"last_login_time": time.Now()}, "id = ?", user.ID); err != nil {
+		return nil, err
+	}
+
+	// 封装数据返回
+	response = &forms.LoginResponse{
+		IsFirstLogin: 2,
+		User:         *user,
+		Token:        token,
+	}
 	return response, err
 }
 

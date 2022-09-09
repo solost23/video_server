@@ -8,9 +8,20 @@ import (
 
 var (
 	Version = viper.GetString("version")
-	JwtKey  = viper.GetString("jwt.key")
 	Md5     = viper.GetString("md5.secret")
 )
+
+type JWTConfig struct {
+	Key      string
+	Duration int64
+}
+
+func NewJWTConfig() *JWTConfig {
+	return &JWTConfig{
+		Key:      viper.GetString("jwt.key"),
+		Duration: viper.GetInt64("jwt.duration"),
+	}
+}
 
 type Project struct {
 	ServiceName string
@@ -26,7 +37,7 @@ func NewProject() *Project {
 	}
 }
 
-type Connections struct {
+type MysqlConfig struct {
 	Host     string
 	UserName string
 	Password string
@@ -36,8 +47,8 @@ type Connections struct {
 	Charset  string
 }
 
-func NewConnections() *Connections {
-	return &Connections{
+func NewMysqlConfig() *MysqlConfig {
+	return &MysqlConfig{
 		Host:     viper.GetString("connections.mysql.video_server.host"),
 		UserName: viper.GetString("connections.mysql.video_server.user"),
 		Password: viper.GetString("connections.mysql.video_server.password"),
@@ -45,6 +56,22 @@ func NewConnections() *Connections {
 		DB:       viper.GetString("connections.mysql.video_server.db"),
 		CasbinDB: viper.GetString("connections.mysql.video_server.casbin_db"),
 		Charset:  viper.GetString("connections.mysql.video_server.charset"),
+	}
+}
+
+type RedisConfig struct {
+	Host     string
+	Port     string
+	UserName string
+	Password string
+}
+
+func NewRedisConfig() *RedisConfig {
+	return &RedisConfig{
+		Host:     viper.GetString("connections.redis.video_server.host"),
+		Port:     viper.GetString("connections.redis.video_server.port"),
+		UserName: viper.GetString("connections.redis.video_server.user"),
+		Password: viper.GetString("connections.redis.video_server.password"),
 	}
 }
 

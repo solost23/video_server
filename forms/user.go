@@ -20,11 +20,13 @@ type RegisterResponse struct {
 type LoginForm struct {
 	UserName string `json:"userName" binding:"required"`
 	Password string `json:"password" binding:"required,min=8"`
+	Device   string `json:"device" comment:"设备类型" binding:"required,oneof=ios android web"`
 }
 
 type LoginResponse struct {
-	TokenStr string       `json:"tokenStr"`
-	User     *models.User `json:"user"`
+	models.User
+	IsFirstLogin uint   `json:"isFirstLogin"`
+	Token        string `json:"token"`
 }
 
 type ListForm struct {
