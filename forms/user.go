@@ -23,6 +23,10 @@ type LoginForm struct {
 	Device   string `json:"device" comment:"设备类型" binding:"required,oneof=ios android web"`
 }
 
+type LogoutForm struct {
+	Device string `json:"device" comment:"设备类型" binding:"required,oneof=ios android web"`
+}
+
 type LoginResponse struct {
 	models.User
 	IsFirstLogin uint   `json:"isFirstLogin"`

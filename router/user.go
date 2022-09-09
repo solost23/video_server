@@ -54,6 +54,21 @@ func login(c *gin.Context) {
 	response.Success(c, result)
 }
 
+func logout(c *gin.Context) {
+	params := &forms.LogoutForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	err := (&workList.UserService{}).Logout(c, params)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	response.MessageSuccess(c, "成功", nil)
+}
+
 // @Summary get_user_info
 // @Description get user info
 // @Tags User

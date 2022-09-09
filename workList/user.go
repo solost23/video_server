@@ -114,6 +114,27 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	return response, err
 }
 
+func (w *UserService) Logout(c *gin.Context, params *forms.LogoutForm) (err error) {
+	user := c.Value("user").(*models.User)
+	rdb, err := cache.RedisConnFactory(15)
+	if err != nil {
+		return err
+	}
+	var redisPrefix string
+	if params.Device == "web" {
+		redisPrefix = constants.WebRedisPrefix
+	} else {
+		redisPrefix = constants.MobileRedisPrefix
+	}
+	key := redisPrefix + strconv.Itoa(int(user.ID))
+	token, err := rdb.Get(c, key).Result()
+	if err != nil {
+		return err
+	}
+	rdb.Del(c, constants.RedisPrefix+token)
+	return nil
+}
+
 func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *forms.ListResponse, err error) {
 	db := w.GetMysqlConn()
 

@@ -12,12 +12,8 @@ import (
 
 func AuthCheckRole() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, ok := c.Get("user")
-		if !ok {
-			response.Error(c, 2001, errors.New("获取user失败"))
-			return
-		}
-		role := user.(*models.User).Role
+		user := c.Value("user").(*models.User)
+		role := user.Role
 		// 写入配置文件
 		casbinDsn := "root:123@tcp(localhost:3306)/"
 		a := xormadapter.NewAdapter("mysql", casbinDsn)
@@ -26,7 +22,7 @@ func AuthCheckRole() gin.HandlerFunc {
 			response.Error(c, 2001, err)
 			return
 		}
-		ok = e.Enforce(role, c.Request.URL.Path, c.Request.Method)
+		ok := e.Enforce(role, c.Request.URL.Path, c.Request.Method)
 		if !ok {
 			response.Error(c, 2001, errors.New("权限认证错误"))
 			return

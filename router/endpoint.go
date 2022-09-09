@@ -14,7 +14,7 @@ type ErrCode int
 func InitRouter() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger(), gin.Recovery())
-	group := router.Group("")
+	group := router.Group("api")
 	initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里
 	//group.Use(jwt.JWTAuth, role.CheckRole)
@@ -41,6 +41,8 @@ func initAuthRouter(group *gin.RouterGroup) {
 func initAuthUserRouter(group *gin.RouterGroup) {
 	user := group.Group("user")
 	{
+		// 注销用户
+		user.POST("logout", logout)
 		// 显示单个用户信息
 		user.GET(":id", userDetail)
 		// 删除单个用户信息(注销，此时用户下的分类、视频和评论都需要删除:定时任务),这里只需要打标记即可
