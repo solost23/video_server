@@ -39,7 +39,7 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 	}
 	err = (&models.User{
 		UserName:     params.UserName,
-		Password:     utils.NewMd5(params.Password, models.SECRET),
+		Password:     utils.NewMd5(params.Password, constants.SECRET),
 		Nickname:     params.Nickname,
 		Role:         params.Role,
 		Avatar:       params.Avatar,
@@ -58,7 +58,7 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if params.UserName != user.UserName || utils.NewMd5(params.Password, models.SECRET) != user.Password {
+	if params.UserName != user.UserName || utils.NewMd5(params.Password, constants.SECRET) != user.Password {
 		return nil, errors.New("userName or password err")
 	}
 	// 区分两种设备 分别是 web 和 mobile
@@ -169,8 +169,8 @@ func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *fo
 			Introduce:    user.Introduce,
 			FansCount:    user.FansCount,
 			CommentCount: user.CommentCount,
-			CreateTime:   user.CreatedAt.Format(models.TimeFormat),
-			UpdateTime:   user.CreatedAt.Format(models.TimeFormat),
+			CreateTime:   user.CreatedAt.Format(constants.TimeFormat),
+			UpdateTime:   user.CreatedAt.Format(constants.TimeFormat),
 		})
 	}
 	response = &forms.ListResponse{
@@ -232,7 +232,7 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 	}
 	value := map[string]interface{}{
 		"user_name": params.UserName,
-		"password":  utils.NewMd5(params.Password, models.SECRET),
+		"password":  utils.NewMd5(params.Password, constants.SECRET),
 		"nickname":  params.Nickname,
 		"avatar":    params.Avatar,
 		"introduce": params.Introduce,
@@ -263,8 +263,8 @@ func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecor
 		Introduce:    user.Introduce,
 		FansCount:    user.FansCount,
 		CommentCount: user.CommentCount,
-		CreateTime:   user.CreatedAt.Format(models.TimeFormat),
-		UpdateTime:   user.UpdatedAt.Format(models.TimeFormat),
+		CreateTime:   user.CreatedAt.Format(constants.TimeFormat),
+		UpdateTime:   user.UpdatedAt.Format(constants.TimeFormat),
 	}
 	return response, nil
 }

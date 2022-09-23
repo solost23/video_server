@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 	"video_server/forms"
+	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
 
@@ -125,8 +126,8 @@ func (w *CommentService) CommentList(c *gin.Context, params *forms.CommentListFo
 			Content:     comment.Content,
 			ParentId:    comment.ParentId,
 			ISThumb:     comment.ISThumb,
-			CreatedAt:   comment.CreatedAt.Format(models.TimeFormat),
-			UpdatedTime: comment.UpdatedAt.Format(models.TimeFormat),
+			CreatedAt:   comment.CreatedAt.Format(constants.TimeFormat),
+			UpdatedTime: comment.UpdatedAt.Format(constants.TimeFormat),
 		})
 	}
 

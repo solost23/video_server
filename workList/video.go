@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"strings"
 	"video_server/forms"
+	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
 
@@ -136,8 +137,8 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 			VideoUrl:     video.VideoUrl,
 			ThumbCount:   int64(thumbCountMap[video.ID]),
 			CommentCount: int64(commentCountMap[video.ID]),
-			CreatedAt:    video.CreatedAt.Format(models.TimeFormat),
-			UpdatedAt:    video.UpdatedAt.Format(models.TimeFormat),
+			CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
+			UpdatedAt:    video.UpdatedAt.Format(constants.TimeFormat),
 		})
 	}
 	response = &forms.VideoListResponse{
@@ -192,8 +193,8 @@ func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.Vid
 		VideoUrl:     video.VideoUrl,
 		ThumbCount:   thumbCount,
 		CommentCount: commentCount,
-		CreatedAt:    video.CreatedAt.Format(models.TimeFormat),
-		UpdatedAt:    video.UpdatedAt.Format(models.TimeFormat),
+		CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
+		UpdatedAt:    video.UpdatedAt.Format(constants.TimeFormat),
 	}
 	return response, nil
 }

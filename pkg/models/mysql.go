@@ -5,16 +5,16 @@ import (
 	"os"
 	"strconv"
 	"time"
+
 	"video_server/config"
 
+	"github.com/solost23/tools/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	"github.com/solost23/tools/mysql"
 )
 
 // new mysql conn // flagDb 为false 连接默认库，flagDb为true连接casbin
-func NewMysqlClient(flagDb bool) (db *gorm.DB, err error) {
+func NewMysqlClient(flag bool) (db *gorm.DB, err error) {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -23,22 +23,22 @@ func NewMysqlClient(flagDb bool) (db *gorm.DB, err error) {
 			IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound错误
 			Colorful:                  true,        // 禁用彩色打印
 		})
-	mysqlClient := config.NewMysqlConfig()
-	port, err := strconv.Atoi(mysqlClient.Port)
+	dbConfig := config.NewMysqlConfig()
+	port, err := strconv.Atoi(dbConfig.Port)
 	if err != nil {
 		return nil, err
 	}
-	var dbName = mysqlClient.DB
-	if flagDb {
-		dbName = mysqlClient.CasbinDB
+	var dbName = dbConfig.DB
+	if flag {
+		dbName = dbConfig.CasbinDB
 	}
 	mysqlConfig := &mysql.Config{
-		UserName: mysqlClient.UserName,
-		Password: mysqlClient.Password,
-		Host:     mysqlClient.Host,
+		UserName: dbConfig.UserName,
+		Password: dbConfig.Password,
+		Host:     dbConfig.Host,
 		Port:     port,
 		DB:       dbName,
-		Charset:  mysqlClient.Charset,
+		Charset:  dbConfig.Charset,
 		Logger:   newLogger,
 	}
 	db, err = mysql.NewMysqlConnect(mysqlConfig)

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 	"video_server/config"
+	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
 
@@ -38,7 +39,7 @@ func uploadImage(user *models.User, folderName string, file *multipart.FileHeade
 
 	postFileName := file.Filename
 	fileName := utils.GetMd5Hash(
-		time.Now().Format(models.TimeFormat)+
+		time.Now().Format(constants.TimeFormat)+
 			strconv.Itoa(int(user.ID))+
 			utils.GetMd5Hash(string(fileByte))+
 			postFileName) + path.Ext(postFileName)
@@ -64,11 +65,21 @@ func upload(folderName string, fileName string, fileHandle multipart.File, uploa
 	if err = minio_storage.CreateBucket(ctx, client, folderName); err != nil {
 		return "", err
 	}
+	// 设置链接可永久下载
+	policy := `
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS": 
+          ["*"]},"Action":["s3:GetBucketLocation","s3:ListBucket"],"Resource": 
+          ["arn:aws:s3:::%s"]},{"Effect":"Allow","Principal":{"AWS":["*"]},"Action": 
+          ["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}
+`
+	if err = client.SetBucketPolicy(folderName, fmt.Sprintf(policy, folderName, folderName)); err != nil {
+		return "", err
+	}
 	if err = minio_storage.StreamUpload(ctx, client, folderName, fileName, fileHandle, fileSize, fmt.Sprintf("Application/%s", uploadType)); err != nil {
 		return "", err
 	}
 	requestParams := make(url.Values)
-	fileUrl, err := minio_storage.GetFileUrl(ctx, client, folderName, fileName, 24*time.Hour, requestParams)
+	fileUrl, err := minio_storage.GetFileUrl(ctx, client, folderName, fileName, 168*time.Hour, requestParams)
 	if err != nil {
 		return "", err
 	}

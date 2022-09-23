@@ -1,70 +1,32 @@
 package models
 
 import (
-	"fmt"
-	"video_server/config"
-
 	"gorm.io/gorm"
 )
 
-var dbConn *gorm.DB
-var DBCasbin *gorm.DB
+var (
+	dbConn   *gorm.DB
+	dbCasbin *gorm.DB
+	err      error
+)
 
 func init() {
-	var err error
 	dbConn, err = NewMysqlClient(false)
 	if err != nil {
 		panic(err)
 	}
-	DBCasbin, err = NewMysqlClient(true)
+	dbCasbin, err = NewMysqlClient(true)
+	// 生成表
+	err = autoMigrate(dbConn, &User{}, &Category{}, &CasbinModel{}, &Comment{}, &UserComment{}, &Video{})
 	if err != nil {
 		panic(err)
 	}
-	dbConn.AutoMigrate(
-		Category{},
-		Comment{},
-		User{},
-		UserComment{},
-		Video{},
-	)
-	DBCasbin.AutoMigrate(
-		CasbinModel{},
-	)
+	err = autoMigrate(dbCasbin, &CasbinModel{})
+	if err != nil {
+		panic(err)
+	}
 }
 
-const (
-	// 管理员
-	ROLEADMIN = "ADMIN"
-	ROLEUSER  = "USER"
-
-	// 删除状态
-	DELETENORMAL = "DELETE_STATUS_NORMAL"
-	DELETEDEL    = "DELETE_STATUS_DEL"
-
-	// 评论类型
-	ISTHUMB   = "ISTHUMB"
-	ISCOMMENT = "ISCOMMENT"
-)
-
-var (
-	SECRET     = config.Md5
-	TimeFormat = "2006-01-02 15:04:05"
-)
-
-type PageForm struct {
-	UsePage bool `json:"-"`
-	Page    int  `json:"page"`
-	Size    int  `json:"pageSize"`
-}
-
-type PageList struct {
-	Size    int   `json:"size"`
-	Pages   int64 `json:"pages"`
-	Total   int64 `json:"total"`
-	Current int   `json:"current"`
-}
-
-// 生成模糊匹配字符串
-func LikeFilter(value interface{}) string {
-	return fmt.Sprintf("%%%v%%", value)
+func autoMigrate(conn *gorm.DB, dst ...interface{}) error {
+	return conn.AutoMigrate(dst...)
 }
