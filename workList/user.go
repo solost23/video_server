@@ -3,6 +3,7 @@ package workList
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"math"
 	"mime/multipart"
 	"strconv"
@@ -62,8 +63,11 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, errors.New(fmt.Sprintf("用户%s不存在", params.UserName))
+	}
 	if params.UserName != user.UserName || utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret) != user.Password {
-		return nil, errors.New("userName or password err")
+		return nil, errors.New("用户名或密码错误")
 	}
 	// 区分两种设备 分别是 web 和 mobile
 	var redisPrefix string
