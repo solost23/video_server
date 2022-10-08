@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"video_server/config"
 	"video_server/forms"
+	"video_server/global"
 	"video_server/pkg/cache"
 	"video_server/pkg/constants"
 	"video_server/pkg/middleware"
@@ -28,9 +28,11 @@ type UserService struct {
 
 func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err error) {
 	// base logic: 校验当前用户是否存在，若不存在则新建
+	db := global.DB
+
 	query := []string{"user_name = ?"}
 	args := []interface{}{params.UserName}
-	_, err = (&models.User{}).WhereOne(w.GetMysqlConn(), strings.Join(query, " AND "), args...)
+	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -39,14 +41,14 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 	}
 	err = (&models.User{
 		UserName:     params.UserName,
-		Password:     utils.NewMd5(params.Password, constants.SECRET),
+		Password:     utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
 		Nickname:     params.Nickname,
 		Role:         params.Role,
 		Avatar:       params.Avatar,
 		Introduce:    params.Introduce,
 		FansCount:    0,
 		CommentCount: 0,
-	}).Insert(w.GetMysqlConn())
+	}).Insert(db)
 	if err != nil {
 		return err
 	}
@@ -54,11 +56,13 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 }
 
 func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
-	user, err := (&models.User{}).WhereOne(w.GetMysqlConn(), "user_name = ?", params.UserName)
+	db := global.DB
+
+	user, err := (&models.User{}).WhereOne(db, "user_name = ?", params.UserName)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if params.UserName != user.UserName || utils.NewMd5(params.Password, constants.SECRET) != user.Password {
+	if params.UserName != user.UserName || utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret) != user.Password {
 		return nil, errors.New("userName or password err")
 	}
 	// 区分两种设备 分别是 web 和 mobile
@@ -75,8 +79,8 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 		Device: redisPrefix,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
-			ExpiresAt: time.Now().Unix() + config.NewJWTConfig().Duration,
-			Issuer:    "video_server",
+			ExpiresAt: time.Now().Unix() + int64(global.ServerConfig.JWTConfig.Duration),
+			Issuer:    global.ServerConfig.Name,
 		},
 	}
 	token, err := j.CreateToken(claims)
@@ -98,10 +102,10 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	oldToken, err := rdb.Get(c, key).Result()
 
 	rdb.Del(c, constants.RedisPrefix+oldToken)
-	rdb.Set(c, key, token, time.Duration(config.NewJWTConfig().Duration)*time.Second)
-	rdb.Set(c, constants.RedisPrefix+token, userJson, time.Duration(config.NewJWTConfig().Duration)*time.Second)
+	rdb.Set(c, key, token, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
+	rdb.Set(c, constants.RedisPrefix+token, userJson, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
 
-	if err = user.Updates(w.GetMysqlConn(), map[string]interface{}{"last_login_time": time.Now()}, "id = ?", user.ID); err != nil {
+	if err = user.Updates(db, map[string]interface{}{"last_login_time": time.Now()}, "id = ?", user.ID); err != nil {
 		return nil, err
 	}
 
@@ -136,7 +140,7 @@ func (w *UserService) Logout(c *gin.Context, params *forms.LogoutForm) (err erro
 }
 
 func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *forms.ListResponse, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
@@ -187,7 +191,7 @@ func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *fo
 
 func (w *UserService) Delete(c *gin.Context, id uint) (err error) {
 	// 查看用户是否存在，若存在，则删除
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := []string{"id = ?"}
 	args := []interface{}{id}
@@ -221,7 +225,7 @@ func (w *UserService) Delete(c *gin.Context, id uint) (err error) {
 }
 
 func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateForm) (err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := []string{"id = ?"}
 	args := []interface{}{id}
@@ -232,7 +236,7 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 	}
 	value := map[string]interface{}{
 		"user_name": params.UserName,
-		"password":  utils.NewMd5(params.Password, constants.SECRET),
+		"password":  utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
 		"nickname":  params.Nickname,
 		"avatar":    params.Avatar,
 		"introduce": params.Introduce,
@@ -245,7 +249,7 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 }
 
 func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecord, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := []string{"id = ?"}
 	args := []interface{}{id}

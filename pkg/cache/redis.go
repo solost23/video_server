@@ -2,29 +2,24 @@ package cache
 
 import (
 	"context"
-	"fmt"
-	"video_server/config"
+	"video_server/global"
 
 	"github.com/go-redis/redis/v8"
 )
 
-var RedisMapPool = make(map[int]*redis.Client, 15)
-
 func RedisConnFactory(db int) (*redis.Client, error) {
-	redisConfig := config.NewRedisConfig()
-	if RedisMapPool[db] != nil {
-		return RedisMapPool[db], nil
+	if global.RedisMapPool[db] != nil {
+		return global.RedisMapPool[db], nil
 	}
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%s", redisConfig.Host, redisConfig.Port),
-		Password: redisConfig.Password,
+	global.RedisMapPool[db] = redis.NewClient(&redis.Options{
+		Addr:     global.ServerConfig.RedisConfig.Addr,
+		Password: global.ServerConfig.RedisConfig.Password,
 		DB:       db,
 	})
 
-	_, err := rdb.Ping(context.Background()).Result()
+	_, err := global.RedisMapPool[db].Ping(context.Background()).Result()
 	if err != nil {
 		return nil, err
 	}
-	RedisMapPool[db] = rdb
-	return RedisMapPool[db], nil
+	return global.RedisMapPool[db], nil
 }

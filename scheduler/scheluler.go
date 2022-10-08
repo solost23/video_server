@@ -2,7 +2,7 @@ package scheduler
 
 import (
 	"github.com/robfig/cron/v3"
-	"video_server/config"
+	"video_server/global"
 
 	"video_server/scheduler/deleteVideo"
 )
@@ -12,8 +12,7 @@ import (
 func Run() {
 	var task = new(deleteVideo.Task)
 	c := cron.New()
-	schedulerConfig := config.NewScheduler()
-	c.AddFunc(schedulerConfig.CronTime, func() {
+	_, _ = c.AddFunc(global.ServerConfig.DeleteCronTime, func() {
 		task.DeleteVideo()
 	})
 	c.Start()

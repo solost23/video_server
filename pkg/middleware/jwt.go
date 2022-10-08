@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"time"
-	"video_server/config"
+	"video_server/global"
 	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/response"
@@ -84,7 +84,7 @@ type CustomClaims struct {
 }
 
 func NewJWT() *JWT {
-	return &JWT{[]byte(config.NewJWTConfig().Key)}
+	return &JWT{[]byte(global.ServerConfig.JWTConfig.Key)}
 }
 
 // CreateToken 创建 Token
@@ -135,7 +135,7 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	}
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		jwt.TimeFunc = time.Now
-		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(config.NewJWTConfig().Duration) * time.Second).Unix()
+		claims.StandardClaims.ExpiresAt = time.Now().Add(time.Duration(global.ServerConfig.JWTConfig.Duration) * time.Second).Unix()
 		return j.CreateToken(*claims)
 	}
 	return "", TokenInvalid

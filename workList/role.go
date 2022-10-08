@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 	"video_server/forms"
+	"video_server/global"
 	"video_server/pkg/models"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ type RoleService struct {
 
 func (w *RoleService) Insert(c *gin.Context, params *forms.RoleInsertForm) (err error) {
 	// 查询数据是否存在
-	db := w.GetMysqlConn()
+	db := global.CasbinDB
 
 	query := []string{"role_name = ?", "path = ?", "method = ?"}
 	args := []interface{}{params.RoleName, params.Path, params.Method}
@@ -39,7 +40,7 @@ func (w *RoleService) Insert(c *gin.Context, params *forms.RoleInsertForm) (err 
 }
 
 func (w *RoleService) Delete(c *gin.Context, params *forms.RoleInsertForm) (err error) {
-	db := w.GetMysqlConn()
+	db := global.CasbinDB
 
 	query := []string{"role_name = ?", "path = ?", "method = ?"}
 	args := []interface{}{params.RoleName, params.Path, params.Method}
@@ -55,7 +56,7 @@ func (w *RoleService) Delete(c *gin.Context, params *forms.RoleInsertForm) (err 
 }
 
 func (w *RoleService) List(c *gin.Context, params *forms.RoleListForm) (response *forms.RoleListResponse, err error) {
-	db := w.GetMysqlConn()
+	db := global.CasbinDB
 
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)

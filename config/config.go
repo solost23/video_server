@@ -1,109 +1,52 @@
 package config
 
-import (
-	"log"
-
-	"github.com/spf13/viper"
-)
-
-var (
-	Version = viper.GetString("version")
-	Md5     = viper.GetString("md5.secret")
-)
-
-type JWTConfig struct {
-	Key      string
-	Duration int64
-}
-
-func NewJWTConfig() *JWTConfig {
-	return &JWTConfig{
-		Key:      viper.GetString("jwt.key"),
-		Duration: viper.GetInt64("jwt.duration"),
-	}
-}
-
-type Project struct {
-	ServiceName string
-	ServiceAddr string
-	ServicePort string
-}
-
-func NewProject() *Project {
-	return &Project{
-		ServiceName: viper.GetString("params.service_name"),
-		ServicePort: viper.GetString("params.service_port"),
-		ServiceAddr: viper.GetString("params.service_addr"),
-	}
+type ServerConfig struct {
+	Version        string      `mapstructure:"version"`
+	DebugMode      string      `mapstructure:"debug_mode"`
+	Addr           string      `mapstructure:"addr"`
+	Name           string      `mapsturcture:"name"`
+	MysqlConfig    MysqlConfig `mapstructure:"mysql"`
+	RedisConfig    RedisConfig `mapstructure:"redis"`
+	MinioConfig    MinioConfig `mapstructure:"minio"`
+	DeleteCronTime string      `mapstructure:"delete_cron_time"`
+	JWTConfig      JWTConfig   `mapstructure:"jwt"`
+	Md5Config      Md5Config   `mapstructure:"md5"`
+	LogConfig      LogConfig   `mapstructure:"log"`
 }
 
 type MysqlConfig struct {
-	Host     string
-	UserName string
-	Password string
-	Port     string
-	DB       string
-	CasbinDB string
-	Charset  string
-}
-
-func NewMysqlConfig() *MysqlConfig {
-	return &MysqlConfig{
-		Host:     viper.GetString("connections.mysql.video_server.host"),
-		UserName: viper.GetString("connections.mysql.video_server.user"),
-		Password: viper.GetString("connections.mysql.video_server.password"),
-		Port:     viper.GetString("connections.mysql.video_server.port"),
-		DB:       viper.GetString("connections.mysql.video_server.db"),
-		CasbinDB: viper.GetString("connections.mysql.video_server.casbin_db"),
-		Charset:  viper.GetString("connections.mysql.video_server.charset"),
-	}
+	Addr           string `mapstructure:"addr"`
+	User           string `mapstructure:"user"`
+	Password       string `mapstructure:"password"`
+	DB             string `mapstructure:"db"`
+	CasbinDB       string `mapstructure:"casbin_db"`
+	Charset        string `mapstructure:"charset"`
+	DeleteCronTime string `mapstructure:"delete_cron_time"`
 }
 
 type RedisConfig struct {
-	Host     string
-	Port     string
-	UserName string
-	Password string
-}
-
-func NewRedisConfig() *RedisConfig {
-	return &RedisConfig{
-		Host:     viper.GetString("connections.redis.video_server.host"),
-		Port:     viper.GetString("connections.redis.video_server.port"),
-		UserName: viper.GetString("connections.redis.video_server.user"),
-		Password: viper.GetString("connections.redis.video_server.password"),
-	}
-}
-
-type Scheduler struct {
-	CronTime string
-}
-
-func NewScheduler() *Scheduler {
-	return &Scheduler{
-		CronTime: viper.GetString("scheduler.delete_video.cron_time"),
-	}
+	Addr     string `mapstructure:"addr"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
 }
 
 type MinioConfig struct {
-	EndPoint        string
-	AccessKeyID     string
-	SecretAccessKey string
-	UserSSL         bool
+	EndPoint        string `mapstructure:"end_point"`
+	AccessKeyId     string `mapstructure:"access_key_id"`
+	SecretAccesskey string `mapstructure:"secret_access_key"`
+	UserSSL         bool   `mapstructure:"user_ssl"`
 }
 
-func NewMinio() *MinioConfig {
-	return &MinioConfig{
-		EndPoint:        viper.GetString("minio.end_point"),
-		AccessKeyID:     viper.GetString("minio.access_key_id"),
-		SecretAccessKey: viper.GetString("minio.secret_access_key"),
-		UserSSL:         viper.GetBool("minio.user_ssl"),
-	}
+type JWTConfig struct {
+	Key      string `mapstructure:"key"`
+	Duration uint   `mapstructure:"duration"`
 }
 
-func init() {
-	viper.SetConfigFile("config/config.yaml")
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalln("config read error")
-	}
+type Md5Config struct {
+	Secret string `mapstructure:"secret"`
+}
+
+type LogConfig struct {
+	RuntimePath string `mapstructure:"runtime_path"`
+	TrackPath   string `mapstructure:"track_path"`
 }

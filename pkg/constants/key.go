@@ -1,7 +1,5 @@
 package constants
 
-import "video_server/config"
-
 const (
 	RedisPrefix = "video_server_"
 
@@ -21,8 +19,4 @@ const (
 	// 评论类型
 	ISTHUMB   = "ISTHUMB"
 	ISCOMMENT = "ISCOMMENT"
-)
-
-var (
-	SECRET = config.Md5
 )

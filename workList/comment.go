@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 	"video_server/forms"
+	"video_server/global"
 	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
@@ -20,7 +21,7 @@ type CommentService struct {
 
 func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCreateForm) (err error) {
 	// 直接创建,关系表也要创建
-	db := w.GetMysqlConn()
+	db := global.DB
 	tx := db.Begin()
 	user := utils.GetUser(c)
 
@@ -81,7 +82,7 @@ func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCrea
 
 func (w *CommentService) CommentDelete(c *gin.Context, id uint) (err error) {
 	// base logic: 查看关系表中有无此用户和评论对应关系，如果有，那么去评论表删除数据
-	db := w.GetMysqlConn()
+	db := global.DB
 	tx := db.Begin()
 	user := utils.GetUser(c)
 
@@ -106,7 +107,7 @@ func (w *CommentService) CommentDelete(c *gin.Context, id uint) (err error) {
 }
 
 func (w *CommentService) CommentList(c *gin.Context, params *forms.CommentListForm) (response *forms.CommentListResponse, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := make([]string, 0, 1)
 	args := make([]interface{}, 0, 1)

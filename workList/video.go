@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"strings"
 	"video_server/forms"
+	"video_server/global"
 	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
@@ -20,7 +21,7 @@ type VideoService struct {
 }
 
 func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (response *forms.VideoListResponse, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	categoryIds := make([]uint, 0)
 	if params.CategoryName != "" {
@@ -154,7 +155,7 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 }
 
 func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.VideoListRecord, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := []string{"id = ?"}
 	args := []interface{}{id}
@@ -201,7 +202,7 @@ func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.Vid
 
 func (w *VideoService) VideoDelete(c *gin.Context, id uint) (err error) {
 	// base logic: 删视频，删评论
-	db := w.GetMysqlConn()
+	db := global.DB
 	tx := db.Begin()
 
 	query := []string{"id = ?"}
@@ -226,7 +227,7 @@ func (w *VideoService) VideoDelete(c *gin.Context, id uint) (err error) {
 }
 
 func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 	user := utils.GetUser(c)
 
 	// base logic: 查看分类是否存在，若存在，则创建视频

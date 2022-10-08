@@ -4,6 +4,7 @@ import (
 	"math"
 	"strings"
 	"video_server/forms"
+	"video_server/global"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
 
@@ -15,8 +16,9 @@ type CategoryService struct {
 }
 
 func (w *CategoryService) Insert(c *gin.Context, params *forms.CategoryInsertForm) (err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
 	user := utils.GetUser(c)
+
 	// 查询用户是否存在，若存在，则新建分类
 	query := []string{"id = ?"}
 	args := []interface{}{user.ID}
@@ -37,7 +39,8 @@ func (w *CategoryService) Insert(c *gin.Context, params *forms.CategoryInsertFor
 }
 
 func (w *CategoryService) List(c *gin.Context, params *forms.CategoryListForm) (response *forms.CategoryListResponse, err error) {
-	db := w.GetMysqlConn()
+	db := global.DB
+
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
 	if params.UserID > 0 {
@@ -82,7 +85,7 @@ func (w *CategoryService) List(c *gin.Context, params *forms.CategoryListForm) (
 
 func (w *CategoryService) Update(c *gin.Context, id uint, params *forms.CategoryUpdateForm) (err error) {
 	// base logic: 查看用户是否存在，若存在，更新数据，否则错误
-	db := w.GetMysqlConn()
+	db := global.DB
 
 	query := []string{"id = ?"}
 	args := []interface{}{id}

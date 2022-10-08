@@ -9,7 +9,7 @@ import (
 	"path"
 	"strconv"
 	"time"
-	"video_server/config"
+	"video_server/global"
 	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
@@ -51,18 +51,8 @@ func uploadImage(user *models.User, folderName string, file *multipart.FileHeade
 }
 
 func upload(folderName string, fileName string, fileHandle multipart.File, uploadType string, fileSize int64) (result string, err error) {
-	minioConfig := config.NewMinio()
-	client, err := minio_storage.NewMinio(&minio_storage.Config{
-		EndPoint:        minioConfig.EndPoint,
-		AccessKeyID:     minioConfig.AccessKeyID,
-		SecretAccessKey: minioConfig.SecretAccessKey,
-		UserSSL:         minioConfig.UserSSL,
-	})
-	if err != nil {
-		return "", err
-	}
 	ctx := context.Background()
-	if err = minio_storage.CreateBucket(ctx, client, folderName); err != nil {
+	if err = minio_storage.CreateBucket(ctx, global.Minio, folderName); err != nil {
 		return "", err
 	}
 	// 设置链接可永久下载
@@ -72,14 +62,14 @@ func upload(folderName string, fileName string, fileHandle multipart.File, uploa
           ["arn:aws:s3:::%s"]},{"Effect":"Allow","Principal":{"AWS":["*"]},"Action": 
           ["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}
 `
-	if err = client.SetBucketPolicy(folderName, fmt.Sprintf(policy, folderName, folderName)); err != nil {
+	if err = global.Minio.SetBucketPolicy(folderName, fmt.Sprintf(policy, folderName, folderName)); err != nil {
 		return "", err
 	}
-	if err = minio_storage.StreamUpload(ctx, client, folderName, fileName, fileHandle, fileSize, fmt.Sprintf("Application/%s", uploadType)); err != nil {
+	if err = minio_storage.StreamUpload(ctx, global.Minio, folderName, fileName, fileHandle, fileSize, fmt.Sprintf("Application/%s", uploadType)); err != nil {
 		return "", err
 	}
 	requestParams := make(url.Values)
-	fileUrl, err := minio_storage.GetFileUrl(ctx, client, folderName, fileName, 168*time.Hour, requestParams)
+	fileUrl, err := minio_storage.GetFileUrl(ctx, global.Minio, folderName, fileName, 168*time.Hour, requestParams)
 	if err != nil {
 		return "", err
 	}
