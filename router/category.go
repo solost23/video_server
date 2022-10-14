@@ -91,3 +91,24 @@ func categoryList(c *gin.Context) {
 
 	response.Success(c, result)
 }
+
+func searchCategory(c *gin.Context) {
+	params := &forms.SearchForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	if params.Page <= 0 {
+		params.Page = 1
+	}
+	if params.Size <= 0 {
+		params.Size = 10
+	}
+	result, err := (&workList.CategoryService{}).SearchCategory(c, params)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	response.Success(c, result)
+}

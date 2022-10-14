@@ -12,6 +12,7 @@ type ServerConfig struct {
 	JWTConfig      JWTConfig   `mapstructure:"jwt"`
 	Md5Config      Md5Config   `mapstructure:"md5"`
 	LogConfig      LogConfig   `mapstructure:"log"`
+	ZincConfig     ZincConfig  `mapstructure:"zinc"`
 }
 
 type MysqlConfig struct {
@@ -49,4 +50,9 @@ type Md5Config struct {
 type LogConfig struct {
 	RuntimePath string `mapstructure:"runtime_path"`
 	TrackPath   string `mapstructure:"track_path"`
+}
+
+type ZincConfig struct {
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
 }

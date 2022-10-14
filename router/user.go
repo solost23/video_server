@@ -125,7 +125,7 @@ func userDelete(c *gin.Context) {
 // @Success 200
 // @Router /user/update [post]
 func userUpdate(c *gin.Context) {
-	UIdForm := utils.UIdForm{}
+	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -166,6 +166,27 @@ func userList(c *gin.Context) {
 		params.Size = 10
 	}
 	result, err := (&workList.UserService{}).List(c, params)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	response.Success(c, result)
+}
+
+func searchUser(c *gin.Context) {
+	params := &forms.SearchForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	if params.Page <= 0 {
+		params.Page = 1
+	}
+	if params.Size <= 0 {
+		params.Size = 10
+	}
+	result, err := (&workList.UserService{}).SearchUser(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

@@ -40,7 +40,7 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 	if err == nil {
 		return errors.New("用户已存在")
 	}
-	err = (&models.User{
+	user := &models.User{
 		UserName:     params.UserName,
 		Password:     utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
 		Nickname:     params.Nickname,
@@ -49,7 +49,19 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 		Introduce:    params.Introduce,
 		FansCount:    0,
 		CommentCount: 0,
-	}).Insert(db)
+	}
+	err = user.Insert(db)
+	if err != nil {
+		return err
+	}
+
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)), map[string]interface{}{
+		"username":  user.UserName,
+		"nickname":  user.Nickname,
+		"role":      user.Role,
+		"introduce": user.Introduce,
+	})
 	if err != nil {
 		return err
 	}
@@ -225,6 +237,13 @@ func (w *UserService) Delete(c *gin.Context, id uint) (err error) {
 		return err
 	}
 	tx.Commit()
+
+	// 从全局索引中删除用户记录
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(id)))
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -236,7 +255,7 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 	// base logic: 检查用户是否存在，若存在，则删除
 	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil {
-		return
+		return err
 	}
 	value := map[string]interface{}{
 		"user_name": params.UserName,
@@ -246,6 +265,24 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 		"introduce": params.Introduce,
 	}
 	err = (&models.User{}).Updates(db, value, strings.Join(query, " AND "), args...)
+	if err != nil {
+		return err
+	}
+	user, err := (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
+	if err != nil {
+		return err
+	}
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)))
+	if err != nil {
+		return err
+	}
+	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)), map[string]interface{}{
+		"username":  user.UserName,
+		"nickname":  user.Nickname,
+		"role":      user.Role,
+		"introduce": user.Introduce,
+	})
 	if err != nil {
 		return err
 	}
@@ -282,6 +319,72 @@ func (w *UserService) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (
 	result, err = UploadImg(user, "avatar", file)
 	if err != nil {
 		return "", err
+	}
+
+	return result, nil
+}
+
+func (w *UserService) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.ListResponse, error) {
+	db := global.DB
+
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	from := int32((params.Page - 1) * params.Size)
+	size := from + int32(params.Size) - 1
+	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXUSER, params.Keyword, from, size)
+	if err != nil {
+		return nil, err
+	}
+	userIds := make([]uint, 0, len(searchResults))
+	for _, searchResult := range searchResults {
+		id, _ := strconv.Atoi(*searchResult.Id)
+		userIds = append(userIds, uint(id))
+	}
+	users, err := (&models.User{}).WhereAll(db, "id IN ?", userIds)
+	if err != nil {
+		return nil, err
+	}
+	userIdToUserInfoMaps := make(map[uint]struct {
+		Avatar       string
+		FansCount    int64
+		CommentCount int64
+		CreateTime   time.Time
+		UpdateTime   time.Time
+	}, len(users))
+	for _, user := range users {
+		userIdToUserInfoMaps[user.ID] = struct {
+			Avatar       string
+			FansCount    int64
+			CommentCount int64
+			CreateTime   time.Time
+			UpdateTime   time.Time
+		}{Avatar: user.Avatar, FansCount: user.FansCount, CommentCount: user.CommentCount, CreateTime: user.CreatedAt, UpdateTime: user.UpdatedAt}
+	}
+	// 封装数据并返回
+	records := make([]forms.ListRecord, 0, len(searchResults))
+	for _, searchResult := range searchResults {
+		id, _ := strconv.Atoi(*searchResult.Id)
+		records = append(records, forms.ListRecord{
+			ID:           uint(id),
+			UserName:     searchResult.Source["username"].(string),
+			Nickname:     searchResult.Source["nickname"].(string),
+			Role:         searchResult.Source["role"].(string),
+			Avatar:       userIdToUserInfoMaps[uint(id)].Avatar,
+			Introduce:    searchResult.Source["introduce"].(string),
+			FansCount:    userIdToUserInfoMaps[uint(id)].FansCount,
+			CommentCount: userIdToUserInfoMaps[uint(id)].CommentCount,
+			CreateTime:   userIdToUserInfoMaps[uint(id)].CreateTime.Format(constants.TimeFormat),
+			UpdateTime:   userIdToUserInfoMaps[uint(id)].UpdateTime.Format(constants.TimeFormat),
+		})
+	}
+
+	result := &forms.ListResponse{
+		List: records,
+		PageList: &utils.PageList{
+			Size:    params.Size,
+			Pages:   int64(math.Ceil(float64(total) / float64(size))),
+			Total:   total,
+			Current: params.Page,
+		},
 	}
 
 	return result, nil

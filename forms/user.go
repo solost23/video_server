@@ -62,7 +62,12 @@ type UserUpdateForm struct {
 	UserName  string `json:"userName" binding:"required"`
 	Password  string `json:"password" binding:"required,min=8"`
 	Nickname  string `json:"nickname"`
-	Role      string `json:"role" binding:"required,oneof=ADMIN,USER"`
+	Role      string `json:"role" binding:"required,oneof=ADMIN USER"`
 	Avatar    string `json:"avatar"`
 	Introduce string `json:"introduce"`
+}
+
+type SearchForm struct {
+	utils.PageForm
+	Keyword string `form:"keyword"`
 }

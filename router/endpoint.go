@@ -27,6 +27,15 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 	group.POST("register", register)
 	group.POST("register/avatar", uploadAvatar)
 	group.POST("login", login)
+
+	// 搜索用户 - 全局搜索
+	group.GET("user/search", searchUser)
+	// 搜索类别 - 全局搜索
+	group.GET("category/search", searchCategory)
+	// 搜索视频 - 全局搜索
+	// 首页 支持获取所有视频
+	group.GET("video/search", searchVideo)
+
 	group.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
@@ -66,7 +75,7 @@ func initAuthCategoryRouter(group *gin.RouterGroup) {
 func initAuthVideoRouter(group *gin.RouterGroup) {
 	video := group.Group("video")
 	{
-		// 上传视频图片接口
+		// 上传视频/图片接口
 		video.POST("img", videoUploadImg)
 		// 上传视频流接口
 		video.POST("vid", videoUploadVid)
@@ -76,8 +85,6 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 		video.DELETE(":id", videoDelete)
 		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
 		video.GET(":id", videoDetail)
-		// 首页 支持获取所有视频，支持按照 分类名，用户名，视频标题 搜索，并支持分页操作
-		video.GET("", videoList)
 	}
 }
 

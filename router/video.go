@@ -131,3 +131,24 @@ func videoList(c *gin.Context) {
 	}
 	response.Success(c, result)
 }
+
+func searchVideo(c *gin.Context) {
+	params := &forms.SearchForm{}
+	if err := utils.DefaultGetValidParams(c, params); err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+	if params.Page <= 0 {
+		params.Page = 1
+	}
+	if params.Size <= 0 {
+		params.Size = 10
+	}
+	result, err := (&workList.VideoService{}).SearchVideo(c, params)
+	if err != nil {
+		response.Error(c, 2001, err)
+		return
+	}
+
+	response.Success(c, result)
+}

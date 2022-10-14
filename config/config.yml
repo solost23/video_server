@@ -32,3 +32,7 @@ gRpc:
   user_service:
     addrSlice:
       "127.0.0.1:8080"
+
+zinc:
+  username: "admin"
+  password: "Complexpass#123"

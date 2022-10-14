@@ -4,7 +4,9 @@ import (
 	"errors"
 	"math"
 	"mime/multipart"
+	"strconv"
 	"strings"
+	"time"
 	"video_server/forms"
 	"video_server/global"
 	"video_server/pkg/constants"
@@ -154,6 +156,99 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 	return response, nil
 }
 
+func (w *VideoService) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
+	db := global.DB
+
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	from := int32((params.Page - 1) * params.Size)
+	size := from + int32(params.Size) - 1
+	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXVIDEO, params.Keyword, from, size)
+	if err != nil {
+		return nil, err
+	}
+	userIds := make([]uint, 0, len(searchResults))
+	videoIds := make([]uint, 0, len(searchResults))
+	categoryIds := make([]uint, 0, len(searchResults))
+	for _, searchResult := range searchResults {
+		userId := uint(searchResult.Source["user_id"].(float64))
+		videoId, _ := strconv.Atoi(*searchResult.Id)
+		categoryId := uint(searchResult.Source["category_id"].(float64))
+		userIds = append(userIds, userId)
+		videoIds = append(videoIds, uint(videoId))
+		categoryIds = append(categoryIds, categoryId)
+	}
+	users, err := (&models.User{}).WhereAll(db, "id IN ?", userIds)
+	if err != nil {
+		return nil, err
+	}
+	userIdToUsernameMaps := make(map[uint]string, len(users))
+	for _, user := range users {
+		userIdToUsernameMaps[user.ID] = user.UserName
+	}
+	categories, err := (&models.Category{}).WhereAll(db, "id IN ?", categoryIds)
+	if err != nil {
+		return nil, err
+	}
+	categoryIdToNameMaps := make(map[uint]string, len(categories))
+	for _, category := range categories {
+		categoryIdToNameMaps[category.ID] = category.Title
+	}
+	videos, err := (&models.Video{}).WhereAll(db, "id IN ?", videoIds)
+	if err != nil {
+		return nil, err
+	}
+	videoIdToVideoInfoMaps := make(map[uint]struct {
+		ImageUrl     string
+		VideoUrl     string
+		ThumbCount   int64
+		CommentCount int64
+		CreatedAt    time.Time
+		UpdatedAt    time.Time
+	}, len(videos))
+	for _, video := range videos {
+		videoIdToVideoInfoMaps[video.ID] = struct {
+			ImageUrl     string
+			VideoUrl     string
+			ThumbCount   int64
+			CommentCount int64
+			CreatedAt    time.Time
+			UpdatedAt    time.Time
+		}{ImageUrl: video.ImageUrl, VideoUrl: video.VideoUrl, ThumbCount: video.ThumbCount, CommentCount: video.CommentCount, CreatedAt: video.CreatedAt, UpdatedAt: video.UpdatedAt}
+	}
+
+	records := make([]forms.VideoListRecord, 0, len(searchResults))
+	for _, searchResult := range searchResults {
+		videoId, _ := strconv.Atoi(*searchResult.Id)
+		userId := uint(searchResult.Source["user_id"].(float64))
+		categoryId := uint(searchResult.Source["category_id"].(float64))
+		records = append(records, forms.VideoListRecord{
+			ID:           uint(videoId),
+			UserID:       userId,
+			UserName:     userIdToUsernameMaps[userId],
+			CategoryID:   categoryId,
+			CategoryName: categoryIdToNameMaps[categoryId],
+			Title:        searchResult.Source["title"].(string),
+			Introduce:    searchResult.Source["introduce"].(string),
+			ImageUrl:     videoIdToVideoInfoMaps[uint(videoId)].ImageUrl,
+			VideoUrl:     videoIdToVideoInfoMaps[uint(videoId)].VideoUrl,
+			ThumbCount:   videoIdToVideoInfoMaps[uint(videoId)].ThumbCount,
+			CommentCount: videoIdToVideoInfoMaps[uint(videoId)].CommentCount,
+			CreatedAt:    videoIdToVideoInfoMaps[uint(videoId)].CreatedAt.Format(constants.TimeFormat),
+			UpdatedAt:    videoIdToVideoInfoMaps[uint(videoId)].UpdatedAt.Format(constants.TimeFormat),
+		})
+	}
+	result := &forms.VideoListResponse{
+		Records: records,
+		PageList: &utils.PageList{
+			Size:    params.Size,
+			Pages:   int64(math.Ceil(float64(total) / float64(params.Size))),
+			Total:   total,
+			Current: params.Page,
+		},
+	}
+	return result, nil
+}
+
 func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.VideoListRecord, err error) {
 	db := global.DB
 
@@ -223,6 +318,11 @@ func (w *VideoService) VideoDelete(c *gin.Context, id uint) (err error) {
 		return err
 	}
 	_ = tx.Commit().Error
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	err = z.DeleteDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(id)))
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -237,7 +337,7 @@ func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm
 	if err != nil {
 		return err
 	}
-	err = (&models.Video{
+	video := &models.Video{
 		UserId:       user.ID,
 		CategoryId:   params.CategoryId,
 		Title:        params.Title,
@@ -246,7 +346,18 @@ func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm
 		VideoUrl:     params.VideoUrl,
 		ThumbCount:   0,
 		CommentCount: 0,
-	}).Insert(db)
+	}
+	err = video.Insert(db)
+	if err != nil {
+		return err
+	}
+	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	err = z.InsertDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(video.ID)), map[string]interface{}{
+		"user_id":     video.UserId,
+		"category_id": video.CategoryId,
+		"title":       video.Title,
+		"introduce":   video.Introduce,
+	})
 	if err != nil {
 		return err
 	}
