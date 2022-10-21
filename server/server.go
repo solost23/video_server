@@ -21,7 +21,7 @@ func Run() {
 		scheduler.Run()
 	}()
 
-	initialize.Initialize()
+	initialize.Initialize("./config/config.yml")
 	server := &http.Server{
 		Addr:         global.ServerConfig.Addr,
 		Handler:      router.InitRouter(),

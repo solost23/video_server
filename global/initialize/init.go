@@ -1,7 +1,7 @@
 package initialize
 
-func Initialize() {
-	InitConfig("./config/config.yml")
+func Initialize(configPath string) {
+	InitConfig(configPath)
 	InitMysql(false)
 	InitMysql(true)
 	InitMinio()
