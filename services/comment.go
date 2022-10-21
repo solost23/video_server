@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"errors"
@@ -15,11 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CommentService struct {
-	WorkList
-}
-
-func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCreateForm) (err error) {
+func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm) (err error) {
 	// 直接创建,关系表也要创建
 	db := global.DB
 	tx := db.Begin()
@@ -80,7 +76,7 @@ func (w *CommentService) CommentInsert(c *gin.Context, params *forms.CommentCrea
 	return nil
 }
 
-func (w *CommentService) CommentDelete(c *gin.Context, id uint) (err error) {
+func (s *Service) CommentDelete(c *gin.Context, id uint) (err error) {
 	// base logic: 查看关系表中有无此用户和评论对应关系，如果有，那么去评论表删除数据
 	db := global.DB
 	tx := db.Begin()
@@ -106,7 +102,7 @@ func (w *CommentService) CommentDelete(c *gin.Context, id uint) (err error) {
 	return nil
 }
 
-func (w *CommentService) CommentList(c *gin.Context, params *forms.CommentListForm) (response *forms.CommentListResponse, err error) {
+func (s *Service) CommentList(c *gin.Context, params *forms.CommentListForm) (response *forms.CommentListResponse, err error) {
 	db := global.DB
 
 	query := make([]string, 0, 1)

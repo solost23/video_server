@@ -4,7 +4,7 @@ import (
 	"video_server/forms"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
-	"video_server/workList"
+	"video_server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func categoryInsert(c *gin.Context) {
 		return
 	}
 
-	err := (&workList.CategoryService{}).Insert(c, params)
+	err := (&services.Service{}).InsertCategory(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -55,7 +55,7 @@ func categoryUpdate(c *gin.Context) {
 		return
 	}
 
-	err := (&workList.CategoryService{}).Update(c, UIdForm.Id, params)
+	err := (&services.Service{}).UpdateCategory(c, UIdForm.Id, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -83,7 +83,7 @@ func categoryList(c *gin.Context) {
 	if params.Size == 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.CategoryService{}).List(c, params)
+	result, err := (&services.Service{}).ListCategory(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -104,7 +104,7 @@ func searchCategory(c *gin.Context) {
 	if params.Size <= 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.CategoryService{}).SearchCategory(c, params)
+	result, err := (&services.Service{}).SearchCategory(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

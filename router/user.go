@@ -4,7 +4,7 @@ import (
 	"video_server/forms"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
-	"video_server/workList"
+	"video_server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,7 @@ func register(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	err := (&workList.UserService{}).Register(c, params)
+	err := (&services.Service{}).Register(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -30,7 +30,7 @@ func uploadAvatar(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.UserService{}).UploadAvatar(c, file)
+	result, err := (&services.Service{}).UploadAvatar(c, file)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -45,7 +45,7 @@ func login(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.UserService{}).Login(c, params)
+	result, err := (&services.Service{}).Login(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -60,7 +60,7 @@ func logout(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	err := (&workList.UserService{}).Logout(c, params)
+	err := (&services.Service{}).Logout(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -83,7 +83,7 @@ func userDetail(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.UserService{}).Detail(c, UIdForm.Id)
+	result, err := (&services.Service{}).Detail(c, UIdForm.Id)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -107,7 +107,7 @@ func userDelete(c *gin.Context) {
 		return
 	}
 
-	err := (&workList.UserService{}).Delete(c, UIdForm.Id)
+	err := (&services.Service{}).DeleteUser(c, UIdForm.Id)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -136,7 +136,7 @@ func userUpdate(c *gin.Context) {
 		return
 	}
 
-	err := (&workList.UserService{}).Update(c, UIdForm.Id, params)
+	err := (&services.Service{}).UpdateUser(c, UIdForm.Id, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -165,7 +165,7 @@ func userList(c *gin.Context) {
 	if params.Size == 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.UserService{}).List(c, params)
+	result, err := (&services.Service{}).ListUser(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -186,7 +186,7 @@ func searchUser(c *gin.Context) {
 	if params.Size <= 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.UserService{}).SearchUser(c, params)
+	result, err := (&services.Service{}).SearchUser(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

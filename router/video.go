@@ -4,7 +4,7 @@ import (
 	"video_server/forms"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
-	"video_server/workList"
+	"video_server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func videoUploadImg(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.VideoService{}).VideoUploadImg(c, file)
+	result, err := (&services.Service{}).VideoUploadImg(c, file)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -40,7 +40,7 @@ func videoUploadVid(c *gin.Context) {
 		return
 	}
 
-	result, err := (&workList.VideoService{}).VideoUploadVid(c, file)
+	result, err := (&services.Service{}).VideoUploadVid(c, file)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -54,7 +54,7 @@ func videoInsert(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	if err := (&workList.VideoService{}).VideoInsert(c, params); err != nil {
+	if err := (&services.Service{}).VideoInsert(c, params); err != nil {
 		response.Error(c, 2001, err)
 		return
 	}
@@ -75,7 +75,7 @@ func videoDelete(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	if err := (&workList.VideoService{}).VideoDelete(c, UIdForm.Id); err != nil {
+	if err := (&services.Service{}).VideoDelete(c, UIdForm.Id); err != nil {
 		response.Error(c, 2001, err)
 		return
 	}
@@ -96,7 +96,7 @@ func videoDetail(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.VideoService{}).VideoDetail(c, UIdForm.Id)
+	result, err := (&services.Service{}).VideoDetail(c, UIdForm.Id)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -124,7 +124,7 @@ func videoList(c *gin.Context) {
 	if params.Size == 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.VideoService{}).VideoList(c, params)
+	result, err := (&services.Service{}).VideoList(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -144,7 +144,7 @@ func searchVideo(c *gin.Context) {
 	if params.Size <= 0 {
 		params.Size = 10
 	}
-	result, err := (&workList.VideoService{}).SearchVideo(c, params)
+	result, err := (&services.Service{}).SearchVideo(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

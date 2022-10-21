@@ -4,7 +4,7 @@ import (
 	"video_server/forms"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
-	"video_server/workList"
+	"video_server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func commentCreate(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	if err := (&workList.CommentService{}).CommentInsert(c, params); err != nil {
+	if err := (&services.Service{}).CommentInsert(c, params); err != nil {
 		response.Error(c, 2001, err)
 		return
 	}
@@ -45,7 +45,7 @@ func commentDelete(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	if err := (&workList.CommentService{}).CommentDelete(c, UIdForm.Id); err != nil {
+	if err := (&services.Service{}).CommentDelete(c, UIdForm.Id); err != nil {
 		response.Error(c, 2001, err)
 		return
 	}
@@ -73,7 +73,7 @@ func commentList(c *gin.Context) {
 		params.Size = 10
 	}
 
-	result, err := (&workList.CommentService{}).CommentList(c, params)
+	result, err := (&services.Service{}).CommentList(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

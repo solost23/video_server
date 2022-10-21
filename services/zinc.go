@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"context"

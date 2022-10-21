@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"encoding/json"
@@ -23,11 +23,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserService struct {
-	WorkList
-}
-
-func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err error) {
+func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err error) {
 	// base logic: 校验当前用户是否存在，若不存在则新建
 	db := global.DB
 
@@ -68,7 +64,7 @@ func (w *UserService) Register(c *gin.Context, params *forms.RegisterForm) (err 
 	return nil
 }
 
-func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
+func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
 	db := global.DB
 
 	user, err := (&models.User{}).WhereOne(db, "user_name = ?", params.UserName)
@@ -134,7 +130,7 @@ func (w *UserService) Login(c *gin.Context, params *forms.LoginForm) (response *
 	return response, err
 }
 
-func (w *UserService) Logout(c *gin.Context, params *forms.LogoutForm) (err error) {
+func (s *Service) Logout(c *gin.Context, params *forms.LogoutForm) (err error) {
 	user := c.Value("user").(*models.User)
 	rdb, err := cache.RedisConnFactory(15)
 	if err != nil {
@@ -155,7 +151,7 @@ func (w *UserService) Logout(c *gin.Context, params *forms.LogoutForm) (err erro
 	return nil
 }
 
-func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *forms.ListResponse, err error) {
+func (s *Service) ListUser(c *gin.Context, params *forms.ListForm) (response *forms.ListResponse, err error) {
 	db := global.DB
 
 	query := make([]string, 0, 3)
@@ -205,7 +201,7 @@ func (w *UserService) List(c *gin.Context, params *forms.ListForm) (response *fo
 	return response, nil
 }
 
-func (w *UserService) Delete(c *gin.Context, id uint) (err error) {
+func (s *Service) DeleteUser(c *gin.Context, id uint) (err error) {
 	// 查看用户是否存在，若存在，则删除
 	db := global.DB
 
@@ -247,7 +243,7 @@ func (w *UserService) Delete(c *gin.Context, id uint) (err error) {
 	return nil
 }
 
-func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateForm) (err error) {
+func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateForm) (err error) {
 	db := global.DB
 
 	query := []string{"id = ?"}
@@ -289,7 +285,7 @@ func (w *UserService) Update(c *gin.Context, id uint, params *forms.UserUpdateFo
 	return nil
 }
 
-func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecord, err error) {
+func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, err error) {
 	db := global.DB
 
 	query := []string{"id = ?"}
@@ -314,7 +310,7 @@ func (w *UserService) Detail(c *gin.Context, id uint) (response *forms.ListRecor
 	return response, nil
 }
 
-func (w *UserService) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+func (s *Service) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := &models.User{}
 	result, err = UploadImg(user, "avatar", file)
 	if err != nil {
@@ -324,7 +320,7 @@ func (w *UserService) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (
 	return result, nil
 }
 
-func (w *UserService) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.ListResponse, error) {
+func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.ListResponse, error) {
 	db := global.DB
 
 	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}

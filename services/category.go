@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"math"
@@ -13,11 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CategoryService struct {
-	WorkList
-}
-
-func (w *CategoryService) Insert(c *gin.Context, params *forms.CategoryInsertForm) (err error) {
+func (s *Service) InsertCategory(c *gin.Context, params *forms.CategoryInsertForm) (err error) {
 	db := global.DB
 	user := utils.GetUser(c)
 
@@ -49,7 +45,7 @@ func (w *CategoryService) Insert(c *gin.Context, params *forms.CategoryInsertFor
 	return nil
 }
 
-func (w *CategoryService) List(c *gin.Context, params *forms.CategoryListForm) (response *forms.CategoryListResponse, err error) {
+func (s *Service) ListCategory(c *gin.Context, params *forms.CategoryListForm) (response *forms.CategoryListResponse, err error) {
 	db := global.DB
 
 	query := make([]string, 0, 3)
@@ -94,7 +90,7 @@ func (w *CategoryService) List(c *gin.Context, params *forms.CategoryListForm) (
 	return response, nil
 }
 
-func (w *CategoryService) Update(c *gin.Context, id uint, params *forms.CategoryUpdateForm) (err error) {
+func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.CategoryUpdateForm) (err error) {
 	// base logic: 查看用户是否存在，若存在，更新数据，否则错误
 	db := global.DB
 
@@ -132,7 +128,7 @@ func (w *CategoryService) Update(c *gin.Context, id uint, params *forms.Category
 	return nil
 }
 
-func (w *CategoryService) SearchCategory(c *gin.Context, params *forms.SearchForm) (*forms.CategoryListResponse, error) {
+func (s *Service) SearchCategory(c *gin.Context, params *forms.SearchForm) (*forms.CategoryListResponse, error) {
 	// 直接搜索
 	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
 	from := int32((params.Page - 1) * params.Size)

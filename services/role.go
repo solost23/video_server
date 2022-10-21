@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"errors"
@@ -11,11 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type RoleService struct {
-	WorkList
-}
-
-func (w *RoleService) Insert(c *gin.Context, params *forms.RoleInsertForm) (err error) {
+func (s *Service) InsertRole(c *gin.Context, params *forms.RoleInsertForm) (err error) {
 	// 查询数据是否存在
 	db := global.CasbinDB
 
@@ -39,7 +35,7 @@ func (w *RoleService) Insert(c *gin.Context, params *forms.RoleInsertForm) (err 
 	return nil
 }
 
-func (w *RoleService) Delete(c *gin.Context, params *forms.RoleInsertForm) (err error) {
+func (s *Service) DeleteRole(c *gin.Context, params *forms.RoleInsertForm) (err error) {
 	db := global.CasbinDB
 
 	query := []string{"role_name = ?", "path = ?", "method = ?"}
@@ -55,7 +51,7 @@ func (w *RoleService) Delete(c *gin.Context, params *forms.RoleInsertForm) (err 
 	return nil
 }
 
-func (w *RoleService) List(c *gin.Context, params *forms.RoleListForm) (response *forms.RoleListResponse, err error) {
+func (s *Service) ListRole(c *gin.Context, params *forms.RoleListForm) (response *forms.RoleListResponse, err error) {
 	db := global.CasbinDB
 
 	query := make([]string, 0, 3)

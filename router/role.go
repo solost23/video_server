@@ -4,7 +4,7 @@ import (
 	"video_server/forms"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
-	"video_server/workList"
+	"video_server/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func roleInsert(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	err := (&workList.RoleService{}).Insert(c, params)
+	err := (&services.Service{}).InsertRole(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -48,7 +48,7 @@ func roleDelete(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	err := (&workList.RoleService{}).Delete(c, params)
+	err := (&services.Service{}).DeleteRole(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return
@@ -70,7 +70,7 @@ func roleList(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	result, err := (&workList.RoleService{}).List(c, params)
+	result, err := (&services.Service{}).ListRole(c, params)
 	if err != nil {
 		response.Error(c, 2001, err)
 		return

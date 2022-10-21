@@ -1,4 +1,4 @@
-package workList
+package services
 
 import (
 	"errors"
@@ -18,11 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type VideoService struct {
-	WorkList
-}
-
-func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (response *forms.VideoListResponse, err error) {
+func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (response *forms.VideoListResponse, err error) {
 	db := global.DB
 
 	categoryIds := make([]uint, 0)
@@ -156,7 +152,7 @@ func (w *VideoService) VideoList(c *gin.Context, params *forms.VideoListForm) (r
 	return response, nil
 }
 
-func (w *VideoService) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
+func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
 	db := global.DB
 
 	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
@@ -249,7 +245,7 @@ func (w *VideoService) SearchVideo(c *gin.Context, params *forms.SearchForm) (*f
 	return result, nil
 }
 
-func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.VideoListRecord, err error) {
+func (s *Service) VideoDetail(c *gin.Context, id uint) (response *forms.VideoListRecord, err error) {
 	db := global.DB
 
 	query := []string{"id = ?"}
@@ -295,7 +291,7 @@ func (w *VideoService) VideoDetail(c *gin.Context, id uint) (response *forms.Vid
 	return response, nil
 }
 
-func (w *VideoService) VideoDelete(c *gin.Context, id uint) (err error) {
+func (s *Service) VideoDelete(c *gin.Context, id uint) (err error) {
 	// base logic: 删视频，删评论
 	db := global.DB
 	tx := db.Begin()
@@ -326,7 +322,7 @@ func (w *VideoService) VideoDelete(c *gin.Context, id uint) (err error) {
 	return nil
 }
 
-func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (err error) {
+func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (err error) {
 	db := global.DB
 	user := utils.GetUser(c)
 
@@ -364,7 +360,7 @@ func (w *VideoService) VideoInsert(c *gin.Context, params *forms.VideoInsertForm
 	return nil
 }
 
-func (w *VideoService) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+func (s *Service) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
 	result, err = UploadImg(user, "img", file)
@@ -375,7 +371,7 @@ func (w *VideoService) VideoUploadImg(c *gin.Context, file *multipart.FileHeader
 	return result, nil
 }
 
-func (w *VideoService) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
+func (s *Service) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
 	result, err = UploadVid(user, "vid", file)
