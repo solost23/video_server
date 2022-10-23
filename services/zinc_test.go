@@ -129,7 +129,7 @@ func TestZinc_SearchDocument(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result, err := z.SearchDocument(test.arg.ctx, test.arg.index, test.arg.queryString, test.arg.from, test.arg.size)
+			result, _, err := z.SearchDocument(test.arg.ctx, test.arg.index, test.arg.queryString, test.arg.from, test.arg.size)
 			if err != nil {
 				t.Errorf("%v", err)
 			}
