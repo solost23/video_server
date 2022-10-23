@@ -9,15 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary add roleAuth
-// @Description add roleAuth
-// @Tags Role
-// @Security ApiKeyAuth
-// @Param data body models.CasbinModel true "角色"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /role/create [post]
 func roleInsert(c *gin.Context) {
 	params := &forms.RoleInsertForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
@@ -33,15 +24,6 @@ func roleInsert(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary delete role
-// @Description delete roleAuth
-// @Tags Role
-// @Security ApiKeyAuth
-// @Param data body models.CasbinModel true "角色"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /role/delete [post]
 func roleDelete(c *gin.Context) {
 	params := &forms.RoleInsertForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
@@ -56,14 +38,6 @@ func roleDelete(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary get all roleAuth
-// @Description get all roleAuth
-// @Tags Role
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /role/list [post]
 func roleList(c *gin.Context) {
 	params := &forms.RoleListForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {

@@ -9,16 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary add video
-// @Description add video
-// @Tags Video
-// @Security ApiKeyAuth
-// @Param data body models.Video true "视频"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/create [post]
-
 func videoUploadImg(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -61,14 +51,6 @@ func videoInsert(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary delete video
-// @Description delete video
-// @Tags Video
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/delete [post]
 func videoDelete(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -82,14 +64,6 @@ func videoDelete(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary video detail
-// @Description video detail
-// @Tags Video
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/detail [get]
 func videoDetail(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -104,14 +78,6 @@ func videoDetail(c *gin.Context) {
 	response.Success(c, result)
 }
 
-// @Summary video list
-// @Description video list
-// @Tags Video
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /video/list [post]
 func videoList(c *gin.Context) {
 	params := &forms.VideoListForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {

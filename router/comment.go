@@ -9,15 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary create comment
-// @Description add comment
-// @Tags Comment
-// @Security ApiKeyAuth
-// @Param data body models.Comment true "评论"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /comment/create [post]
 func commentCreate(c *gin.Context) {
 	params := &forms.CommentCreateForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
@@ -31,14 +22,6 @@ func commentCreate(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary delete comment
-// @Description delete comment
-// @Tags Comment
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /comment/delete [post]
 func commentDelete(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -52,14 +35,6 @@ func commentDelete(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary get_comment_by_video_id
-// @Description get comment by video id
-// @Tags Comment
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /comment/list [post]
 func commentList(c *gin.Context) {
 	params := &forms.CommentListForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {

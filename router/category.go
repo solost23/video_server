@@ -9,15 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary create_class
-// @Description add category
-// @Tags Class
-// @Security ApiKeyAuth
-// @Param data body models.Class true "类别"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /category/create [post]
 func categoryInsert(c *gin.Context) {
 	params := &forms.CategoryInsertForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
@@ -34,15 +25,6 @@ func categoryInsert(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary update_class
-// @Description update category
-// @Tags Class
-// @Security ApiKeyAuth
-// @Param data body models.Class true "类别"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /category/update [post]
 func categoryUpdate(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -63,14 +45,6 @@ func categoryUpdate(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary get user all category
-// @Description get user all category
-// @Tags Class
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /category/list [post]
 func categoryList(c *gin.Context) {
 	params := &forms.CategoryListForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {

@@ -69,14 +69,6 @@ func logout(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary get_user_info
-// @Description get user info
-// @Tags User
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /user/detail [post]
 func userDetail(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -92,14 +84,6 @@ func userDetail(c *gin.Context) {
 	response.Success(c, result)
 }
 
-// @Summary delete_user_info
-// @Description delete user info
-// @Tags User
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /user/delete [post]
 func userDelete(c *gin.Context) {
 	UIdForm := utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -115,15 +99,6 @@ func userDelete(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary update_user_info
-// @Description update user info
-// @Tags User
-// @Security ApiKeyAuth
-// @Param data body models.User true "用户"
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /user/update [post]
 func userUpdate(c *gin.Context) {
 	UIdForm := &utils.UIdForm{}
 	if err := utils.GetValidUriParams(c, UIdForm); err != nil {
@@ -145,14 +120,6 @@ func userUpdate(c *gin.Context) {
 	response.MessageSuccess(c, "成功", nil)
 }
 
-// @Summary get_all_user_info
-// @Description get all user info
-// @Tags User
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200
-// @Router /user/list [post]
 func userList(c *gin.Context) {
 	params := &forms.ListForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
