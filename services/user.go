@@ -13,7 +13,7 @@ import (
 	"video_server/global"
 	"video_server/pkg/cache"
 	"video_server/pkg/constants"
-	"video_server/pkg/middleware"
+	"video_server/pkg/middlewares"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
 
@@ -85,14 +85,14 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 		redisPrefix = constants.MobileRedisPrefix
 	}
 
-	j := middleware.NewJWT()
-	claims := middleware.CustomClaims{
+	j := middlewares.NewJWT()
+	claims := middlewares.CustomClaims{
 		UserId: user.ID,
 		Device: redisPrefix,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			ExpiresAt: time.Now().Unix() + int64(global.ServerConfig.JWTConfig.Duration),
-			Issuer:    global.ServerConfig.Name,
+			Issuer:    "video_server",
 		},
 	}
 	token, err := j.CreateToken(claims)

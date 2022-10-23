@@ -1,26 +1,20 @@
-package router
+package routers
 
 import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "video_server/docs" // 必须要导入生成的docs文档包
-	"video_server/global"
-	"video_server/pkg/middleware"
+	"video_server/pkg/middlewares"
 )
 
-func InitRouter() *gin.Engine {
-	router := gin.New()
-	router.Use(gin.Logger(), gin.Recovery())
-	gin.SetMode(global.ServerConfig.DebugMode)
-	group := router.Group("api")
+func SetRouters(r *gin.Engine) {
+	group := r.Group("api")
 	initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里
 	//group.Use(jwt.JWTAuth, role.CheckRole)
-	group.Use(middleware.JWTAuth())
+	group.Use(middlewares.JWTAuth())
 	initAuthRouter(group)
-
-	return router
 }
 
 func initNoAuthRouter(group *gin.RouterGroup) {

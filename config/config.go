@@ -1,18 +1,19 @@
 package config
 
 type ServerConfig struct {
-	Version        string      `mapstructure:"version"`
-	DebugMode      string      `mapstructure:"debug_mode"`
-	Addr           string      `mapstructure:"addr"`
-	Name           string      `mapsturcture:"name"`
-	MysqlConfig    MysqlConfig `mapstructure:"mysql"`
-	RedisConfig    RedisConfig `mapstructure:"redis"`
-	MinioConfig    MinioConfig `mapstructure:"minio"`
-	DeleteCronTime string      `mapstructure:"delete_cron_time"`
-	JWTConfig      JWTConfig   `mapstructure:"jwt"`
-	Md5Config      Md5Config   `mapstructure:"md5"`
-	LogConfig      LogConfig   `mapstructure:"log"`
-	ZincConfig     ZincConfig  `mapstructure:"zinc"`
+	Version          string      `mapstructure:"version"`
+	DebugMode        string      `mapstructure:"debug_mode"`
+	TimeLocation     string      `mapstructure:"time_location"`
+	Addr             string      `mapstructure:"addr"`
+	PrometheusEnable bool        `mapstructure:"prometheus_enable"`
+	MysqlConfig      MysqlConfig `mapstructure:"mysql"`
+	RedisConfig      RedisConfig `mapstructure:"redis"`
+	MinioConfig      MinioConfig `mapstructure:"minio"`
+	DeleteCronTime   string      `mapstructure:"delete_cron_time"`
+	JWTConfig        JWTConfig   `mapstructure:"jwt"`
+	Md5Config        Md5Config   `mapstructure:"md5"`
+	LogConfig        LogConfig   `mapstructure:"log"`
+	ZincConfig       ZincConfig  `mapstructure:"zinc"`
 }
 
 type MysqlConfig struct {

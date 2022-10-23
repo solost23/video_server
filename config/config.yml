@@ -1,7 +1,8 @@
-version: "1.0"
+version: "1.0.1"
 debug_mode: "debug"
-addr: "0.0.0.0:8081"
-name: "video_server"
+addr: ":8081"
+time_location: "Asia/Chongqing"
+prometheus_enable: false
 
 mysql:
   addr: "127.0.0.1:3306"
