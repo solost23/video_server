@@ -41,7 +41,7 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 		Password:     utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
 		Nickname:     params.Nickname,
 		Role:         params.Role,
-		Avatar:       params.Avatar,
+		Avatar:       utils.TrimDomainPrefix(params.Avatar),
 		Introduce:    params.Introduce,
 		FansCount:    0,
 		CommentCount: 0,
@@ -181,7 +181,7 @@ func (s *Service) ListUser(c *gin.Context, params *forms.ListForm) (response *fo
 			UserName:     user.UserName,
 			Nickname:     user.Nickname,
 			Role:         user.Role,
-			Avatar:       user.Avatar,
+			Avatar:       utils.FulfillImageOSSPrefix(user.Avatar),
 			Introduce:    user.Introduce,
 			FansCount:    user.FansCount,
 			CommentCount: user.CommentCount,
@@ -257,7 +257,7 @@ func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateFo
 		"user_name": params.UserName,
 		"password":  utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
 		"nickname":  params.Nickname,
-		"avatar":    params.Avatar,
+		"avatar":    utils.TrimDomainPrefix(params.Avatar),
 		"introduce": params.Introduce,
 	}
 	err = (&models.User{}).Updates(db, value, strings.Join(query, " AND "), args...)
@@ -300,7 +300,7 @@ func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, e
 		UserName:     user.UserName,
 		Nickname:     user.Nickname,
 		Role:         user.Role,
-		Avatar:       user.Avatar,
+		Avatar:       utils.FulfillImageOSSPrefix(user.Avatar),
 		Introduce:    user.Introduce,
 		FansCount:    user.FansCount,
 		CommentCount: user.CommentCount,
@@ -312,7 +312,7 @@ func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, e
 
 func (s *Service) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := &models.User{}
-	result, err = UploadImg(user, "avatar", file)
+	result, err = UploadImg(c, user, "avatar", file)
 	if err != nil {
 		return "", err
 	}

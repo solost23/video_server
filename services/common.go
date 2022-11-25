@@ -2,10 +2,10 @@ package services
 
 import (
 	"context"
-	"fmt"
+	"github.com/solost23/go_interface/gen_go/common"
+	"github.com/solost23/go_interface/gen_go/oss"
 	"io/ioutil"
 	"mime/multipart"
-	"net/url"
 	"path"
 	"strconv"
 	"time"
@@ -13,19 +13,17 @@ import (
 	"video_server/pkg/constants"
 	"video_server/pkg/models"
 	"video_server/pkg/utils"
-
-	"github.com/solost23/tools/minio_storage"
 )
 
-func UploadImg(user *models.User, folderName string, file *multipart.FileHeader) (string, error) {
-	return uploadImage(user, folderName, file, "image")
+func UploadImg(ctx context.Context, user *models.User, folderName string, file *multipart.FileHeader) (string, error) {
+	return uploadImage(ctx, user, folderName, file, "image")
 }
 
-func UploadVid(user *models.User, folderName string, file *multipart.FileHeader) (string, error) {
-	return uploadImage(user, folderName, file, "video")
+func UploadVid(ctx context.Context, user *models.User, folderName string, file *multipart.FileHeader) (string, error) {
+	return uploadImage(ctx, user, folderName, file, "video")
 }
 
-func uploadImage(user *models.User, folderName string, file *multipart.FileHeader, uploadType string) (string, error) {
+func uploadImage(ctx context.Context, user *models.User, folderName string, file *multipart.FileHeader, uploadType string) (string, error) {
 	fileHandle, err := file.Open()
 	if err != nil {
 		return "", err
@@ -43,35 +41,18 @@ func uploadImage(user *models.User, folderName string, file *multipart.FileHeade
 			strconv.Itoa(int(user.ID))+
 			utils.GetMd5Hash(string(fileByte))+
 			postFileName) + path.Ext(postFileName)
-	url, err := upload(folderName, fileName, fileHandle, uploadType, file.Size)
+	reply, err := global.OSSSrvClient.Upload(ctx, &oss.UploadRequest{
+		Header: &common.RequestHeader{
+			OperatorUid: int32(user.ID),
+			Requester:   user.UserName,
+		},
+		Folder:     folderName,
+		Key:        fileName,
+		Data:       fileByte,
+		UploadType: uploadType,
+	})
 	if err != nil {
 		return "", err
 	}
-	return url, nil
-}
-
-func upload(folderName string, fileName string, fileHandle multipart.File, uploadType string, fileSize int64) (result string, err error) {
-	ctx := context.Background()
-	if err = minio_storage.CreateBucket(ctx, global.Minio, folderName); err != nil {
-		return "", err
-	}
-	// 设置链接可永久下载
-	policy := `
-{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS": 
-          ["*"]},"Action":["s3:GetBucketLocation","s3:ListBucket"],"Resource": 
-          ["arn:aws:s3:::%s"]},{"Effect":"Allow","Principal":{"AWS":["*"]},"Action": 
-          ["s3:GetObject"],"Resource":["arn:aws:s3:::%s/*"]}]}
-`
-	if err = global.Minio.SetBucketPolicy(folderName, fmt.Sprintf(policy, folderName, folderName)); err != nil {
-		return "", err
-	}
-	if err = minio_storage.StreamUpload(ctx, global.Minio, folderName, fileName, fileHandle, fileSize, fmt.Sprintf("Application/%s", uploadType)); err != nil {
-		return "", err
-	}
-	requestParams := make(url.Values)
-	fileUrl, err := minio_storage.GetFileUrl(ctx, global.Minio, folderName, fileName, 168*time.Hour, requestParams)
-	if err != nil {
-		return "", err
-	}
-	return fileUrl, nil
+	return reply.GetUrl(), nil
 }

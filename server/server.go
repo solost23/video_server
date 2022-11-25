@@ -11,12 +11,14 @@ import (
 	"time"
 	"video_server/global"
 	"video_server/global/initialize"
+	"video_server/pkg/models"
 	"video_server/routers"
 	"video_server/scheduler"
 )
 
 func Run() {
-	initialize.Initialize("./config/config.yml")
+	initialize.Initialize("./configs/config.yml")
+	global.DB.AutoMigrate(&models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
 	// Version
 	if len(os.Args) > 1 && os.Args[1] == "version" {
 		fmt.Printf("video_server version: %s\n", global.ServerConfig.Version)

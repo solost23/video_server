@@ -1,39 +1,45 @@
 version: "1.0.1"
 debug_mode: "debug"
 addr: ":8081"
-time_location: "Asia/Chongqing"
+time_location: "Asia/Shanghai"
 prometheus_enable: false
 
 mysql:
-  addr: "127.0.0.1:3306"
+  addr: "mariadb:3306"
   user: "root"
   password: "123"
   db: "video_server"
   casbin_db: "casbin"
   charset: "utf8mb4"
+
 redis:
-  addr: "127.0.0.1:6379"
+  addr: "redis:6379"
   user: ""
   password: ""
-minio:
-  end_point: "127.0.0.1:9000"
-  access_key_id: "minioadmin"
-  secret_access_key: "minioadmin"
-  user_ssl: false
+
 delete_cron_time: "0 0 3 * * ?"
+
 jwt:
   key: "my_secret_key"
   duration: 2678400
+
 md5:
   secret: "ty"
+
 log:
   runtime_path: "/logs/"
   track_path: "/err_logs/"
-gRpc:
-  user_service:
-    addrSlice:
-      "127.0.0.1:8080"
 
 zinc:
   username: "admin"
   password: "Complexpass#123"
+
+consul:
+  host: "consul"
+  port: 8500
+
+static-oss:
+  domain: "http://127.0.0.1:9000"
+
+oss:
+  name: "oss_service"

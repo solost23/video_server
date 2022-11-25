@@ -1,18 +1,26 @@
-FROM golang:alpine
-
-MAINTAINER TY tianyuanyuans@163.com
+FROM golang:alpine AS builder
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
-    GOOS=linux\
-    GOARCH=amd64 \
-    GOPROXY=https://goproxy.cn,direct \
-    GOPRIVATE=git.domob-inc.cn
+    GOOS=linux \
+    GOARCH=amd64
 
-WORKDIR /app/video_server
-COPY . /app/video_server
-RUN go get github.com/sirupsen/logrus/internal/testutils && go mod tidy
+WORKDIR /build
+COPY . .
+RUN go build -o app ./cmd/video_server/main.go
+# 下载时区文件
+RUN apk add tzdata
 
-EXPOSE 8080
 
-CMD ["go", "run", "cmd/main.go"]
+FROM scratch
+
+COPY --from=builder /build/app /
+#COPY --from=builder /build/configs /
+
+# 拷贝时区文件
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+# 设置时区
+ENV TZ=Asia/Shanghai
+
+EXPOSE 8081
+CMD ["/app"]

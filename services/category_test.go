@@ -12,7 +12,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	initialize.Initialize("../config/config.yml")
+	initialize.Initialize("../configs/configs.yml")
 	os.Exit(m.Run())
 }
 

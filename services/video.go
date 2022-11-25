@@ -132,8 +132,8 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 			CategoryName: categoryNameMaps[video.CategoryId],
 			Title:        video.Title,
 			Introduce:    video.Introduce,
-			ImageUrl:     video.ImageUrl,
-			VideoUrl:     video.VideoUrl,
+			ImageUrl:     utils.FulfillImageOSSPrefix(video.ImageUrl),
+			VideoUrl:     utils.FulfillImageOSSPrefix(video.VideoUrl),
 			ThumbCount:   int64(thumbCountMap[video.ID]),
 			CommentCount: int64(commentCountMap[video.ID]),
 			CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
@@ -281,8 +281,8 @@ func (s *Service) VideoDetail(c *gin.Context, id uint) (response *forms.VideoLis
 		CategoryID:   video.CategoryId,
 		Title:        video.Title,
 		Introduce:    video.Introduce,
-		ImageUrl:     video.ImageUrl,
-		VideoUrl:     video.VideoUrl,
+		ImageUrl:     utils.FulfillImageOSSPrefix(video.ImageUrl),
+		VideoUrl:     utils.FulfillImageOSSPrefix(video.VideoUrl),
 		ThumbCount:   thumbCount,
 		CommentCount: commentCount,
 		CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
@@ -338,8 +338,8 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 		CategoryId:   params.CategoryId,
 		Title:        params.Title,
 		Introduce:    params.Introduce,
-		ImageUrl:     params.ImageUrl,
-		VideoUrl:     params.VideoUrl,
+		ImageUrl:     utils.TrimDomainPrefix(params.ImageUrl),
+		VideoUrl:     utils.TrimDomainPrefix(params.VideoUrl),
 		ThumbCount:   0,
 		CommentCount: 0,
 	}
@@ -363,21 +363,21 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 func (s *Service) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadImg(user, "img", file)
+	result, err = UploadImg(c, user, "img", file)
 	if err != nil {
 		return "", err
 	}
 
-	return result, nil
+	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(result)), nil
 }
 
 func (s *Service) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadVid(user, "vid", file)
+	result, err = UploadVid(c, user, "vid", file)
 	if err != nil {
 		return "", err
 	}
 
-	return result, nil
+	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(result)), nil
 }

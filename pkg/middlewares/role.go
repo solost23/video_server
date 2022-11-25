@@ -17,7 +17,7 @@ func AuthCheckRole() gin.HandlerFunc {
 		// 写入配置文件
 		casbinDsn := "root:123@tcp(localhost:3306)/"
 		a := xormadapter.NewAdapter("mysql", casbinDsn)
-		e := casbin.NewEnforcer("../config/rbac_model.conf", a)
+		e := casbin.NewEnforcer("../configs/rbac_model.conf", a)
 		if err := e.LoadPolicy(); err != nil {
 			response.Error(c, 2001, err)
 			return
