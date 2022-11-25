@@ -10,6 +10,32 @@ services:
       - "/Users/ty/server/video_server/configs:/configs"
       # 挂载证书
       - "/Users/ty/server/Twitta/certs:/etc/ssl/certs/"
+    depends_on:
+      - zinc
+      - redis
+    networks:
+      - app_net
+
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_net
+
+  zinc:
+    image: public.ecr.aws/zinclabs/zinc:latest
+    restart: always
+    container_name: zinc
+    environment:
+      ZINC_FIRST_ADMIN_USER: "admin"
+      ZINC_FIRST_ADMIN_PASSWORD: "Complexpass#123"
+    ports:
+      - "4080:4080"
+    volumes:
+      - "/Users/ty/zinc/data:/data"
     networks:
       - app_net
 

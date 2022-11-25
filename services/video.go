@@ -155,7 +155,7 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
 	db := global.DB
 
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
 	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXVIDEO, params.Keyword, from, size)
@@ -314,7 +314,7 @@ func (s *Service) VideoDelete(c *gin.Context, id uint) (err error) {
 		return err
 	}
 	_ = tx.Commit().Error
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.DeleteDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(id)))
 	if err != nil {
 		return err
@@ -347,7 +347,7 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 	if err != nil {
 		return err
 	}
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.InsertDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(video.ID)), map[string]interface{}{
 		"user_id":     video.UserId,
 		"category_id": video.CategoryId,

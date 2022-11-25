@@ -2,12 +2,30 @@ package services
 
 import (
 	"context"
+	"fmt"
 	client "github.com/zinclabs/sdk-go-zincsearch"
+	"video_server/global"
 )
 
 type Zinc struct {
+	Host     string
+	Port     int
 	Username string
 	Password string
+	conf     *client.Configuration
+}
+
+func NewZinc() *Zinc {
+	conf := client.NewConfiguration()
+	conf.Servers[0].URL = fmt.Sprintf("%s:%d", global.ServerConfig.ZincConfig.Host, global.ServerConfig.ZincConfig.Port)
+	conf.Servers[1].URL = fmt.Sprintf("%s:%d", global.ServerConfig.ZincConfig.Host, global.ServerConfig.ZincConfig.Port)
+	return &Zinc{
+		Host:     global.ServerConfig.ZincConfig.Host,
+		Port:     global.ServerConfig.ZincConfig.Port,
+		Username: global.ServerConfig.ZincConfig.Username,
+		Password: global.ServerConfig.ZincConfig.Password,
+		conf:     conf,
+	}
 }
 
 // 检查索引是否存在

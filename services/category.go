@@ -34,7 +34,7 @@ func (s *Service) InsertCategory(c *gin.Context, params *forms.CategoryInsertFor
 	if err != nil {
 		return err
 	}
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.InsertDocument(c, constants.ZINCINDEXCATEGORY, strconv.Itoa(int(user.ID)), map[string]interface{}{
 		"title":     category.Title,
 		"introduce": category.Introduce,
@@ -113,7 +113,7 @@ func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.Category
 	if err != nil {
 		return err
 	}
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.DeleteDocument(c, constants.ZINCINDEXCATEGORY, strconv.Itoa(int(user.ID)))
 	if err != nil {
 		return err
@@ -130,7 +130,7 @@ func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.Category
 
 func (s *Service) SearchCategory(c *gin.Context, params *forms.SearchForm) (*forms.CategoryListResponse, error) {
 	// 直接搜索
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
 	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXCATEGORY, params.Keyword, from, size)

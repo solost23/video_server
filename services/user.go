@@ -51,7 +51,7 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 		return err
 	}
 
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)), map[string]interface{}{
 		"username":  user.UserName,
 		"nickname":  user.Nickname,
@@ -121,6 +121,7 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 		return nil, err
 	}
 
+	user.Avatar = utils.FulfillImageOSSPrefix(user.Avatar)
 	// 封装数据返回
 	response = &forms.LoginResponse{
 		IsFirstLogin: 2,
@@ -235,7 +236,7 @@ func (s *Service) DeleteUser(c *gin.Context, id uint) (err error) {
 	tx.Commit()
 
 	// 从全局索引中删除用户记录
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(id)))
 	if err != nil {
 		return err
@@ -268,7 +269,7 @@ func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateFo
 	if err != nil {
 		return err
 	}
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)))
 	if err != nil {
 		return err
@@ -323,7 +324,7 @@ func (s *Service) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (resu
 func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.ListResponse, error) {
 	db := global.DB
 
-	z := &Zinc{Username: global.ServerConfig.ZincConfig.Username, Password: global.ServerConfig.ZincConfig.Password}
+	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
 	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXUSER, params.Keyword, from, size)
