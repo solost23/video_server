@@ -135,8 +135,8 @@ func (s *Service) CommentList(c *gin.Context, params *forms.CommentListForm) (re
 			Content:     comment.Content,
 			ParentId:    comment.ParentId,
 			ISThumb:     comment.ISThumb,
-			CreatedAt:   comment.CreatedAt.Format(constants.TimeFormat),
-			UpdatedTime: comment.UpdatedAt.Format(constants.TimeFormat),
+			CreatedAt:   comment.CreatedAt.Format(constants.DateTime),
+			UpdatedTime: comment.UpdatedAt.Format(constants.DateTime),
 		})
 	}
 

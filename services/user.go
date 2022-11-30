@@ -186,8 +186,8 @@ func (s *Service) ListUser(c *gin.Context, params *forms.ListForm) (response *fo
 			Introduce:    user.Introduce,
 			FansCount:    user.FansCount,
 			CommentCount: user.CommentCount,
-			CreateTime:   user.CreatedAt.Format(constants.TimeFormat),
-			UpdateTime:   user.CreatedAt.Format(constants.TimeFormat),
+			CreateTime:   user.CreatedAt.Format(constants.DateTime),
+			UpdateTime:   user.CreatedAt.Format(constants.DateTime),
 		})
 	}
 	response = &forms.ListResponse{
@@ -305,20 +305,20 @@ func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, e
 		Introduce:    user.Introduce,
 		FansCount:    user.FansCount,
 		CommentCount: user.CommentCount,
-		CreateTime:   user.CreatedAt.Format(constants.TimeFormat),
-		UpdateTime:   user.UpdatedAt.Format(constants.TimeFormat),
+		CreateTime:   user.CreatedAt.Format(constants.DateTime),
+		UpdateTime:   user.UpdatedAt.Format(constants.DateTime),
 	}
 	return response, nil
 }
 
 func (s *Service) UploadAvatar(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
-	user := &models.User{}
-	result, err = UploadImg(c, user, "avatar", file)
+	folder := "video.server.users.avatar"
+
+	url, err := UploadImg(0, folder, file.Filename, file, "image")
 	if err != nil {
 		return "", err
 	}
-
-	return result, nil
+	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(url)), nil
 }
 
 func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.ListResponse, error) {
@@ -369,8 +369,8 @@ func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.L
 			Introduce:    searchResult.Source["introduce"].(string),
 			FansCount:    userIdToUserInfoMaps[uint(id)].FansCount,
 			CommentCount: userIdToUserInfoMaps[uint(id)].CommentCount,
-			CreateTime:   userIdToUserInfoMaps[uint(id)].CreateTime.Format(constants.TimeFormat),
-			UpdateTime:   userIdToUserInfoMaps[uint(id)].UpdateTime.Format(constants.TimeFormat),
+			CreateTime:   userIdToUserInfoMaps[uint(id)].CreateTime.Format(constants.DateTime),
+			UpdateTime:   userIdToUserInfoMaps[uint(id)].UpdateTime.Format(constants.DateTime),
 		})
 	}
 

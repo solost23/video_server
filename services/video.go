@@ -136,8 +136,8 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 			VideoUrl:     utils.FulfillImageOSSPrefix(video.VideoUrl),
 			ThumbCount:   int64(thumbCountMap[video.ID]),
 			CommentCount: int64(commentCountMap[video.ID]),
-			CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
-			UpdatedAt:    video.UpdatedAt.Format(constants.TimeFormat),
+			CreatedAt:    video.CreatedAt.Format(constants.DateTime),
+			UpdatedAt:    video.UpdatedAt.Format(constants.DateTime),
 		})
 	}
 	response = &forms.VideoListResponse{
@@ -229,8 +229,8 @@ func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.
 			VideoUrl:     videoIdToVideoInfoMaps[uint(videoId)].VideoUrl,
 			ThumbCount:   videoIdToVideoInfoMaps[uint(videoId)].ThumbCount,
 			CommentCount: videoIdToVideoInfoMaps[uint(videoId)].CommentCount,
-			CreatedAt:    videoIdToVideoInfoMaps[uint(videoId)].CreatedAt.Format(constants.TimeFormat),
-			UpdatedAt:    videoIdToVideoInfoMaps[uint(videoId)].UpdatedAt.Format(constants.TimeFormat),
+			CreatedAt:    videoIdToVideoInfoMaps[uint(videoId)].CreatedAt.Format(constants.DateTime),
+			UpdatedAt:    videoIdToVideoInfoMaps[uint(videoId)].UpdatedAt.Format(constants.DateTime),
 		})
 	}
 	result := &forms.VideoListResponse{
@@ -285,8 +285,8 @@ func (s *Service) VideoDetail(c *gin.Context, id uint) (response *forms.VideoLis
 		VideoUrl:     utils.FulfillImageOSSPrefix(video.VideoUrl),
 		ThumbCount:   thumbCount,
 		CommentCount: commentCount,
-		CreatedAt:    video.CreatedAt.Format(constants.TimeFormat),
-		UpdatedAt:    video.UpdatedAt.Format(constants.TimeFormat),
+		CreatedAt:    video.CreatedAt.Format(constants.DateTime),
+		UpdatedAt:    video.UpdatedAt.Format(constants.DateTime),
 	}
 	return response, nil
 }
@@ -363,21 +363,24 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 func (s *Service) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadImg(c, user, "img", file)
+	folder := "video.server.videos.img"
+
+	url, err := UploadImg(user.ID, folder, file.Filename, file, "image")
 	if err != nil {
 		return "", err
 	}
 
-	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(result)), nil
+	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(url)), nil
 }
 
 func (s *Service) VideoUploadVid(c *gin.Context, file *multipart.FileHeader) (result string, err error) {
 	user := utils.GetUser(c)
 
-	result, err = UploadVid(c, user, "vid", file)
+	folder := "video.server.videos.vid"
+
+	url, err := UploadVid(user.ID, folder, file.Filename, file, "video")
 	if err != nil {
 		return "", err
 	}
-
-	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(result)), nil
+	return utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(url)), nil
 }

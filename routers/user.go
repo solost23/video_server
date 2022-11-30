@@ -36,7 +36,7 @@ func uploadAvatar(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, utils.FulfillImageOSSPrefix(utils.TrimDomainPrefix(result)))
+	response.Success(c, result)
 }
 
 func login(c *gin.Context) {
