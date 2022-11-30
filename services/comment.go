@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"math"
 	"strings"
 	"video_server/forms"
@@ -25,20 +26,25 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 	query := []string{"id = ?"}
 	args := []interface{}{params.VideoID}
 	_, err = (&models.Video{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New(fmt.Sprintf("视频:[%d]未找到, 参数错误", params.VideoID))
 	}
 	query = append(query, "is_thumb = ?")
 	args = []interface{}{params.ParentID, params.ISThumb}
-	comment, err := (&models.Comment{}).WhereOne(db, strings.Join(query, " AND "), args...)
+	sqlComment, err := (&models.Comment{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 	var commentData *models.Comment
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		// 不存在
 		commentData = &models.Comment{
-			UserId:   user.ID,
+			CreatorBase: models.CreatorBase{
+				CreatorId: user.ID,
+			},
 			VideoId:  params.VideoID,
 			Content:  params.Content,
 			ParentId: 0,
@@ -52,10 +58,12 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 	} else {
 		// 存在
 		commentData = &models.Comment{
-			UserId:   user.ID,
+			CreatorBase: models.CreatorBase{
+				CreatorId: user.ID,
+			},
 			VideoId:  params.VideoID,
 			Content:  params.Content,
-			ParentId: comment.ID,
+			ParentId: sqlComment.ID,
 			ISThumb:  params.ISThumb,
 		}
 		err = commentData.Insert(tx)
@@ -66,13 +74,16 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 	}
 	// 存储关系
 	err = (&models.UserComment{
-		UserId:  user.ID,
-		Comment: commentData.ID,
+		CreatorBase: models.CreatorBase{
+			CreatorId: user.ID,
+		},
+		CommentId: commentData.ID,
 	}).Insert(tx)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+	tx.Commit()
 	return nil
 }
 
@@ -82,18 +93,19 @@ func (s *Service) CommentDelete(c *gin.Context, id uint) (err error) {
 	tx := db.Begin()
 	user := utils.GetUser(c)
 
-	query := []string{"user_id = ?", "comment_id = ?"}
-	args := []interface{}{user.ID, id}
-	_, err = (&models.UserComment{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
+	_, err = (&models.UserComment{}).WhereOne(db, "creator_id = ? AND comment_id = ?", user.ID, id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	err = (&models.Comment{}).Delete(tx, strings.Join(query, " AND "), args...)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New(fmt.Sprintf("用户:[%d]下评论:[%d]未找到，参数错误", user.ID, id))
+	}
+	err = (&models.Comment{}).Delete(tx, "id = ? AND creator_id = ?", id, user.ID)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
-	err = (&models.UserComment{}).Delete(tx, strings.Join(query, " AND "), args...)
+	err = (&models.UserComment{}).Delete(tx, "creator_id = ? AND comment_id = ?", user.ID, id)
 	if err != nil {
 		tx.Rollback()
 		return err
