@@ -34,11 +34,12 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 }
 
 func initAuthRouter(group *gin.RouterGroup) {
+	initAuthRoleRouter(group)
+	group.Use(middlewares.AuthCheckRole())
 	initAuthUserRouter(group)
 	initAuthCategoryRouter(group)
 	initAuthVideoRouter(group)
 	initAuthCommentRouter(group)
-	initAuthRoleRouter(group)
 }
 
 func initAuthUserRouter(group *gin.RouterGroup) {

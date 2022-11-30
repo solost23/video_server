@@ -23,7 +23,6 @@ type MysqlConfig struct {
 	User           string `mapstructure:"user"`
 	Password       string `mapstructure:"password"`
 	DB             string `mapstructure:"db"`
-	CasbinDB       string `mapstructure:"casbin_db"`
 	Charset        string `mapstructure:"charset"`
 	DeleteCronTime string `mapstructure:"delete_cron_time"`
 }

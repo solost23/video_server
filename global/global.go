@@ -11,7 +11,6 @@ import (
 var (
 	ServerConfig = &configs.ServerConfig{}
 	DB           *gorm.DB
-	CasbinDB     *gorm.DB
 	Minio        *minio.Client
 	RedisMapPool = make(map[int]*redis.Client, 15)
 	OSSSrvClient oss.OssClient

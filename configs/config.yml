@@ -9,7 +9,6 @@ mysql:
   user: "root"
   password: "123"
   db: "video_server"
-  casbin_db: "casbin"
   charset: "utf8mb4"
 
 redis:

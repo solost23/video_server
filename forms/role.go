@@ -11,8 +11,10 @@ type RoleInsertForm struct {
 }
 
 type RoleListForm struct {
-	*utils.PageForm
-	*RoleInsertForm
+	utils.PageForm
+	RoleName string `json:"roleName"`
+	Path     string `json:"path"`
+	Method   string `json:"method"`
 }
 
 type RoleListResponse struct {

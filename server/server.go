@@ -20,7 +20,7 @@ import (
 func Run() {
 	initialize.Initialize("./configs/config.yml")
 	// 创建 model
-	err := autoMigrate(global.DB, &models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
+	err := autoMigrate(global.DB, &models.CasbinRule{}, &models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
 	if err != nil {
 		panic(err)
 	}

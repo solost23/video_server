@@ -11,8 +11,7 @@ import (
 	"video_server/global"
 )
 
-// new mysql conn // flagDb 为false 连接默认库，flagDb为true连接casbin
-func InitMysql(flag bool) {
+func InitMysql() {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
@@ -21,10 +20,6 @@ func InitMysql(flag bool) {
 			IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound错误
 			Colorful:                  true,        // 禁用彩色打印
 		})
-	var dbName = global.ServerConfig.MysqlConfig.DB
-	if flag {
-		dbName = global.ServerConfig.MysqlConfig.CasbinDB
-	}
 	addr := strings.Split(global.ServerConfig.MysqlConfig.Addr, ":")
 	host := addr[0]
 	port := 3306
@@ -40,15 +35,12 @@ func InitMysql(flag bool) {
 		Password: global.ServerConfig.MysqlConfig.Password,
 		Host:     host,
 		Port:     port,
-		DB:       dbName,
+		DB:       global.ServerConfig.MysqlConfig.DB,
 		Charset:  global.ServerConfig.MysqlConfig.Charset,
 		Logger:   newLogger,
 	}
-	if flag {
-		global.CasbinDB, err = mysql.NewMysqlConnect(mysqlConfig)
-	} else {
-		global.DB, err = mysql.NewMysqlConnect(mysqlConfig)
-	}
+
+	global.DB, err = mysql.NewMysqlConnect(mysqlConfig)
 	if err != nil {
 		panic(err)
 	}
