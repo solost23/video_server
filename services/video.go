@@ -53,7 +53,7 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 		args = append(args, categoryIds)
 	}
 	if len(userIds) > 0 {
-		query = append(query, "user_id IN ?")
+		query = append(query, "creator_id IN ?")
 		args = append(args, userIds)
 	}
 	if params.VideoTitle != "" {
