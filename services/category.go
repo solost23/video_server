@@ -26,7 +26,9 @@ func (s *Service) InsertCategory(c *gin.Context, params *forms.CategoryInsertFor
 	}
 	// 增加分类
 	category := &models.Category{
-		UserID:    user.ID,
+		CreatorBase: models.CreatorBase{
+			CreatorId: user.ID,
+		},
 		Title:     params.Title,
 		Introduce: params.Introduce,
 	}
@@ -51,7 +53,7 @@ func (s *Service) ListCategory(c *gin.Context, params *forms.CategoryListForm) (
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
 	if params.UserID > 0 {
-		query = append(query, "user_id = ?")
+		query = append(query, "creator_id = ?")
 		args = append(args, params.UserID)
 	}
 	if params.Title != "" {
@@ -93,11 +95,12 @@ func (s *Service) ListCategory(c *gin.Context, params *forms.CategoryListForm) (
 func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.CategoryUpdateForm) (err error) {
 	// base logic: 查看用户是否存在，若存在，更新数据，否则错误
 	db := global.DB
+	user := utils.GetUser(c)
 
-	query := []string{"id = ?"}
-	args := []interface{}{id}
+	query := []string{"id = ?", "creator_id = ?"}
+	args := []interface{}{id, user.ID}
 
-	_, err = (&models.Category{}).WhereOne(db, strings.Join(query, " AND "), args...)
+	sqlCategory, err := (&models.Category{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil {
 		return err
 	}
@@ -109,7 +112,6 @@ func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.Category
 	if err != nil {
 		return err
 	}
-	user, err := (&models.Category{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil {
 		return err
 	}
@@ -119,8 +121,8 @@ func (s *Service) UpdateCategory(c *gin.Context, id uint, params *forms.Category
 		return err
 	}
 	err = z.InsertDocument(c, constants.ZINCINDEXCATEGORY, strconv.Itoa(int(user.ID)), map[string]interface{}{
-		"title":     user.Title,
-		"introduce": user.Introduce,
+		"title":     sqlCategory.Title,
+		"introduce": sqlCategory.Introduce,
 	})
 	if err != nil {
 		return err

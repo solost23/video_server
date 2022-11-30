@@ -23,12 +23,12 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 	group.POST("login", login)
 
 	// 搜索用户 - 全局搜索
-	group.GET("user/search", searchUser)
+	group.GET("users/search", searchUser)
 	// 搜索类别 - 全局搜索
-	group.GET("category/search", searchCategory)
+	group.GET("categories/search", searchCategory)
 	// 搜索视频 - 全局搜索
 	// 首页 支持获取所有视频
-	group.GET("video/search", searchVideo)
+	group.GET("videos/search", searchVideo)
 
 	group.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
@@ -42,7 +42,7 @@ func initAuthRouter(group *gin.RouterGroup) {
 }
 
 func initAuthUserRouter(group *gin.RouterGroup) {
-	user := group.Group("user")
+	user := group.Group("users")
 	{
 		// 注销用户
 		user.POST("logout", logout)
@@ -58,7 +58,7 @@ func initAuthUserRouter(group *gin.RouterGroup) {
 }
 
 func initAuthCategoryRouter(group *gin.RouterGroup) {
-	class := group.Group("category")
+	class := group.Group("categories")
 	{
 		class.POST("", categoryInsert)
 		class.PUT(":id", categoryUpdate)
@@ -67,7 +67,7 @@ func initAuthCategoryRouter(group *gin.RouterGroup) {
 }
 
 func initAuthVideoRouter(group *gin.RouterGroup) {
-	video := group.Group("video")
+	video := group.Group("videos")
 	{
 		// 上传视频/图片接口
 		video.POST("img", videoUploadImg)
@@ -83,7 +83,7 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 }
 
 func initAuthCommentRouter(group *gin.RouterGroup) {
-	comment := group.Group("comment")
+	comment := group.Group("comments")
 	{
 		comment.POST("", commentCreate)
 		comment.DELETE(":id", commentDelete)
@@ -92,7 +92,7 @@ func initAuthCommentRouter(group *gin.RouterGroup) {
 }
 
 func initAuthRoleRouter(group *gin.RouterGroup) {
-	role := group.Group("role")
+	role := group.Group("roles")
 	{
 		role.POST("", roleInsert)
 		role.DELETE(":id", roleDelete)

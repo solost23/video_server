@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +19,11 @@ import (
 
 func Run() {
 	initialize.Initialize("./configs/config.yml")
-	global.DB.AutoMigrate(&models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
+	// 创建 model
+	err := autoMigrate(global.DB, &models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
+	if err != nil {
+		panic(err)
+	}
 	// Version
 	if len(os.Args) > 1 && os.Args[1] == "version" {
 		fmt.Printf("video_server version: %s\n", global.ServerConfig.Version)
@@ -62,4 +67,8 @@ func Run() {
 			return
 		}
 	}
+}
+
+func autoMigrate(db *gorm.DB, dst ...interface{}) error {
+	return db.AutoMigrate(dst...)
 }

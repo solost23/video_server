@@ -6,7 +6,6 @@ import (
 
 type Category struct {
 	CreatorBase
-	UserID    uint   `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
 	Title     string `json:"title" gorm:"column:title;comment: 分类标题"`
 	Introduce string `json:"introduce" gorm:"column:introduce;comment: 分类介绍"`
 }
