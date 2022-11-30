@@ -5,11 +5,10 @@ import (
 )
 
 type Category struct {
-	gorm.Model
-	UserID    uint   `gorm:"comment: 用户 ID"`
-	Title     string `gorm:"comment: 分类标题" json:"title"`
-	Introduce string `gorm:"comment: 分类介绍" json:"introduce"`
-	// DeleteStatus string `gorm:"type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`
+	CreatorBase
+	UserID    uint   `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
+	Title     string `json:"title" gorm:"column:title;comment: 分类标题"`
+	Introduce string `json:"introduce" gorm:"column:introduce;comment: 分类介绍"`
 }
 
 func (t *Category) TableName() string {

@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"gorm.io/gorm"
+)
 
 type ListPageInput struct {
 	Page int `comment:"当前页"`
@@ -23,4 +26,9 @@ type PageList struct {
 // 生成模糊匹配字符串
 func LikeFilter(value interface{}) string {
 	return fmt.Sprintf("%%%v%%", value)
+}
+
+type CreatorBase struct {
+	gorm.Model
+	CreatorId uint `json:"creatorId" gorm:"column:creator_id;comment: 创建人ID"`
 }

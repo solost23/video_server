@@ -5,16 +5,15 @@ import (
 )
 
 type Video struct {
-	gorm.Model
-	UserId       uint   `gorm:"comment: 用户 ID"`
-	CategoryId   uint   `gorm:"comment: 视频分类 ID"`
-	Title        string `gorm:"comment: 视频标题" json:"title" form:"title"`
-	Introduce    string `gorm:"comment: 视频介绍" json:"introduce" form:"introduce"`
-	ImageUrl     string `gorm:"comment: 视频封面oss地址" json:"image_url" form:"image_url"`
-	VideoUrl     string `gorm:"comment: 视频流oss地址"`
-	ThumbCount   int64  `gorm:"comment: 点赞数;default:0"`
-	CommentCount int64  `gorm:"comment: 评论数;default:0"`
-	//DeleteStatus string `gorm:"delete_status;type:enum('DELETE_STATUS_NORMAL','DELETE_STATUS_DEL');default:DELETE_STATUS_NORMAL"`  // 定时任务清除 oss 中的视频 if 数据库中无视频信息
+	CreatorBase
+	UserId       uint   `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
+	CategoryId   uint   `json:"categoryId" gorm:"column:category_id;comment: 视频分类 ID"`
+	Title        string `json:"title" gorm:"column:title;comment: 视频标题"`
+	Introduce    string `json:"introduce" gorm:"column:introduce;comment: 视频介绍"`
+	ImageUrl     string `json:"imageUrl" gorm:"column:image_url;comment: 视频封面oss地址"`
+	VideoUrl     string `json:"videoUrl" gorm:"column:video_url;comment: 视频流oss地址"`
+	ThumbCount   int64  `json:"thumbCount" gorm:"column:thumb_count;comment: 点赞数;default:0"`
+	CommentCount int64  `json:"commentCount" gorm:"column:comment_count;comment: 评论数;default:0"`
 }
 
 func (v *Video) TableName() string {

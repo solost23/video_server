@@ -3,9 +3,9 @@ package models
 import "gorm.io/gorm"
 
 type UserComment struct {
-	gorm.Model
-	UserId  uint `gorm:"comment: 用户 ID"`
-	Comment uint `gorm:"comment: 评论 ID"`
+	CreatorBase
+	UserId  uint `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
+	Comment uint `json:"comment" gorm:"column:comment;comment: 评论 ID"`
 }
 
 func (t *UserComment) Insert(db *gorm.DB) (err error) {
