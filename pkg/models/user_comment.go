@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type UserComment struct {
 	CreatorBase
-	UserId  uint `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
-	Comment uint `json:"comment" gorm:"column:comment;comment: 评论 ID"`
+	UserId  uint `json:"userId" gorm:"column:user_id;type:bigint unsigned;comment: 用户 ID"`
+	Comment uint `json:"comment" gorm:"column:comment;type:bigint unsigned;comment: 评论 ID"`
 }
 
 func (t *UserComment) Insert(db *gorm.DB) (err error) {

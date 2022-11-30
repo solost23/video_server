@@ -8,11 +8,10 @@ import (
 
 type Comment struct {
 	CreatorBase
-	UserId   uint   `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
-	VideoId  uint   `json:"videoId" gorm:"column:video_id;comment: 视频 ID"`
-	Content  string `json:"content" gorm:"column:content;comment: 评论内容"`
-	ParentId uint   `json:"parentId" gorm:"column:parent_id;comment: 父评论 ID"`
-	ISThumb  string `json:"isThumb" gorm:"column:is_thumb;comment: 评论-点赞区别;type:enum('ISTHUMB','ISCOMMENT');default:ISTHUMB"`
+	VideoId  uint   `json:"videoId" gorm:"column:video_id;type:bigint unsigned;comment: 视频 ID"`
+	Content  string `json:"content" gorm:"column:content;type:varchar(300);comment: 评论内容"`
+	ParentId uint   `json:"parentId" gorm:"column:parent_id;type:bigint unsigned;comment: 父评论 ID"`
+	ISThumb  string `json:"isThumb" gorm:"column:is_thumb;type:enum('ISTHUMB','ISCOMMENT');default:ISTHUMB;comment: 评论-点赞区别"`
 }
 
 type CommentCount struct {

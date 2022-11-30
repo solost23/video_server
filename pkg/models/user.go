@@ -8,15 +8,15 @@ import (
 
 type User struct {
 	gorm.Model
-	UserName      string    `json:"userName" gorm:"column:user_name;comment: 用户名"`
-	Password      string    `json:"password" gorm:"column:password;comment: 用户密码"`
-	Nickname      string    `json:"nickname" gorm:"column:nickname;comment: 昵称"`
-	Role          string    `json:"role" gorm:"column:role;comment: 用户角色;type:enum('ADMIN','USER');default:USER"`
-	Avatar        string    `json:"avatar" gorm:"column:avatar;comment: 用户头像"`
-	Introduce     string    `json:"introduce" gorm:"column:introduce;comment: 用户介绍"`
-	FansCount     int64     `json:"fansCount" gorm:"column:fans_count;comment: 用户粉丝数;default:0"`
-	CommentCount  int64     `json:"commentCount" gorm:"column:comment_count;comment: 用户评论数;default:0"`
-	LastLoginTime time.Time `json:"lastLoginTime" gorm:"column:last_login_time;comment: 用户上次登录时间"`
+	UserName      string    `json:"userName" gorm:"column:user_name;type:varchar(100);comment: 用户名"`
+	Password      string    `json:"password" gorm:"column:password;type:varchar(300);comment: 用户密码"`
+	Nickname      string    `json:"nickname" gorm:"column:nickname;type:varchar(100);comment: 昵称"`
+	Role          string    `json:"role" gorm:"column:role;comment: 用户角色;type:enum('ADMIN','USER');default:USER;comment: 用户角色"`
+	Avatar        string    `json:"avatar" gorm:"column:avatar;type:text;comment: 用户头像"`
+	Introduce     string    `json:"introduce" gorm:"column:introduce;type:varchar(300);comment: 用户介绍"`
+	FansCount     int64     `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;comment: 用户粉丝数;default:0"`
+	CommentCount  int64     `json:"commentCount" gorm:"column:comment_count;type:bigint unsigned;comment: 用户评论数;default:0"`
+	LastLoginTime time.Time `json:"lastLoginTime" gorm:"column:last_login_time;type:datetime;comment: 用户上次登录时间"`
 }
 
 func (u *User) TableName() string {

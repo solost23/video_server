@@ -6,8 +6,8 @@ import (
 
 type Category struct {
 	CreatorBase
-	Title     string `json:"title" gorm:"column:title;comment: 分类标题"`
-	Introduce string `json:"introduce" gorm:"column:introduce;comment: 分类介绍"`
+	Title     string `json:"title" gorm:"column:title;type:varchar(100);comment: 分类标题"`
+	Introduce string `json:"introduce" gorm:"column:introduce;type:varchar(300);comment: 分类介绍"`
 }
 
 func (t *Category) TableName() string {

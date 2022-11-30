@@ -6,14 +6,14 @@ import (
 
 type Video struct {
 	CreatorBase
-	UserId       uint   `json:"userId" gorm:"column:user_id;comment: 用户 ID"`
-	CategoryId   uint   `json:"categoryId" gorm:"column:category_id;comment: 视频分类 ID"`
-	Title        string `json:"title" gorm:"column:title;comment: 视频标题"`
-	Introduce    string `json:"introduce" gorm:"column:introduce;comment: 视频介绍"`
-	ImageUrl     string `json:"imageUrl" gorm:"column:image_url;comment: 视频封面oss地址"`
-	VideoUrl     string `json:"videoUrl" gorm:"column:video_url;comment: 视频流oss地址"`
-	ThumbCount   int64  `json:"thumbCount" gorm:"column:thumb_count;comment: 点赞数;default:0"`
-	CommentCount int64  `json:"commentCount" gorm:"column:comment_count;comment: 评论数;default:0"`
+	UserId       uint   `json:"userId" gorm:"column:user_id;type:bigint unsigned;comment: 用户 ID"`
+	CategoryId   uint   `json:"categoryId" gorm:"column:category_id;type:bigint unsigned;comment: 视频分类 ID"`
+	Title        string `json:"title" gorm:"column:title;type:varchar(100);comment: 视频标题"`
+	Introduce    string `json:"introduce" gorm:"column:introduce;type:varchar(500);comment: 视频介绍"`
+	ImageUrl     string `json:"imageUrl" gorm:"column:image_url;type:text;comment: 视频封面oss地址"`
+	VideoUrl     string `json:"videoUrl" gorm:"column:video_url;type:text;comment: 视频流oss地址"`
+	ThumbCount   int64  `json:"thumbCount" gorm:"column:thumb_count;type:bigint unsigned;comment: 点赞数;default:0"`
+	CommentCount int64  `json:"commentCount" gorm:"column:comment_count;type:bigint unsigned;comment: 评论数;default:0"`
 }
 
 func (v *Video) TableName() string {

@@ -30,5 +30,5 @@ func LikeFilter(value interface{}) string {
 
 type CreatorBase struct {
 	gorm.Model
-	CreatorId uint `json:"creatorId" gorm:"column:creator_id;comment: 创建人ID"`
+	CreatorId uint `json:"creatorId" gorm:"column:creator_id;type:bigint unsigned;comment: 创建人ID"`
 }
