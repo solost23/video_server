@@ -22,7 +22,12 @@ func AuthCheckRole() gin.HandlerFunc {
 			return
 		}
 		e, err := casbin.NewEnforcer("./configs/rbac_model.conf", a)
-		if err := e.LoadPolicy(); err != nil {
+		if err != nil {
+			response.Error(c, 2001, err)
+			return
+		}
+		err = e.LoadPolicy()
+		if err != nil {
 			response.Error(c, 2001, err)
 			return
 		}
