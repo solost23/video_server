@@ -5,14 +5,14 @@ time_location: "Asia/Shanghai"
 prometheus_enable: false
 
 mysql:
-  addr: "mariadb:3306"
+  addr: "localhost:3306"
   user: "root"
   password: "123"
   db: "video"
   charset: "utf8mb4"
 
 redis:
-  addr: "redis:6379"
+  addr: "localhost:6379"
   user: ""
   password: ""
 
@@ -36,7 +36,7 @@ zinc:
   password: "Complexpass#123"
 
 consul:
-  host: "consul"
+  host: "localhost"
   port: 8500
 
 static-oss:
