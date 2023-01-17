@@ -7,7 +7,7 @@ ENV GO111MODULE=on \
 
 WORKDIR /build
 COPY . .
-RUN go build -o app ./cmd/video_server/main.go
+RUN go build -o app ./cmd/video/main.go
 # 下载时区文件
 RUN apk add tzdata
 

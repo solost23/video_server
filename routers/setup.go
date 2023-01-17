@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"video_server/global"
+	"video/global"
 )
 
 func Setup(app *gin.Engine) {

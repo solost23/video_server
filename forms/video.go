@@ -1,6 +1,6 @@
 package forms
 
-import "video_server/pkg/utils"
+import "video/pkg/utils"
 
 type VideoInsertForm struct {
 	CategoryId uint   `json:"categoryId" binding:"required"`

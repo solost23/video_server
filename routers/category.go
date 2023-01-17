@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"video_server/forms"
-	"video_server/pkg/response"
-	"video_server/pkg/utils"
-	"video_server/services"
+	"video/forms"
+	"video/pkg/response"
+	"video/pkg/utils"
+	"video/services"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,7 +3,7 @@ package utils
 import (
 	"github.com/gin-gonic/gin"
 
-	"video_server/pkg/models"
+	"video/pkg/models"
 )
 
 func GetUser(c *gin.Context) *models.User {

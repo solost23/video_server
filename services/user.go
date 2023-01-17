@@ -4,20 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"math"
 	"mime/multipart"
 	"strconv"
 	"strings"
 	"time"
-	"video_server/forms"
-	"video_server/global"
-	"video_server/pkg/cache"
-	"video_server/pkg/constants"
-	"video_server/pkg/middlewares"
-	"video_server/pkg/models"
-	"video_server/pkg/utils"
-
-	"github.com/dgrijalva/jwt-go"
+	"video/forms"
+	"video/global"
+	"video/pkg/cache"
+	"video/pkg/constants"
+	"video/pkg/middlewares"
+	"video/pkg/models"
+	"video/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -92,7 +91,7 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			ExpiresAt: time.Now().Unix() + int64(global.ServerConfig.JWTConfig.Duration),
-			Issuer:    "video_server",
+			Issuer:    "video",
 		},
 	}
 	token, err := j.CreateToken(claims)

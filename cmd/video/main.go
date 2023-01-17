@@ -1,6 +1,6 @@
 package main
 
-import "video_server/server"
+import "video/server"
 
 func main() {
 	server.Run()

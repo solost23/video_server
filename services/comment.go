@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"math"
 	"strings"
-	"video_server/forms"
-	"video_server/global"
-	"video_server/pkg/constants"
-	"video_server/pkg/models"
-	"video_server/pkg/utils"
+	"video/forms"
+	"video/global"
+	"video/pkg/constants"
+	"video/pkg/models"
+	"video/pkg/utils"
 
 	"gorm.io/gorm"
 

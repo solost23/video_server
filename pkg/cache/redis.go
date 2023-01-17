@@ -2,7 +2,7 @@ package cache
 
 import (
 	"context"
-	"video_server/global"
+	"video/global"
 
 	"github.com/go-redis/redis/v8"
 )

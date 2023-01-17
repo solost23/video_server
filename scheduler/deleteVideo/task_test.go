@@ -3,7 +3,7 @@ package deleteVideo
 import (
 	"context"
 	"testing"
-	"video_server/mysql"
+	"video/mysql"
 )
 
 func TestTask_Deal(t *testing.T) {

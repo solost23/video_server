@@ -6,9 +6,9 @@ import (
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
-	"video_server/global"
-	"video_server/pkg/response"
-	"video_server/pkg/utils"
+	"video/global"
+	"video/pkg/response"
+	"video/pkg/utils"
 )
 
 func AuthCheckRole() gin.HandlerFunc {

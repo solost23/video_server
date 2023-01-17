@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"video_server/global"
+	"video/global"
 )
 
 func InitMysql() {

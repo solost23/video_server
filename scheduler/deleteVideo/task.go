@@ -7,12 +7,12 @@ import (
 	"log"
 	"net/url"
 	"os"
-	"video_server/global"
-	"video_server/pkg/constants"
+	"video/global"
+	"video/pkg/constants"
 
 	"gorm.io/gorm"
 
-	"video_server/pkg/models"
+	"video/pkg/models"
 )
 
 type Task struct {

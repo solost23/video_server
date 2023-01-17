@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"video_server/global"
-	"video_server/pkg/constants"
-	"video_server/pkg/utils"
+	"video/global"
+	"video/pkg/constants"
+	"video/pkg/utils"
 
 	"github.com/gabriel-vasile/mimetype"
 )

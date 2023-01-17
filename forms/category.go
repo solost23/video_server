@@ -1,7 +1,7 @@
 package forms
 
 import (
-	"video_server/pkg/utils"
+	"video/pkg/utils"
 )
 
 type CategoryInsertForm struct {

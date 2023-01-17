@@ -7,9 +7,9 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - "/Users/ty/server/video_server/configs:/configs"
+      - "/Users/ty/server/video/configs:/configs"
       # 挂载证书
-      - "/Users/ty/server/Twitta/certs:/etc/ssl/certs/"
+      - "/Users/ty/server/twitta/certs:/etc/ssl/certs/"
     depends_on:
       - zinc
       - redis

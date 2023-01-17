@@ -2,9 +2,9 @@ package scheduler
 
 import (
 	"github.com/robfig/cron/v3"
-	"video_server/global"
+	"video/global"
 
-	"video_server/scheduler/deleteVideo"
+	"video/scheduler/deleteVideo"
 )
 
 // 删除数据库中视频数据记录

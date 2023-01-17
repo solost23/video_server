@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"strings"
-	"video_server/forms"
-	"video_server/global"
-	"video_server/pkg/models"
+	"video/forms"
+	"video/global"
+	"video/pkg/models"
 )
 
 func (s *Service) InsertRole(c *gin.Context, params *forms.RoleInsertForm) (err error) {

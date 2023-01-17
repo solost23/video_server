@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/http"
 	"testing"
-	"video_server/forms"
-	"video_server/pkg/utils"
+	"video/forms"
+	"video/pkg/utils"
 )
 
 func TestService_VideoList(t *testing.T) {

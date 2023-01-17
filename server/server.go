@@ -10,11 +10,11 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"video_server/global"
-	"video_server/global/initialize"
-	"video_server/pkg/models"
-	"video_server/routers"
-	"video_server/scheduler"
+	"video/global"
+	"video/global/initialize"
+	"video/pkg/models"
+	"video/routers"
+	"video/scheduler"
 )
 
 func Run() {
@@ -26,7 +26,7 @@ func Run() {
 	}
 	// Version
 	if len(os.Args) > 1 && os.Args[1] == "version" {
-		fmt.Printf("video_server version: %s\n", global.ServerConfig.Version)
+		fmt.Printf("video version: %s\n", global.ServerConfig.Version)
 		os.Exit(0)
 	}
 

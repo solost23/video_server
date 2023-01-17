@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"video_server/global"
+	"video/global"
 
 	ginprometheus "github.com/zinclabs/go-gin-prometheus"
 )
@@ -13,6 +13,6 @@ func SetPrometheus(app *gin.Engine) {
 		return
 	}
 
-	p := ginprometheus.NewPrometheus("Twitta", []*ginprometheus.Metric{})
+	p := ginprometheus.NewPrometheus("twitta", []*ginprometheus.Metric{})
 	p.Use(app)
 }
