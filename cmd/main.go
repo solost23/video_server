@@ -1,6 +1,7 @@
-package server
+package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -8,26 +9,40 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
-	"video/global"
-	"video/global/initialize"
-	"video/pkg/models"
-	"video/routers"
-	"video/scheduler"
+	"video_server/global"
+	"video_server/global/initialize"
+	"video_server/pkg/models"
+	"video_server/routers"
+	"video_server/scheduler"
 )
 
-func Run() {
-	initialize.Initialize("./configs/config.yml")
+var (
+	WebConfigPath = "configs/config.yml"
+	WebLogPath    = "logs"
+	version       = "__BUILD_VERSION_"
+	execDir       string
+	st, v, V      bool
+)
+
+func main() {
+	flag.StringVar(&execDir, "d", ".", "项目目录")
+	flag.BoolVar(&v, "v", false, "查看版本号")
+	flag.BoolVar(&V, "V", false, "查看版本号")
+	flag.BoolVar(&st, "s", false, "项目状态")
+	flag.Parse()
+	if v || V {
+		fmt.Println(version)
+		os.Exit(-1)
+	}
+
+	initialize.Initialize(path.Join(execDir, WebConfigPath))
 	// 创建 model
 	err := autoMigrate(global.DB, &models.CasbinRule{}, &models.Category{}, &models.Comment{}, &models.User{}, &models.UserComment{}, &models.Video{})
 	if err != nil {
 		panic(err)
-	}
-	// Version
-	if len(os.Args) > 1 && os.Args[1] == "version" {
-		fmt.Printf("video version: %s\n", global.ServerConfig.Version)
-		os.Exit(0)
 	}
 
 	// HTTP init

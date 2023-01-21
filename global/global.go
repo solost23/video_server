@@ -5,7 +5,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/solost23/go_interface/gen_go/oss"
 	"gorm.io/gorm"
-	"video/configs"
+	"video_server/configs"
 )
 
 var (

@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"github.com/spf13/viper"
-	"video/global"
+	"video_server/global"
 )
 
 func InitConfig(filePath string) {

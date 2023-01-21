@@ -4,11 +4,11 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"video/forms"
-	"video/global"
-	"video/pkg/constants"
-	"video/pkg/models"
-	"video/pkg/utils"
+	"video_server/forms"
+	"video_server/global"
+	"video_server/pkg/constants"
+	"video_server/pkg/models"
+	"video_server/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )

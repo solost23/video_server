@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/http"
 	"testing"
-	"video/forms"
-	"video/pkg/utils"
+	"video_server/forms"
+	"video_server/pkg/utils"
 )
 
 func TestService_SearchUser(t *testing.T) {

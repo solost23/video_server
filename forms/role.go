@@ -1,7 +1,7 @@
 package forms
 
 import (
-	"video/pkg/utils"
+	"video_server/pkg/utils"
 )
 
 type RoleInsertForm struct {

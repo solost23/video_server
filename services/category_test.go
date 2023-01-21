@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/http"
 	"os"
 	"testing"
-	"video/forms"
-	"video/global/initialize"
-	"video/pkg/utils"
+	"video_server/forms"
+	"video_server/global/initialize"
+	"video_server/pkg/utils"
 )
 
 func TestMain(m *testing.M) {

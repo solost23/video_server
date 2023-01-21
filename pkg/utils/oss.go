@@ -4,7 +4,7 @@ import (
 	"fmt"
 	URL "net/url"
 	"strings"
-	"video/global"
+	"video_server/global"
 )
 
 func FulfillImageOSSPrefix(relativePath string) string {

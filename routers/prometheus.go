@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"video/global"
+	"video_server/global"
 
 	ginprometheus "github.com/zinclabs/go-gin-prometheus"
 )

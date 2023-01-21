@@ -7,7 +7,7 @@ import (
 	"github.com/solost23/go_interface/gen_go/oss"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"video/global"
+	"video_server/global"
 )
 
 func InitOSSClient() {

@@ -1,6 +1,6 @@
 package forms
 
-import "video/pkg/utils"
+import "video_server/pkg/utils"
 
 type CommentCreateForm struct {
 	VideoID  uint   `json:"videoId" binding:"required"`

@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/http"
 	"testing"
-	"video/forms"
+	"video_server/forms"
 )
 
 func TestService_ListRole(t *testing.T) {

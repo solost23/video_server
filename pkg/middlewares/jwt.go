@@ -5,12 +5,12 @@ import (
 	"errors"
 	"strconv"
 	"time"
-	"video/global"
-	"video/pkg/constants"
-	"video/pkg/models"
-	"video/pkg/response"
+	"video_server/global"
+	"video_server/pkg/constants"
+	"video_server/pkg/models"
+	"video_server/pkg/response"
 
-	"video/pkg/cache"
+	"video_server/pkg/cache"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"

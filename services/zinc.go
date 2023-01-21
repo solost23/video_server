@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	client "github.com/zinclabs/sdk-go-zincsearch"
-	"video/global"
+	"video_server/global"
 )
 
 type Zinc struct {
