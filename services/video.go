@@ -155,10 +155,15 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
 	db := global.DB
 
+	keyword := params.Keyword
+	// 如果没有输入，那么匹配所有视频
+	if params.Keyword == "" {
+		keyword = "*"
+	}
 	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
-	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXVIDEO, params.Keyword, from, size)
+	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXVIDEO, keyword, from, size)
 	if err != nil {
 		return nil, err
 	}
@@ -225,8 +230,8 @@ func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.
 			CategoryName: categoryIdToNameMaps[categoryId],
 			Title:        searchResult.Source["title"].(string),
 			Introduce:    searchResult.Source["introduce"].(string),
-			ImageUrl:     videoIdToVideoInfoMaps[uint(videoId)].ImageUrl,
-			VideoUrl:     videoIdToVideoInfoMaps[uint(videoId)].VideoUrl,
+			ImageUrl:     utils.FulfillImageOSSPrefix(videoIdToVideoInfoMaps[uint(videoId)].ImageUrl),
+			VideoUrl:     utils.FulfillImageOSSPrefix(videoIdToVideoInfoMaps[uint(videoId)].VideoUrl),
 			ThumbCount:   videoIdToVideoInfoMaps[uint(videoId)].ThumbCount,
 			CommentCount: videoIdToVideoInfoMaps[uint(videoId)].CommentCount,
 			CreatedAt:    videoIdToVideoInfoMaps[uint(videoId)].CreatedAt.Format(constants.DateTime),
