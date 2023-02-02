@@ -156,7 +156,6 @@ func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.
 	db := global.DB
 
 	keyword := params.Keyword
-	// 如果没有输入，那么匹配所有视频
 	if params.Keyword == "" {
 		keyword = "*"
 	}
