@@ -326,7 +326,7 @@ func (s *Service) VideoDelete(c *gin.Context, id uint) (err error) {
 	return nil
 }
 
-func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (err error) {
+func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (id uint, err error) {
 	db := global.DB
 	user := utils.GetUser(c)
 
@@ -335,7 +335,7 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 	args := []interface{}{params.CategoryId}
 	_, err = (&models.Category{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	video := &models.Video{
 		UserId:       user.ID,
@@ -349,7 +349,7 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 	}
 	err = video.Insert(db)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	z := NewZinc()
 	err = z.InsertDocument(c, constants.ZINCINDEXVIDEO, strconv.Itoa(int(video.ID)), map[string]interface{}{
@@ -359,9 +359,9 @@ func (s *Service) VideoInsert(c *gin.Context, params *forms.VideoInsertForm) (er
 		"introduce":   video.Introduce,
 	})
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return video.ID, nil
 }
 
 func (s *Service) VideoUploadImg(c *gin.Context, file *multipart.FileHeader) (result string, err error) {

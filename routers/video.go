@@ -44,11 +44,12 @@ func videoInsert(c *gin.Context) {
 		response.Error(c, 2001, err)
 		return
 	}
-	if err := (&services.Service{}).VideoInsert(c, params); err != nil {
+	id, err := (&services.Service{}).VideoInsert(c, params)
+	if err != nil {
 		response.Error(c, 2001, err)
 		return
 	}
-	response.MessageSuccess(c, "成功", nil)
+	response.Success(c, id)
 }
 
 func videoDelete(c *gin.Context) {

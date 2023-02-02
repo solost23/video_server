@@ -3,11 +3,11 @@ package forms
 import "video_server/pkg/utils"
 
 type VideoInsertForm struct {
-	CategoryId uint   `json:"categoryId" binding:"required"`
-	Title      string `json:"title" binding:"required,max=20"`
-	Introduce  string `json:"introduce" binding:"required,max=20"`
-	ImageUrl   string `json:"imageUrl" binding:"required" comment:"oss上传之后生成的url,前端再传过来"`
-	VideoUrl   string `json:"videoUrl" binding:"required" comment:"oss上传之后生成的url,前端再传过来"`
+	CategoryId uint   `form:"categoryId" binding:"required"`
+	Title      string `form:"title" binding:"required,max=20"`
+	Introduce  string `form:"introduce" binding:"required,max=20"`
+	ImageUrl   string `form:"imageUrl" binding:"required" comment:"oss上传之后生成的url,前端再传过来"`
+	VideoUrl   string `form:"videoUrl" binding:"required" comment:"oss上传之后生成的url,前端再传过来"`
 }
 
 type VideoListForm struct {
