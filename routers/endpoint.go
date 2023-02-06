@@ -35,7 +35,7 @@ func initNoAuthRouter(group *gin.RouterGroup) {
 
 func initAuthRouter(group *gin.RouterGroup) {
 	initAuthRoleRouter(group)
-	group.Use(middlewares.AuthCheckRole())
+	//group.Use(middlewares.AuthCheckRole())
 	initAuthUserRouter(group)
 	initAuthCategoryRouter(group)
 	initAuthVideoRouter(group)
@@ -82,7 +82,7 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 		video.GET(":id", videoDetail)
 
 		// 根据不同条件查询视频列表
-		video.GET("category", videoList)
+		video.GET("", videoList)
 	}
 }
 
