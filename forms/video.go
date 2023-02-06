@@ -12,6 +12,7 @@ type VideoInsertForm struct {
 
 type VideoListForm struct {
 	utils.PageForm
+	CategoryId   uint   `json:"categoryId"`
 	CategoryName string `json:"categoryName"`
 	UserName     string `json:"userName"`
 	VideoTitle   string `json:"videoTitle"`

@@ -22,6 +22,9 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 	db := global.DB
 
 	categoryIds := make([]uint, 0)
+	if params.CategoryId > 0 {
+		categoryIds = append(categoryIds, params.CategoryId)
+	}
 	if params.CategoryName != "" {
 		query := []string{"title LIKE ?"}
 		args := []interface{}{models.LikeFilter(params.CategoryName)}

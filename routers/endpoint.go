@@ -80,6 +80,9 @@ func initAuthVideoRouter(group *gin.RouterGroup) {
 		video.DELETE(":id", videoDelete)
 		// 获取单个视频信息(视频流直接就可以通过video_url字段访问到，所以不用处理文件)
 		video.GET(":id", videoDetail)
+
+		// 根据不同条件查询视频列表
+		video.GET("category", videoList)
 	}
 }
 
