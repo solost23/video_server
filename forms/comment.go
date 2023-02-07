@@ -6,7 +6,7 @@ type CommentCreateForm struct {
 	VideoID  uint   `json:"videoId" binding:"required"`
 	Content  string `json:"content" binding:"required"`
 	ParentID uint   `json:"parentId"`
-	ISThumb  string `json:"ISThumb" binding:"required,oneof=ISTHUMB,ISCOMMENT"`
+	ISThumb  string `json:"iSThumb"`
 }
 
 type CommentListForm struct {
