@@ -48,3 +48,16 @@ func GWherePageListOrder[T any](db *gorm.DB, t *T, order string, params *ListPag
 	}
 	return results, count, nil
 }
+
+func GWhereAllOrderPluckIds[T any](db *gorm.DB, t *T, column string, order string, query string, args ...any) ([]uint, error) {
+	var ids []uint
+	if order == "" {
+		order = "id DESC"
+	}
+	err := db.Model(t).Order(order).Where(query, args...).Pluck(column, &ids).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}

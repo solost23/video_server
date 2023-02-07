@@ -15,12 +15,14 @@ type CommentListForm struct {
 }
 
 type CommentListRecord struct {
-	Id          uint   `json:"id"`
-	Content     string `json:"content"`
-	ParentId    uint   `json:"parentId"`
-	ISThumb     string `json:"ISThumb"`
-	CreatedAt   string `json:"createdAt"`
-	UpdatedTime string `json:"updatedTime"`
+	Id            uint   `json:"id"`
+	Content       string `json:"content"`
+	ParentId      uint   `json:"parentId"`
+	ISThumb       string `json:"ISThumb"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedTime   string `json:"updatedTime"`
+	CreatorId     uint   `json:"creatorId"`
+	CreatorAvatar string `json:"creatorAvatar"`
 }
 
 type CommentListResponse struct {

@@ -127,16 +127,31 @@ func (s *Service) CommentList(c *gin.Context, params *forms.CommentListForm) (re
 	if err != nil {
 		return nil, err
 	}
+	// 查询用户信息
+	creatorIds := make([]uint, 0, len(comments))
+	for _, comment := range comments {
+		creatorIds = append(creatorIds, comment.CreatorId)
+	}
+	sqlUsers, err := models.GWhereAll(db, &models.User{}, "id IN ?", creatorIds)
+	if err != nil {
+		return nil, err
+	}
+	userIdToInfoMaps := make(map[uint]*models.User, len(sqlUsers))
+	for _, sqlUser := range sqlUsers {
+		userIdToInfoMaps[sqlUser.ID] = sqlUser
+	}
 	// 封装数据，返回
 	records := make([]forms.CommentListRecord, 0, len(comments))
 	for _, comment := range comments {
 		records = append(records, forms.CommentListRecord{
-			Id:          comment.ID,
-			Content:     comment.Content,
-			ParentId:    comment.ParentId,
-			ISThumb:     comment.ISThumb,
-			CreatedAt:   comment.CreatedAt.Format(constants.DateTime),
-			UpdatedTime: comment.UpdatedAt.Format(constants.DateTime),
+			Id:            comment.ID,
+			Content:       comment.Content,
+			ParentId:      comment.ParentId,
+			ISThumb:       comment.ISThumb,
+			CreatedAt:     comment.CreatedAt.Format(constants.DateTime),
+			UpdatedTime:   comment.UpdatedAt.Format(constants.DateTime),
+			CreatorId:     comment.CreatorId,
+			CreatorAvatar: utils.FulfillImageOSSPrefix(userIdToInfoMaps[comment.CreatorId].Avatar),
 		})
 	}
 
