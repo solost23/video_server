@@ -6,6 +6,7 @@ type ServerConfig struct {
 	TimeLocation     string        `mapstructure:"time_location"`
 	Addr             string        `mapstructure:"addr"`
 	PrometheusEnable bool          `mapstructure:"prometheus_enable"`
+	ConfigPath       string        `mapstructure:"config_path"`
 	MysqlConfig      MysqlConfig   `mapstructure:"mysql"`
 	RedisConfig      RedisConfig   `mapstructure:"redis"`
 	DeleteCronTime   string        `mapstructure:"delete_cron_time"`

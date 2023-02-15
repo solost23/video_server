@@ -1,46 +1,47 @@
-version: "1.0.1"
-debug_mode: "debug"
-addr: ":8081"
-time_location: "Asia/Shanghai"
-prometheus_enable: false
+#version: "1.0.1"
+#debug_mode: "debug"
+#addr: ":8081"
+#time_location: "Asia/Shanghai"
+#prometheus_enable: false
+config_path: api/video_server
 
-mysql:
-  addr: "localhost:3306"
-  user: "root"
-  password: "123"
-  db: "video_server"
-  charset: "utf8mb4"
-
-redis:
-  addr: "localhost:6379"
-  user: ""
-  password: ""
-
-delete_cron_time: "0 0 3 * * ?"
-
-jwt:
-  key: "my_secret_key"
-  duration: 2678400
-
-md5:
-  secret: "ty"
-
-log:
-  runtime_path: "/logs/"
-  track_path: "/err_logs/"
-
-zinc:
-  host: "http://zinc"
-  port: 4080
-  username: "admin"
-  password: "Complexpass#123"
+#mysql:
+#  addr: "localhost:3306"
+#  user: "root"
+#  password: "123"
+#  db: "video_server"
+#  charset: "utf8mb4"
+#
+#redis:
+#  addr: "localhost:6379"
+#  user: ""
+#  password: ""
+#
+#delete_cron_time: "0 0 3 * * ?"
+#
+#jwt:
+#  key: "my_secret_key"
+#  duration: 2678400
+#
+#md5:
+#  secret: "ty"
+#
+#log:
+#  runtime_path: "/logs/"
+#  track_path: "/err_logs/"
+#
+#zinc:
+#  host: "http://zinc"
+#  port: 4080
+#  username: "admin"
+#  password: "Complexpass#123"
 
 consul:
   host: "localhost"
   port: 8500
 
-static-oss:
-  domain: "http://127.0.0.1:9000"
-
-oss:
-  name: "oss_service"
+#static-oss:
+#  domain: "http://127.0.0.1:9000"
+#
+#oss:
+#  name: "oss_service"
