@@ -98,7 +98,7 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 		return nil, err
 	}
 	for _, user := range users {
-		userNameMaps[user.ID] = user.UserName
+		userNameMaps[user.ID] = user.Username
 	}
 	for _, category := range categories {
 		categoryNameMaps[category.ID] = category.Title
@@ -158,9 +158,9 @@ func (s *Service) VideoList(c *gin.Context, params *forms.VideoListForm) (respon
 func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.VideoListResponse, error) {
 	db := global.DB
 
-	keyword := params.Keyword
-	if params.Keyword == "" {
-		keyword = "*"
+	keyword := "*"
+	if params.Keyword != nil && *params.Keyword != "" {
+		keyword = *params.Keyword
 	}
 	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
@@ -186,7 +186,7 @@ func (s *Service) SearchVideo(c *gin.Context, params *forms.SearchForm) (*forms.
 	}
 	userIdToUsernameMaps := make(map[uint]string, len(users))
 	for _, user := range users {
-		userIdToUsernameMaps[user.ID] = user.UserName
+		userIdToUsernameMaps[user.ID] = user.Username
 	}
 	categories, err := (&models.Category{}).WhereAll(db, "id IN ?", categoryIds)
 	if err != nil {
