@@ -26,33 +26,33 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 	// base logic: 校验当前用户是否存在，若不存在则新建
 	db := global.DB
 
-	query := []string{"user_name = ?"}
-	args := []interface{}{params.UserName}
-	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
+	query := []string{"username = ?"}
+	args := []interface{}{params.Username}
+	sqlUser, err := (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	if err == nil {
+	if sqlUser != nil && sqlUser.ID > 0 {
 		return errors.New("用户已存在")
 	}
 	user := &models.User{
-		UserName:     params.UserName,
-		Password:     utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
-		Nickname:     params.Nickname,
-		Role:         params.Role,
-		Avatar:       utils.TrimDomainPrefix(params.Avatar),
-		Introduce:    params.Introduce,
+		Username:     *params.Username,
+		Password:     utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret),
+		Nickname:     *params.Nickname,
+		Role:         *params.Role,
+		Avatar:       utils.TrimDomainPrefix(*params.Avatar),
+		Introduce:    *params.Introduce,
 		FansCount:    0,
 		CommentCount: 0,
 	}
-	err = user.Insert(db)
-	if err != nil {
+
+	if err := models.GInsert(db, user); err != nil {
 		return err
 	}
 
 	z := NewZinc()
 	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)), map[string]interface{}{
-		"username":  user.UserName,
+		"username":  user.Username,
 		"nickname":  user.Nickname,
 		"role":      user.Role,
 		"introduce": user.Introduce,
@@ -66,19 +66,19 @@ func (s *Service) Register(c *gin.Context, params *forms.RegisterForm) (err erro
 func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *forms.LoginResponse, err error) {
 	db := global.DB
 
-	user, err := (&models.User{}).WhereOne(db, "user_name = ?", params.UserName)
+	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "*", "user_name = ?", *params.Username)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, errors.New(fmt.Sprintf("用户%s不存在", params.UserName))
+	if sqlUser == nil {
+		return nil, errors.New(fmt.Sprintf("用户%s不存在", *params.Username))
 	}
-	if params.UserName != user.UserName || utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret) != user.Password {
+	if *params.Username != sqlUser.Username || utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret) != sqlUser.Password {
 		return nil, errors.New("用户名或密码错误")
 	}
 	// 区分两种设备 分别是 web 和 mobile
 	var redisPrefix string
-	if params.Device == "web" {
+	if *params.Device == "web" {
 		redisPrefix = constants.WebRedisPrefix
 	} else {
 		redisPrefix = constants.MobileRedisPrefix
@@ -86,7 +86,7 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 
 	j := middlewares.NewJWT()
 	claims := middlewares.CustomClaims{
-		UserId: user.ID,
+		UserId: sqlUser.ID,
 		Device: redisPrefix,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
@@ -99,7 +99,7 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 		return nil, err
 	}
 
-	userJson, _ := json.Marshal(user)
+	userJson, _ := json.Marshal(sqlUser)
 	if err != nil {
 		return nil, err
 	}
@@ -109,23 +109,23 @@ func (s *Service) Login(c *gin.Context, params *forms.LoginForm) (response *form
 		return nil, err
 	}
 
-	key := redisPrefix + strconv.Itoa(int(user.ID))
+	key := redisPrefix + strconv.Itoa(int(sqlUser.ID))
 	oldToken, err := rdb.Get(c, key).Result()
 
 	rdb.Del(c, constants.RedisPrefix+oldToken)
 	rdb.Set(c, key, token, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
 	rdb.Set(c, constants.RedisPrefix+token, userJson, time.Duration(global.ServerConfig.JWTConfig.Duration)*time.Second)
 
-	if err = user.Updates(db, map[string]interface{}{"last_login_time": time.Now()}, "id = ?", user.ID); err != nil {
+	err = models.GUpdateColumn(db, &models.User{}, "last_login_time", time.Now(), "id = ?", sqlUser.ID)
+	if err != nil {
 		return nil, err
 	}
 
-	user.Avatar = utils.FulfillImageOSSPrefix(user.Avatar)
+	sqlUser.Avatar = utils.FulfillImageOSSPrefix(sqlUser.Avatar)
 	// 封装数据返回
 	response = &forms.LoginResponse{
-		IsFirstLogin: 2,
-		User:         *user,
-		Token:        token,
+		User:  sqlUser,
+		Token: &token,
 	}
 	return response, err
 }
@@ -137,7 +137,7 @@ func (s *Service) Logout(c *gin.Context, params *forms.LogoutForm) (err error) {
 		return err
 	}
 	var redisPrefix string
-	if params.Device == "web" {
+	if *params.Device == "web" {
 		redisPrefix = constants.WebRedisPrefix
 	} else {
 		redisPrefix = constants.MobileRedisPrefix
@@ -157,36 +157,46 @@ func (s *Service) ListUser(c *gin.Context, params *forms.ListForm) (response *fo
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
 
-	if params.ID > 0 {
+	if *params.ID > 0 {
 		query = append(query, "id = ?")
 		args = append(args, params.ID)
 	}
-	if params.UserName != "" {
+	if *params.Username != "" {
 		query = append(query, "user_name LIKE ?")
-		args = append(args, models.LikeFilter(params.UserName))
+		args = append(args, models.LikeFilter(*params.Username))
 	}
-	if params.Role != "" {
-		query = append(query, "role LIKE ?")
-		args = append(args, models.LikeFilter(params.Role))
+	if params.Role != nil {
+		query = append(query, "role = ?")
+		args = append(args, params.Role)
 	}
-	users, total, err := (&models.User{}).PageListOrder(db, "", &models.ListPageInput{
+	sqlUsers, total, err := (&models.User{}).PageListOrder(db, "", &models.ListPageInput{
 		Page: params.Page,
 		Size: params.Size,
 	}, strings.Join(query, " AND "), args...)
 	// 封装数据返回
-	records := make([]forms.ListRecord, 0, len(users))
-	for _, user := range users {
-		records = append(records, forms.ListRecord{
-			ID:           user.ID,
-			UserName:     user.UserName,
-			Nickname:     user.Nickname,
-			Role:         user.Role,
-			Avatar:       utils.FulfillImageOSSPrefix(user.Avatar),
-			Introduce:    user.Introduce,
-			FansCount:    user.FansCount,
-			CommentCount: user.CommentCount,
-			CreateTime:   user.CreatedAt.Format(constants.DateTime),
-			UpdateTime:   user.CreatedAt.Format(constants.DateTime),
+	records := make([]*forms.ListRecord, 0, len(sqlUsers))
+	for _, sqlUser := range sqlUsers {
+		id := sqlUser.ID
+		username := sqlUser.Username
+		nickname := sqlUser.Nickname
+		role := sqlUser.Role
+		avatar := utils.FulfillImageOSSPrefix(sqlUser.Avatar)
+		introduce := sqlUser.Introduce
+		fansCount := sqlUser.FansCount
+		commentCount := sqlUser.CommentCount
+		createdAt := sqlUser.CreatedAt.Format(constants.DateTime)
+		updatedAt := sqlUser.UpdatedAt.Format(constants.DateTime)
+		records = append(records, &forms.ListRecord{
+			ID:           &id,
+			Username:     &username,
+			Nickname:     &nickname,
+			Role:         &role,
+			Avatar:       &avatar,
+			Introduce:    &introduce,
+			FansCount:    &fansCount,
+			CommentCount: &commentCount,
+			CreatedAt:    &createdAt,
+			UpdatedAt:    &updatedAt,
 		})
 	}
 	response = &forms.ListResponse{
@@ -246,38 +256,42 @@ func (s *Service) DeleteUser(c *gin.Context, id uint) (err error) {
 func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateForm) (err error) {
 	db := global.DB
 
-	query := []string{"id = ?"}
-	args := []interface{}{id}
-	// base logic: 检查用户是否存在，若存在，则删除
-	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
+	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "id", "id = ?", id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	value := map[string]interface{}{
-		"user_name": params.UserName,
-		"password":  utils.NewMd5(params.Password, global.ServerConfig.Md5Config.Secret),
+	if sqlUser == nil {
+		return errors.New("该用户不存在")
+	}
+	values := map[string]interface{}{
+		"user_name": *params.Username,
+		"password":  utils.NewMd5(*params.Password, global.ServerConfig.Md5Config.Secret),
 		"nickname":  params.Nickname,
-		"avatar":    utils.TrimDomainPrefix(params.Avatar),
+		"avatar":    utils.TrimDomainPrefix(*params.Avatar),
 		"introduce": params.Introduce,
 	}
-	err = (&models.User{}).Updates(db, value, strings.Join(query, " AND "), args...)
+	_, err = models.GUpdatesWhere(db, &models.User{}, values, "id = ?", id)
 	if err != nil {
 		return err
 	}
-	user, err := (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
+	sqlUser, err = models.GWhereFirstSelect(db, &models.User{}, "*", "id = ?", id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
+	if sqlUser == nil {
+		return errors.New("该用户不存在")
+	}
+
 	z := NewZinc()
-	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)))
+	err = z.DeleteDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(sqlUser.ID)))
 	if err != nil {
 		return err
 	}
-	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(user.ID)), map[string]interface{}{
-		"username":  user.UserName,
-		"nickname":  user.Nickname,
-		"role":      user.Role,
-		"introduce": user.Introduce,
+	err = z.InsertDocument(c, constants.ZINCINDEXUSER, strconv.Itoa(int(sqlUser.ID)), map[string]interface{}{
+		"username":  sqlUser.Username,
+		"nickname":  sqlUser.Nickname,
+		"role":      sqlUser.Role,
+		"introduce": sqlUser.Introduce,
 	})
 	if err != nil {
 		return err
@@ -288,24 +302,29 @@ func (s *Service) UpdateUser(c *gin.Context, id uint, params *forms.UserUpdateFo
 func (s *Service) Detail(c *gin.Context, id uint) (response *forms.ListRecord, err error) {
 	db := global.DB
 
-	query := []string{"id = ?"}
-	args := []interface{}{id}
-	user, err := (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
+	sqlUser, err := models.GWhereFirstSelect(db, &models.User{}, "*", "id = ?", id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
+	if sqlUser == nil {
+		return nil, errors.New("该用户不存在")
+	}
+
 	// 封装数据，返回
+	avatar := utils.FulfillImageOSSPrefix(sqlUser.Avatar)
+	createdAt := sqlUser.CreatedAt.Format(constants.DateTime)
+	updatedAt := sqlUser.UpdatedAt.Format(constants.DateTime)
 	response = &forms.ListRecord{
-		ID:           user.ID,
-		UserName:     user.UserName,
-		Nickname:     user.Nickname,
-		Role:         user.Role,
-		Avatar:       utils.FulfillImageOSSPrefix(user.Avatar),
-		Introduce:    user.Introduce,
-		FansCount:    user.FansCount,
-		CommentCount: user.CommentCount,
-		CreateTime:   user.CreatedAt.Format(constants.DateTime),
-		UpdateTime:   user.UpdatedAt.Format(constants.DateTime),
+		ID:           &sqlUser.ID,
+		Username:     &sqlUser.Username,
+		Nickname:     &sqlUser.Nickname,
+		Role:         &sqlUser.Role,
+		Avatar:       &avatar,
+		Introduce:    &sqlUser.Introduce,
+		FansCount:    &sqlUser.FansCount,
+		CommentCount: &sqlUser.CommentCount,
+		CreatedAt:    &createdAt,
+		UpdatedAt:    &updatedAt,
 	}
 	return response, nil
 }
@@ -326,7 +345,7 @@ func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.L
 	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
-	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXUSER, params.Keyword, from, size)
+	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXUSER, *params.Keyword, from, size)
 	if err != nil {
 		return nil, err
 	}
@@ -335,41 +354,35 @@ func (s *Service) SearchUser(c *gin.Context, params *forms.SearchForm) (*forms.L
 		id, _ := strconv.Atoi(*searchResult.Id)
 		userIds = append(userIds, uint(id))
 	}
-	users, err := (&models.User{}).WhereAll(db, "id IN ?", userIds)
+	sqlUsers, err := models.GWhereAllSelectOrder(db, &models.User{}, "*", "id DESC", "id IN ?", userIds)
 	if err != nil {
 		return nil, err
 	}
-	userIdToUserInfoMaps := make(map[uint]struct {
-		Avatar       string
-		FansCount    int64
-		CommentCount int64
-		CreateTime   time.Time
-		UpdateTime   time.Time
-	}, len(users))
-	for _, user := range users {
-		userIdToUserInfoMaps[user.ID] = struct {
-			Avatar       string
-			FansCount    int64
-			CommentCount int64
-			CreateTime   time.Time
-			UpdateTime   time.Time
-		}{Avatar: user.Avatar, FansCount: user.FansCount, CommentCount: user.CommentCount, CreateTime: user.CreatedAt, UpdateTime: user.UpdatedAt}
-	}
-	// 封装数据并返回
-	records := make([]forms.ListRecord, 0, len(searchResults))
-	for _, searchResult := range searchResults {
-		id, _ := strconv.Atoi(*searchResult.Id)
-		records = append(records, forms.ListRecord{
-			ID:           uint(id),
-			UserName:     searchResult.Source["username"].(string),
-			Nickname:     searchResult.Source["nickname"].(string),
-			Role:         searchResult.Source["role"].(string),
-			Avatar:       userIdToUserInfoMaps[uint(id)].Avatar,
-			Introduce:    searchResult.Source["introduce"].(string),
-			FansCount:    userIdToUserInfoMaps[uint(id)].FansCount,
-			CommentCount: userIdToUserInfoMaps[uint(id)].CommentCount,
-			CreateTime:   userIdToUserInfoMaps[uint(id)].CreateTime.Format(constants.DateTime),
-			UpdateTime:   userIdToUserInfoMaps[uint(id)].UpdateTime.Format(constants.DateTime),
+
+	records := make([]*forms.ListRecord, 0, len(searchResults))
+	for _, sqlUser := range sqlUsers {
+		id := sqlUser.ID
+		username := sqlUser.Username
+		nickname := sqlUser.Nickname
+		role := sqlUser.Role
+		avatar := utils.FulfillImageOSSPrefix(sqlUser.Avatar)
+		introduce := sqlUser.Introduce
+		fansCount := sqlUser.FansCount
+		commentCount := sqlUser.CommentCount
+		createdAt := sqlUser.CreatedAt.Format(constants.DateTime)
+		updatedAt := sqlUser.UpdatedAt.Format(constants.DateTime)
+
+		records = append(records, &forms.ListRecord{
+			ID:           &id,
+			Username:     &username,
+			Nickname:     &nickname,
+			Role:         &role,
+			Avatar:       &avatar,
+			Introduce:    &introduce,
+			FansCount:    &fansCount,
+			CommentCount: &commentCount,
+			CreatedAt:    &createdAt,
+			UpdatedAt:    &updatedAt,
 		})
 	}
 

@@ -6,12 +6,17 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	UserRoleAdmin = iota
+	UserRoleUser
+)
+
 type User struct {
 	gorm.Model
-	UserName      string    `json:"userName" gorm:"column:user_name;type:varchar(100);comment: 用户名"`
+	Username      string    `json:"username" gorm:"column:username;type:varchar(100);comment: 用户名"`
 	Password      string    `json:"password" gorm:"column:password;type:varchar(300);comment: 用户密码"`
 	Nickname      string    `json:"nickname" gorm:"column:nickname;type:varchar(100);comment: 昵称"`
-	Role          string    `json:"role" gorm:"column:role;comment: 用户角色;type:enum('ADMIN','USER');default:USER;comment: 用户角色"`
+	Role          uint      `json:"role" gorm:"column:role;type:tinyint unsigned;default:1;comment: 用户角色 0-管理员 1-普通用户"`
 	Avatar        string    `json:"avatar" gorm:"column:avatar;type:text;comment: 用户头像"`
 	Introduce     string    `json:"introduce" gorm:"column:introduce;type:varchar(300);comment: 用户介绍"`
 	FansCount     int64     `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;comment: 用户粉丝数;default:0"`

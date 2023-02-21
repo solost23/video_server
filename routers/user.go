@@ -2,6 +2,7 @@ package routers
 
 import (
 	"video_server/forms"
+	"video_server/pkg/constants"
 	"video_server/pkg/response"
 	"video_server/pkg/utils"
 	"video_server/services"
@@ -12,16 +13,16 @@ import (
 func register(c *gin.Context) {
 	params := &forms.RegisterForm{}
 	if err := utils.DefaultGetValidParams(c, params); err != nil {
-		response.Error(c, 2001, err)
+		response.Error(c, constants.BadRequestCode, err)
 		return
 	}
 	err := (&services.Service{}).Register(c, params)
 	if err != nil {
-		response.Error(c, 2001, err)
+		response.Error(c, constants.InternalServerErrorCode, err)
 		return
 	}
 
-	response.MessageSuccess(c, "成功", nil)
+	response.Success(c, "成功")
 }
 
 func uploadAvatar(c *gin.Context) {
