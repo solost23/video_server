@@ -17,23 +17,18 @@ func (s *Service) InsertCategory(c *gin.Context, params *forms.CategoryInsertFor
 	db := global.DB
 	user := utils.GetUser(c)
 
-	// 查询用户是否存在，若存在，则新建分类
-	query := []string{"id = ?"}
-	args := []interface{}{user.ID}
-	_, err = (&models.User{}).WhereOne(db, strings.Join(query, " AND "), args...)
-	if err != nil {
-		return err
+	introduce := ""
+	if params.Introduce != nil {
+		introduce = *params.Introduce
 	}
-	// 增加分类
 	category := &models.Category{
 		CreatorBase: models.CreatorBase{
 			CreatorId: user.ID,
 		},
-		Title:     params.Title,
-		Introduce: params.Introduce,
+		Title:     *params.Title,
+		Introduce: introduce,
 	}
-	err = category.Insert(db)
-	if err != nil {
+	if err = models.GInsert(db, category); err != nil {
 		return err
 	}
 	z := NewZinc()
@@ -52,15 +47,15 @@ func (s *Service) ListCategory(c *gin.Context, params *forms.CategoryListForm) (
 
 	query := make([]string, 0, 3)
 	args := make([]interface{}, 0, 3)
-	if params.UserID > 0 {
+	if params.UserID != nil && *params.UserID > 0 {
 		query = append(query, "creator_id = ?")
 		args = append(args, params.UserID)
 	}
-	if params.Title != "" {
+	if params.Title != nil && *params.Title != "" {
 		query = append(query, "title LIKE ?")
 		args = append(args, models.LikeFilter(params.Title))
 	}
-	if params.Introduce != "" {
+	if params.Introduce != nil && *params.Introduce != "" {
 		query = append(query, "introduce LIKE ?")
 		args = append(args, models.LikeFilter(params.Introduce))
 	}
@@ -72,12 +67,15 @@ func (s *Service) ListCategory(c *gin.Context, params *forms.CategoryListForm) (
 		return nil, err
 	}
 	// 封装数据
-	records := make([]forms.CategoryListRecord, 0, len(categories))
+	records := make([]*forms.CategoryListRecord, 0, len(categories))
 	for _, category := range categories {
-		records = append(records, forms.CategoryListRecord{
-			Id:        category.ID,
-			Title:     category.Title,
-			Introduce: category.Introduce,
+		id := category.ID
+		title := category.Title
+		introduce := category.Introduce
+		records = append(records, &forms.CategoryListRecord{
+			Id:        &id,
+			Title:     &title,
+			Introduce: &introduce,
 		})
 	}
 	response = &forms.CategoryListResponse{
@@ -135,17 +133,28 @@ func (s *Service) SearchCategory(c *gin.Context, params *forms.SearchForm) (*for
 	z := NewZinc()
 	from := int32((params.Page - 1) * params.Size)
 	size := from + int32(params.Size) - 1
-	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXCATEGORY, params.Keyword, from, size)
+	searchResults, total, err := z.SearchDocument(c, constants.ZINCINDEXCATEGORY, *params.Keyword, from, size)
 	if err != nil {
 		return nil, err
 	}
-	records := make([]forms.CategoryListRecord, 0, len(searchResults))
+	categoryIds := make([]string, 0, len(searchResults))
 	for _, searchResult := range searchResults {
-		id, _ := strconv.Atoi(*searchResult.Id)
-		records = append(records, forms.CategoryListRecord{
-			Id:        uint(id),
-			Title:     searchResult.Source["title"].(string),
-			Introduce: searchResult.Source["introduce"].(string),
+		categoryIds = append(categoryIds, *searchResult.Id)
+	}
+	sqlCategories, err := models.GWhereAllSelectOrder(global.DB, &models.Category{}, "*", "id DESC", "id IN ?", categoryIds)
+	if err != nil {
+		return nil, err
+	}
+
+	records := make([]*forms.CategoryListRecord, 0, len(searchResults))
+	for _, sqlCategory := range sqlCategories {
+		id := sqlCategory.ID
+		title := sqlCategory.Title
+		introduce := sqlCategory.Introduce
+		records = append(records, &forms.CategoryListRecord{
+			Id:        &id,
+			Title:     &title,
+			Introduce: &introduce,
 		})
 	}
 	result := &forms.CategoryListResponse{
