@@ -33,7 +33,7 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 		return errors.New(fmt.Sprintf("视频:[%d]未找到, 参数错误", params.VideoID))
 	}
 	query = append(query, "is_thumb = ?")
-	args = []interface{}{params.ParentID, params.ISThumb}
+	args = []interface{}{params.ParentID, params.Type}
 	sqlComment, err := (&models.Comment{}).WhereOne(db, strings.Join(query, " AND "), args...)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
@@ -45,10 +45,10 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 			CreatorBase: models.CreatorBase{
 				CreatorId: user.ID,
 			},
-			VideoId:  params.VideoID,
-			Content:  params.Content,
+			VideoId:  *params.VideoID,
+			Content:  *params.Content,
 			ParentId: 0,
-			ISThumb:  params.ISThumb,
+			Type:     *params.Type,
 		}
 		err = commentData.Insert(tx)
 		if err != nil {
@@ -61,10 +61,10 @@ func (s *Service) CommentInsert(c *gin.Context, params *forms.CommentCreateForm)
 			CreatorBase: models.CreatorBase{
 				CreatorId: user.ID,
 			},
-			VideoId:  params.VideoID,
-			Content:  params.Content,
+			VideoId:  *params.VideoID,
+			Content:  *params.Content,
 			ParentId: sqlComment.ID,
-			ISThumb:  params.ISThumb,
+			Type:     *params.Type,
 		}
 		err = commentData.Insert(tx)
 		if err != nil {
@@ -119,39 +119,47 @@ func (s *Service) CommentList(c *gin.Context, params *forms.CommentListForm) (re
 
 	query := make([]string, 0, 1)
 	args := make([]interface{}, 0, 1)
-	if params.VideoId > 0 {
+	if *params.VideoId > 0 {
 		query = append(query, "video_id = ?")
 		args = append(args, params.VideoId)
 	}
-	comments, total, err := (&models.Comment{}).PageListOrder(db, "", &models.ListPageInput{Page: params.Page, Size: params.Size}, strings.Join(query, " AND "), args...)
+	sqlComments, total, err := (&models.Comment{}).PageListOrder(db, "", &models.ListPageInput{Page: params.Page, Size: params.Size}, strings.Join(query, " AND "), args...)
 	if err != nil {
 		return nil, err
 	}
 	// 查询用户信息
-	creatorIds := make([]uint, 0, len(comments))
-	for _, comment := range comments {
+	creatorIds := make([]uint, 0, len(sqlComments))
+	for _, comment := range sqlComments {
 		creatorIds = append(creatorIds, comment.CreatorId)
 	}
-	sqlUsers, err := models.GWhereAll(db, &models.User{}, "id IN ?", creatorIds)
+	sqlUsers, err := models.GWhereAllSelectOrder(db, &models.User{}, "", "", "id IN ?", creatorIds)
 	if err != nil {
 		return nil, err
 	}
-	userIdToInfoMaps := make(map[uint]*models.User, len(sqlUsers))
+	userIdToInfoMaps := make(map[uint]string, len(sqlUsers))
 	for _, sqlUser := range sqlUsers {
-		userIdToInfoMaps[sqlUser.ID] = sqlUser
+		userIdToInfoMaps[sqlUser.ID] = sqlUser.Avatar
 	}
 	// 封装数据，返回
-	records := make([]forms.CommentListRecord, 0, len(comments))
-	for _, comment := range comments {
-		records = append(records, forms.CommentListRecord{
-			Id:            comment.ID,
-			Content:       comment.Content,
-			ParentId:      comment.ParentId,
-			ISThumb:       comment.ISThumb,
-			CreatedAt:     comment.CreatedAt.Format(constants.DateTime),
-			UpdatedTime:   comment.UpdatedAt.Format(constants.DateTime),
-			CreatorId:     comment.CreatorId,
-			CreatorAvatar: utils.FulfillImageOSSPrefix(userIdToInfoMaps[comment.CreatorId].Avatar),
+	records := make([]*forms.CommentListRecord, 0, len(sqlComments))
+	for _, sqlComment := range sqlComments {
+		id := sqlComment.ID
+		content := sqlComment.Content
+		parentId := sqlComment.ParentId
+		style := sqlComment.Type
+		createdAt := sqlComment.CreatedAt.Format(constants.DateTime)
+		updatedAt := sqlComment.UpdatedAt.Format(constants.DateTime)
+		creatorId := sqlComment.CreatorId
+		avatar := utils.FulfillImageOSSPrefix(userIdToInfoMaps[sqlComment.CreatorId])
+		records = append(records, &forms.CommentListRecord{
+			Id:            &id,
+			Content:       &content,
+			ParentId:      &parentId,
+			Type:          &style,
+			CreatedAt:     &createdAt,
+			UpdatedAt:     &updatedAt,
+			CreatorId:     &creatorId,
+			CreatorAvatar: &avatar,
 		})
 	}
 

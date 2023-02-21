@@ -11,7 +11,7 @@ type Comment struct {
 	VideoId  uint   `json:"videoId" gorm:"column:video_id;type:bigint unsigned;comment: 视频 ID"`
 	Content  string `json:"content" gorm:"column:content;type:varchar(300);comment: 评论内容"`
 	ParentId uint   `json:"parentId" gorm:"column:parent_id;type:bigint unsigned;comment: 父评论 ID"`
-	ISThumb  string `json:"isThumb" gorm:"column:is_thumb;type:enum('ISTHUMB','ISCOMMENT');default:ISTHUMB;comment: 评论-点赞区别"`
+	Type     uint   `json:"type" gorm:"column:type;type:tinyint unsigned;default:0;comment: 0-点赞 1-评论"`
 }
 
 type CommentCount struct {
