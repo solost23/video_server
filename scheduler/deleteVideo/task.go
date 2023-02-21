@@ -4,13 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"log"
 	"net/url"
 	"os"
 	"video_server/global"
-	"video_server/pkg/constants"
-
-	"gorm.io/gorm"
 
 	"video_server/pkg/models"
 )
@@ -35,14 +33,14 @@ func (t *Task) Deal() (err error) {
 	// 删除本地视频数据
 	var video = new(models.Video)
 	var videos []*models.Video
-	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", constants.DELETEDEL).Find(&videos).Error; err != nil {
+	if err = t.Conn.Table(video.TableName()).Where("deleted_at != NULL").Find(&videos).Error; err != nil {
 		return err
 	}
 	if len(videos) <= 0 {
 		return errors.New("不存在要删除视频")
 	}
 	// 删除数据库中记录
-	if err = t.Conn.Table(video.TableName()).Where("delete_status=?", constants.DELETEDEL).Delete(video).Error; err != nil {
+	if err = t.Conn.Table(video.TableName()).Where("deleted_at != NULL").Delete(video).Error; err != nil {
 		return err
 	}
 	var videoFilePath []string
