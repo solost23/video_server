@@ -9,7 +9,7 @@ import (
 )
 
 func SetRouters(r *gin.Engine) {
-	group := r.Group("api")
+	group := r.Group("api/video_server")
 	initNoAuthRouter(group)
 	// 注意 role 需要再思考一下，不一定要放在这里
 	//group.Use(jwt.JWTAuth, role.CheckRole)

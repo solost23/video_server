@@ -52,7 +52,7 @@ func UploadVid(userId uint, folderName string, postFilename string, file *multip
 
 func uploadImgOrVidBytes(userId uint, folderName string, postFileName string, fileBytes []byte, fileType string) (string, error) {
 	if len(fileBytes) == 0 {
-		return "", fmt.Errorf("upload image or video file is empty")
+		return "", fmt.Errorf("search image or video file is empty")
 	}
 	mime := strings.Split(mimetype.Detect(fileBytes).String(), " ")[0]
 	if !strings.HasPrefix(mime, fileType) {
