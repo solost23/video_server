@@ -25,8 +25,8 @@ require (
 	github.com/swaggo/files v1.0.0
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/swaggo/swag v1.8.9
-	github.com/zinclabs/go-gin-prometheus v0.1.1
 	github.com/zinclabs/sdk-go-zincsearch v0.3.3
+	github.com/zsais/go-gin-prometheus v0.1.0
 	google.golang.org/grpc v1.52.0
 	gorm.io/gorm v1.24.3
 )

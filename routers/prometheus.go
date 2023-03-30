@@ -2,17 +2,15 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"video_server/global"
-
-	ginprometheus "github.com/zinclabs/go-gin-prometheus"
+	ginPrometheus "github.com/zsais/go-gin-prometheus"
+	"twitta/global"
 )
 
-// SetPrometheus sets up prometheus metrics for giin
+// SetPrometheus sets up prometheus metrics for gin
 func SetPrometheus(app *gin.Engine) {
 	if !global.ServerConfig.PrometheusEnable {
 		return
 	}
 
-	p := ginprometheus.NewPrometheus("twitta", []*ginprometheus.Metric{})
-	p.Use(app)
+	ginPrometheus.NewPrometheus("video_server").Use(app)
 }
